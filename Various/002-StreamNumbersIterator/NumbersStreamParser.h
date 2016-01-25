@@ -28,7 +28,7 @@ public:
     class iterator;
 
     iterator begin();
-    iterator end();
+    iterator end() const;
 
     class iterator
     {
@@ -43,15 +43,23 @@ public:
     public:
         iterator(istream& s, streampos pos, bool finished):m_src(s), m_pos(pos), m_n(0), m_finished(finished) {}
 
-        bool operator==(const iterator& rhs) const {return (m_finished == rhs.m_finished) && (m_finished || (m_pos == rhs.m_pos));}
+        bool operator==(const iterator& other) const {return (m_finished == other.m_finished) && (m_finished || (m_pos == other.m_pos));}
         //  TODO;   is this necessary ?
-        bool operator!=(const iterator& rhs) const {return !operator==(rhs);}
+        bool operator!=(const iterator& other) const {return !operator==(other);}
         iterator& operator++();
         iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
 
         //  OPT:    should throw for end() ?
         int operator*() const {return m_n;}
+
+    private:
+        //  no assign operator, but the generated copy constructor is necessary
+        iterator& operator= (const iterator&);
     };
+
+private:
+    //  no assign operator
+    Solution& operator= (const Solution&);
 };
 
 void Solution::iterator::readNextLine(std::string& line)
@@ -124,7 +132,7 @@ Solution::iterator Solution::begin()
     return begin;
 }
 
-Solution::iterator Solution::end()
+Solution::iterator Solution::end() const
 {
     return Solution::iterator(m_src, 0 /*it doesn't matter*/, true);
 }

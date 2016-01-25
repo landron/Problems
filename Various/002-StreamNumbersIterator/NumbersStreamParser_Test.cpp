@@ -26,7 +26,8 @@ void FileNumbersParser_Test_Invalids()
         std::istream ss(&buf);
 
         Solution sol(ss);
-        assert(sol.begin() == sol.end());
+        Solution::iterator it = sol.begin();
+        assert(it == sol.end());
     }
 }
 
