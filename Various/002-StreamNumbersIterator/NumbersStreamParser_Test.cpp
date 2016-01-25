@@ -112,8 +112,8 @@ void FileNumbersParser_Test_1()
         +0000004321     \n\
         +2000000000\n\
     ";
-    std::stringbuf test2(test);
-    std::istream ss(&test2);
+    std::stringbuf buf(test);
+    std::istream ss(&buf);
 
     Solution sol(ss);
     for (Solution::iterator it = sol.begin(); it != sol.end(); ++it) {
@@ -122,10 +122,41 @@ void FileNumbersParser_Test_1()
     }
 }
 
+void FileNumbersParser_Test_Standard()
+{
+    static const char* test = 
+    "\
+        137\n\
+        -104\n\
+        2 58\n\
+          +0\n\
+        ++3\n\
+        +1\n\
+         23.9\n\
+        2000000000\n\
+        -0\n\
+        five\n\
+         -1\n\
+    ";
+    std::stringbuf buf(test);
+    std::istream ss(&buf);
+
+    int i = 0;
+    static const int result[] = {137, -104, 0, 1, 0, -1};
+
+    Solution sol(ss);
+    for (Solution::iterator it = sol.begin(); it != sol.end(); ++it, ++i) {
+        assert(i < sizeof(result)/sizeof(result[0]));
+        assert(result[i] == *it);
+    }
+}
+
+
 void FileNumbersParser_Tests()
 {
     FileNumbersParser_Test_Invalids();
     FileNumbersParser_Test_Valids_1line();
     FileNumbersParser_Test_Valids_2lines();
     FileNumbersParser_Test_1();
+    FileNumbersParser_Test_Standard();
 }
