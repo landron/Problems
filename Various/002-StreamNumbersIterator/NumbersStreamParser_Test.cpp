@@ -118,7 +118,7 @@ void FileNumbersParser_Test_1()
     Solution sol(ss);
     for (Solution::iterator it = sol.begin(); it != sol.end(); ++it) {
         int x = *it;
-        std::cout << x << endl;
+        std::cout << x << std::endl;
     }
 }
 
