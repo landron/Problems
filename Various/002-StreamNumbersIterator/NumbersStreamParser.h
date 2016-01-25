@@ -91,7 +91,12 @@ bool Solution::iterator::getInteger(const std::string& line, int& n)
     // eat zeros
     for (; (i < line.length()) && ('0' == line[i]); ++i);
     if (i == line.length())
-        return (i == 0) ? false : ('0' == line[i-1]);
+    {
+        if ((i == 0) || ('0' != line[i-1]))
+            return false;
+        n = 0;
+        return true;
+    }
     //  number
     size_t j;
     for (j = i; (j < line.length()) && ('0' <= line[j]) && ('9' >= line[j]); ++j);
