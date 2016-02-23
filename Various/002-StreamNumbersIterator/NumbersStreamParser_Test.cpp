@@ -151,6 +151,23 @@ void FileNumbersParser_Test_Standard()
     }
 }
 
+void FileNumbersParser_Test_Errors()
+{
+   std::stringbuf buf("");
+   std::istream ss(&buf);
+   Solution sol(ss);
+
+   int result = -1;
+   try
+   {
+      result = *sol.begin();
+   }
+   catch (std::exception)
+   {
+      result = -2;
+   }
+   assert(-2 == result);
+}
 
 void FileNumbersParser_Tests()
 {
@@ -159,4 +176,5 @@ void FileNumbersParser_Tests()
     FileNumbersParser_Test_Valids_2lines();
     FileNumbersParser_Test_1();
     FileNumbersParser_Test_Standard();
+    FileNumbersParser_Test_Errors();
 }

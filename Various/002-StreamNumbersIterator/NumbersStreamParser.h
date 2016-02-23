@@ -19,12 +19,12 @@
 #include <string>
 #include <sstream>
 #include <cassert>
-using namespace std;
 
-class Solution {
+class Solution
+{
     std::istream& m_src;
 public:
-    Solution(istream& s): m_src(s) {}
+    Solution(std::istream& s): m_src(s) {}
     class iterator;
 
     iterator begin();
@@ -32,8 +32,8 @@ public:
 
     class iterator
     {
-        istream& m_src;
-        streampos m_pos;
+        std::istream& m_src;
+        std::streampos m_pos;
         bool m_finished;
         int m_n;
 
@@ -41,24 +41,23 @@ public:
         bool getInteger(const std::string&, int&);
 
     public:
-        iterator(istream& s, streampos pos, bool finished):m_src(s), m_pos(pos), m_n(0), m_finished(finished) {}
+        iterator(std::istream& s, std::streampos pos, bool finished):m_src(s), m_pos(pos), m_n(0), m_finished(finished) {}
 
         bool operator==(const iterator& other) const {return (m_finished == other.m_finished) && (m_finished || (m_pos == other.m_pos));}
-        //  TODO;   is this necessary ?
         bool operator!=(const iterator& other) const {return !operator==(other);}
         iterator& operator++();
         iterator operator++(int) {iterator tmp(*this); operator++(); return tmp;}
 
-        //  OPT:    should throw for end() ?
-        int operator*() const {return m_n;}
+        int operator*() const;
 
     private:
-        //  no assign operator, but the generated copy constructor is necessary
+        //  no assignment operator, but the generated copy constructor is necessary
         iterator& operator= (const iterator&);
     };
 
 private:
-    //  no assign operator
+    //  no assignment operator warnings
+    Solution(const Solution&);
     Solution& operator= (const Solution&);
 };
 
@@ -66,7 +65,7 @@ void Solution::iterator::readNextLine(std::string& line)
 {
     assert(!m_src.eof());
 
-    stringbuf sb;
+    std::stringbuf sb;
     m_src.get(sb, 10);
     line = sb.str();
 
@@ -129,8 +128,8 @@ bool Solution::iterator::getInteger(const std::string& line, int& n)
 
 Solution::iterator Solution::begin()
 {
-    streampos restore = m_src.tellg();
-    m_src.seekg(0, ios_base::beg);
+    std::streampos restore = m_src.tellg();
+    m_src.seekg(0, std::ios_base::beg);
     Solution::iterator begin(m_src, m_src.tellg(), false);
     ++begin;
     m_src.seekg(restore);
@@ -162,6 +161,14 @@ Solution::iterator& Solution::iterator::operator++()
     }
 
     return *this;
+}
+
+
+int Solution::iterator::operator*() const 
+{
+   if (m_finished)
+      throw std::overflow_error("end stream passed");
+   return m_n;
 }
 
 /**
