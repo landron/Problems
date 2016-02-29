@@ -39,16 +39,37 @@ def merge_sort_1(numbers):
 # 1. not possible to merge two array fragments in place
 # "how to merge two sorted integer array in place using O(n) time and O(1) space cost"
 # http://stackoverflow.com/questions/2126219/how-to-merge-two-sorted-integer-array-in-place-using-on-time-and-o1-space-co
-def merge_sort_2_step(numbers, result, index1, index2):
+def merge_sort_2_step(numbers, result, index, size):
     """merge sort 2: recursive step"""
-    size = index2 - index1 + 1
-    assert size > 1
 
-    if size > 2:
-        merge_sort_2_step(numbers, result, index1, index1+size//2)
-        merge_sort_2_step(numbers, result, index1+size//2, index2)
+    if size == 1:
+        result[index] = numbers[index]
+        return
 
-def merge_sort_2_UNFINISHED(numbers):
+    merge_sort_2_step(numbers, result, index, size//2)
+    merge_sort_2_step(numbers, result, index+size//2, size-size//2)
+
+    # get the result back in the initial array
+    i = index
+    j = index+size//2
+    for k in range(index, index+size):
+        if result[i] <= result[j]:
+            numbers[k] = result[i]
+            i += 1
+            if i == index+size//2:
+                numbers[(k+1):index+size] = result[j:index+size]
+                break
+        else:
+            numbers[k] = result[j]
+            j += 1
+            if j == index+size:
+                numbers[(k+1):index+size] = result[i:index+size//2]
+                break
+
+    # can this copy be avoided ? like switching from one buffer to the other
+    result[index:index+size] = numbers[index:index+size]
+
+def merge_sort_2(numbers):
     """merge sort 2: reducing additional space from O(2*n) to O(n) """
     assert len(numbers) != 0
 
@@ -56,10 +77,10 @@ def merge_sort_2_UNFINISHED(numbers):
         return numbers.copy()
 
     size = len(numbers)
-    result = [0] * size
-    merge_sort_2_step(numbers, result, 0, size-1)
+    auxiliary = [0] * size
+    merge_sort_2_step(numbers, auxiliary, 0, size)
 
-    return result
+    return numbers
 
 def debug_validations():
     """all the assertions"""
@@ -71,18 +92,15 @@ def debug_validations():
         [1],
         [3, 1],
         [3, 1, 2],
-    ]
-    lists_out = [
-        [1, 2, 2, 3, 6, 7, 8, 9],
-        [1, 1, 2, 2, 3, 6, 7],
-        [1, 2, 3, 4, 5, 6, 7, 8],
-        [1, 3, 4, 9, 10, 11],
-        [1],
-        [1, 3],
-        [1, 2, 3]
+        [2, 3, 1],
+        [1, 3, 7, 2, 9, 2, 6, 8, 2, 3, 5]
     ]
     for i, list_in in enumerate(lists_in):
-        succes = lists_out[i] == merge_sort_1(list_in)
+        list_out = lists_in[i].copy()
+        list_out.sort()
+        succes = list_out == merge_sort_1(list_in)
+        # print(list_in, list_out)
+        succes = list_out == merge_sort_2(list_in)
         # if not succes:
         #     print(i)
         assert succes
@@ -90,4 +108,11 @@ def debug_validations():
 if __name__ == "__main__":
     debug_validations()
 
-    # merge_sort_2([1, 3, 7, 2, 9, 2, 6, 8])
+    listIn = [1, 3, 7, 2, 9, 2, 6, 8, 2, 3, 5]
+    print(listIn)
+    listTest = listIn.copy()
+    listOut = merge_sort_2(listIn)
+    print("Result: ", listOut)
+
+    listTest.sort()
+    assert(listTest == listOut)
