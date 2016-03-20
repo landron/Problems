@@ -1,4 +1,12 @@
 
+/*
+   Knowledge base
+   1. format http://www.json.org/ , http://en.wikipedia.org/wiki/JSON
+
+   2. limit cases
+         "Unfortunately the JSON specification does not allow a trailing comma."
+*/
+
 #include <cassert>
 #include <iostream>
 #include <limits>
@@ -130,6 +138,33 @@ JResult GetValue(const wchar_t* src, size_t len, JValue& value)
       }
       break;
 
+   case L't':
+   case L'f':
+   case L'n':
+      {
+         if (0 == wcsncmp(src+next, L"true", 4) || 0 == wcsncmp(src+next, L"null", 4) )
+         {
+            value.type = (src[next] == L't') ? TYPE_BOOL : TYPE_NULL;
+            value.start = next;
+            value.size = 4;
+
+            next += 4;
+            result.result = true;
+         }
+         else if (0 == wcsncmp(src+next, L"false", 5))
+         {
+            value.type = TYPE_BOOL;
+            value.start = next;
+            value.size = 5;
+
+            next += 5;
+            result.result = true;
+         }
+
+         return result;
+      }
+      break;
+
    default:
       assert(!result.result);
       //  do not know how to treat it
@@ -218,7 +253,8 @@ JResult Object_GetNextItem(const wchar_t* src, size_t len, const size_t fromPos,
    assert(next < len);
 
    //JValue name;
-   if (!GetString(src+next, len-next, name))
+   if (  L'"' != src[next] ||    // invalid JSON
+         !GetString(src+next, len-next, name))
    {
       //  empty object accepted
       if ((next < len) && (L'}' == src[next]) && (0 == fromPos))

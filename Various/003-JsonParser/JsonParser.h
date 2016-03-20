@@ -15,7 +15,8 @@ enum
    TYPE_UNDEFINED,
    TYPE_INPUT,
    TYPE_MALFORMED,
-   TYPE_EMPTY,
+   TYPE_EMPTY,     //  nothing, empty object
+   TYPE_NULL,
    TYPE_STRING,
    TYPE_BOOL,
    TYPE_ARRAY,

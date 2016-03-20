@@ -22,6 +22,25 @@
 //    }
 //}
 
+void TestUnit_1_limit_cases_trailing_commas()
+{
+   static const wchar_t* test =
+   {
+      L"{\
+       \"firstName\": \"Jennifer\",\
+       \"lastName\": \"Connelly\",\
+       }"
+   };
+
+   std::wstringbuf buf(test);
+   std::wistream ss(&buf);
+
+   JsonParser parser(ss);
+   size_t i = 0;
+   for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i);
+   assert(0 == i);
+}
+
 void TestUnit_2_Array()
 {
     static const wchar_t* test =
@@ -57,7 +76,8 @@ void TestUnit_3_just_begin()
 
    JsonParser parser(ss);
    JsonItem::iterator it = parser.begin();
-   assert(it != parser.end());
+   const JsonItem::iterator end = parser.end();
+   assert(it != end);
 }
 
 void TestUnit_4_just_begin()
@@ -79,7 +99,8 @@ void TestUnit_4_just_begin()
 
    JsonParser parser(ss);
    JsonItem::iterator it = parser.begin();
-   assert(it != parser.end());
+   const JsonItem::iterator end = parser.end();
+   assert(it != end);
 }
 
 void TestUnit_5_a_for()
@@ -134,16 +155,44 @@ void TestUnit_6_a_for_complete()
    assert(4 == i);
 }
 
+void TestUnit_7_simple_except_numbers()
+{
+   static const wchar_t* test =
+   {
+      L"{\
+       \"firstName\": \"Jennifer\",\
+       \"lastName\": \"Connelly\",\
+       \"beautiful\": true,\
+       \"married\": false,\
+       \"husband\": null,\
+       \"active\": true,\
+       \"last film\": \"unknown\"\
+       }"
+   };
+
+   std::wstringbuf buf(test);
+   std::wistream ss(&buf);
+
+   JsonParser parser(ss);
+   size_t i = 0;
+   for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i);
+   assert(7 == i);
+}
+
 void TestUnits()
 {
    //  TODO
    //TestUnit_1();
+
+   // limit cases
+   TestUnit_1_limit_cases_trailing_commas();
    
-   // done
    TestUnit_2_Array();
    TestUnit_3_just_begin();
    TestUnit_4_just_begin();
 
    TestUnit_5_a_for();
    TestUnit_6_a_for_complete();
+
+   TestUnit_7_simple_except_numbers();
 }
