@@ -5,7 +5,7 @@
         pylint 1.5.2,
         astroid 1.4.3
         Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)]
-    Your code has been rated at 9.77/10 (previous run: 9.55/10, +0.23)
+    Your code has been rated at 10.00/10 (previous run: 9.44/10, +0.56)
 '''
 
 def merge_sort_1(numbers):
@@ -103,14 +103,19 @@ def debug_validations():
         succes = list_out == merge_sort_2(list_in)
         assert succes
 
+def print_merge():
+    """the function to print some merge simulation"""
+
+    list_in = [1, 3, 7, 2, 9, 2, 6, 8, 2, 3, 5]
+    print("Input: ", list_in)
+    list_test = list_in.copy()
+    list_out = merge_sort_2(list_in)
+    print("Result: ", list_out)
+
+    list_test.sort()
+    assert list_test == list_out
+
 if __name__ == "__main__":
     debug_validations()
 
-    listIn = [1, 3, 7, 2, 9, 2, 6, 8, 2, 3, 5]
-    print(listIn)
-    listTest = listIn.copy()
-    listOut = merge_sort_2(listIn)
-    print("Result: ", listOut)
-
-    listTest.sort()
-    assert(listTest == listOut)
+    print_merge()
