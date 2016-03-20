@@ -99,10 +99,8 @@ def debug_validations():
         list_out = lists_in[i].copy()
         list_out.sort()
         succes = list_out == merge_sort_1(list_in)
-        # print(list_in, list_out)
+        assert succes
         succes = list_out == merge_sort_2(list_in)
-        # if not succes:
-        #     print(i)
         assert succes
 
 if __name__ == "__main__":
