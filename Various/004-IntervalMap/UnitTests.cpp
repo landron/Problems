@@ -180,7 +180,10 @@ void IntervalMapTest::Run()
    Test5();
    Test6();
    Test7_basic();
+
+#if 0
    Test8_random();
+#endif
 }
 
 void IntervalMapTest_Main()
