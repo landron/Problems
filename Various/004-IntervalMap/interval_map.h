@@ -6,11 +6,15 @@
 #include <iostream>
 
 template<class K, class V>
-class interval_map {
+class interval_map 
+{
     friend class IntervalMapTest;
 
+public:
+    typedef std::map<K,V> MapType;
+
 private:
-    std::map<K,V> m_map;
+    MapType m_map;
 
 public:
     // constructor associates whole range of K with val by inserting (K_min, val)

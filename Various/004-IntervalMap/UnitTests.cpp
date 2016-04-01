@@ -115,7 +115,7 @@ private:
       assert(vals.m_map.lower_bound(10)->first == 10);
    }
 
-   //   the basic test from the test itself
+   //   the basic test from the problem itself
    void Test7_basic()
    {
       typedef interval_map<unsigned, char> Interval;
@@ -137,26 +137,28 @@ private:
       }
    }
 
+#ifdef _DEBUG
    void Test8_random()
    {
       srand ((unsigned)time(NULL));
 
       typedef interval_map<unsigned, char> Interval;
+      typedef Interval::MapType::value_type::second_type ValueType;
 
       for (size_t i = 0; i < 1000; ++i)
       {
-          if (i%25)
+          if (0 == (i+1)%25)
               std::cout<<"Test8_random no."<<(i+1)<<std::endl;
 
           Interval vals(0);
-          const size_t noIntervals = rand() % 100 + 1;
-          for (size_t i = 0; i < noIntervals; ++i)
+          const ValueType noIntervals = rand() % 100 + 1;
+          for (ValueType i = 0; i < noIntervals; ++i)
           {
               const unsigned bottom = rand() % 100;
               const unsigned size = rand() % 10 + 1;
 
-              const unsigned first = bottom ? vals[bottom-1] : 0;
-              const unsigned last = vals[bottom+size];
+              const ValueType first = bottom ? vals[bottom-1] : 0;
+              const ValueType last = vals[bottom+size];
               vals.assign(bottom, bottom+size, i+1);
               //std::cout<<"("<<bottom<<","<<size<<","<<i<<")"<<std::endl;
               //Print(vals);
@@ -167,8 +169,10 @@ private:
                   assert(i+1 == vals[bottom+j]);
           }
       }
-      //printf("");
+      std::cout<<std::endl;
    }
+#endif //_DEBUG
+
 };
 
 void IntervalMapTest::Run()
@@ -181,9 +185,11 @@ void IntervalMapTest::Run()
    Test6();
    Test7_basic();
 
+#ifdef _DEBUG
 #if 0
    Test8_random();
 #endif
+#endif //_DEBUG
 }
 
 void IntervalMapTest_Main()
