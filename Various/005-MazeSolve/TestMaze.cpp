@@ -1,6 +1,5 @@
 
-struct IMaze;
-extern void FindCheese(IMaze* maze);
+extern void TestUnits();
 
 int wmain(int /*argc*/, wchar_t* /*argv*/[])
 {

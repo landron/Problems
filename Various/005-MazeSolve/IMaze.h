@@ -7,6 +7,11 @@ enum Direction
     up = 4  // move up (y+1)
 };
 
+enum
+{
+   LIMIT_MAZE = 100,
+};
+
 //(You don’t need to implement the maze interface below.)
 struct IMaze
 {

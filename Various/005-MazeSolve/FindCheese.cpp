@@ -1,15 +1,11 @@
 
 //#include "stdafx.h"
-#include "assert.h"
-#include "utility"   // std::pair
-#include "iostream"
+#include <assert.h>
+#include <utility>   // std::pair
+#include <iostream>
 
 #include "IMaze.h"
 
-enum
-{
-   LIMIT_MAZE = 100,
-};
 typedef std::pair<int, int> ValueType;
 
 static inline
