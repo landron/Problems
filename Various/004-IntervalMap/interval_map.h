@@ -25,6 +25,20 @@ public:
         m_map.insert(m_map.begin(),std::make_pair(std::numeric_limits<K>::lowest(),val));
     };
 
+    // The representation in m_map must be canonical, that is, consecutive map entries must not have the same value: 
+   //    ..., (0,'A'), (3,'A'), ... is not allowed. 
+    static bool IsCanonical(const MapType& vals)
+    {
+       MapType::const_iterator prev = vals.begin(), it = prev;
+       ++it;
+       for (; vals.end() != it && prev->second != it->second; prev=it, ++it);
+       return (vals.end() == it);
+    }
+    bool IsCanonical() const
+    {
+       return IsCanonical(m_map);
+    }
+
     // Assign value val to interval [keyBegin, keyEnd). 
     // Overwrite previous values in this interval. 
     // Do not change values outside this interval.
@@ -35,6 +49,11 @@ public:
 
     //  protection against assigning same variable to (almost) the same interval / BUT allow enlarging the range
     void assign( K const& keyBegin, K const& keyEnd, const V& val ) {
+       assign_4(keyBegin, keyEnd, val);
+       assert(IsCanonical());
+    }
+
+    void assign_4( K const& keyBegin, K const& keyEnd, const V& val ) {
         if (!(keyBegin <  keyEnd))
             return;
 
@@ -42,32 +61,45 @@ public:
         typedef typename BaseMap::value_type MVT; 
 
         BaseMap::iterator end = m_map.upper_bound(keyEnd);
-        //  upper_bound can be m_map.end()
-        --end;
-        assert(end != m_map.end() && "the container was already initialized");
-        V afterEnd(end->second);
-        ++end;
+        BaseMap::iterator previous(end);
+        --previous;
+        assert(previous != m_map.end() && "the container was already initialized");
+        //  this value must be saved, before maybe being lost by the start insertion
+        //     (even if might be not needed:  the end insertion might be skipped (when start != m_map.end()))
+        MVT afterEnd(keyEnd, previous->second);
         
         //  do not verify against 'afterEnd' here: the interval might be enlarged downwards
         BaseMap::iterator start = m_map.lower_bound(keyBegin);
-        if (start == m_map.end())
-            start = m_map.insert(start, MVT(keyBegin, val));
-        else if (keyBegin < start->first)
-        {
-            --start;
-            if (start == m_map.end() || (val != start->second))
+        if (start == m_map.end()) {
+           previous = start;
+           --previous;
+           assert(previous != m_map.end());
+           if (val != previous->second)
+              start = m_map.insert(start, MVT(keyBegin, val));
+        }
+        else if (keyBegin < start->first) {
+            --start; // needed to allow the next erase
+            if (start == m_map.end() || (val != start->second))   // not already contained
                 start = m_map.insert(start, MVT(keyBegin, val));
         }
-        else
-            start->second = val;
+        else {
+           previous = start;
+           --previous;
+           if ((previous == m_map.end()) || (val != previous->second))
+              start->second = val;
+           else 
+              start = previous;
+        }
 
         //  insert end if needed
-        if (end == m_map.end() || (keyEnd > end->first) || (afterEnd != val))
-            end = m_map.insert(end, MVT(keyEnd, afterEnd));
+        //     (start value is missing when the new interval is enterily contained)
+        if (start != m_map.end()) {
+           if (end == m_map.end() || (keyEnd > end->first) || (afterEnd.second != val))
+               end = m_map.insert(end, afterEnd);
 
-        //  erase old values in between
-        if (start != m_map.end())
+            //  erase old values in between
             m_map.erase(++start, end);
+        }
     }
 
 
@@ -79,4 +111,5 @@ public:
 private:
    void assign_1( K const& keyBegin, K const& keyEnd, const V& val );
    void assign_2( K const& keyBegin, K const& keyEnd, const V& val );
+   void assign_3( K const& keyBegin, K const& keyEnd, const V& val );
 };
