@@ -2,6 +2,7 @@
 #include "time.h"
 
 #include "interval_map.h"
+#include "interval_map_extra.h"
 
 class IntervalMapTest
 {
@@ -9,20 +10,30 @@ public:
    void Run();
 
 private:
-    template<class K, class V>
-    void Print(const interval_map<K,V>& vals)
-    {
-        typedef std::map<K,V> BaseMap;
-        for (BaseMap::const_iterator it = vals.m_map.begin(); vals.m_map.end() != it; ++it)
-          std::cout<<"("<<it->first<<","<<it->second<<")"<<std::endl;
-        std::cout<<std::endl;
-    }
+   template<class K, class V>
+   void Print(const interval_map<K,V>& vals)
+   {
+      typedef std::map<K,V> BaseMap;
+      for (BaseMap::const_iterator it = vals.m_map.begin(); vals.m_map.end() != it; ++it)
+         std::cout<<"("<<it->first<<","<<it->second<<")"<<std::endl;
+      std::cout<<std::endl;
+   }
+
+   void Test0_Limit()
+   {
+      typedef interval_map<int, char> Interval;
+      Interval vals('D');
+
+      vals.assign(2,2,'A');
+      for (int i = -1; i < 4; ++i)
+         assert(vals[i] == 'D');
+   }
 
    void Test1()
    {
       typedef interval_map<int, char> Interval;
       Interval vals('D');
-	  vals.assign(2,5,'A');
+      vals.assign(2,5,'A');
 
       assert(vals[4] == 'A');
       assert(vals[1] == 'D');
@@ -34,7 +45,7 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('*');
-	  vals.assign(5,6,'A');
+      vals.assign(5,6,'A');
       vals.assign(6,8,'B');
       vals.assign(9,10,'C');
 
@@ -49,7 +60,7 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('*');
-	  vals.assign(5,6,'A');
+      vals.assign(5,6,'A');
       vals.assign(6,8,'B');
       vals.assign(9,10,'C');
       assert(vals[7] == 'B');
@@ -65,7 +76,7 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('*');
-	  vals.assign(5,6,'A');
+      vals.assign(5,6,'A');
       vals.assign(6,8,'B');
       vals.assign(9,10,'C');
       assert(vals[7] == 'B');
@@ -82,7 +93,7 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('*');
-	  vals.assign(5,6,'A');
+      vals.assign(5,6,'A');
       vals.assign(6,8,'B');
       vals.assign(11,15,'C');
       assert(vals[12] == 'C');
@@ -98,7 +109,7 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('*');
-	  vals.assign(5,6,'A');
+      vals.assign(5,6,'A');
       vals.assign(6,8,'B');
       vals.assign(11,15,'C');
       assert(vals[12] == 'C');
@@ -120,20 +131,20 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('A');
-	  vals.assign(3,5,'B');
-    
+      vals.assign(3,5,'B');
+
       for (size_t i = 0; i < 10 ; ++i)
       {
-          switch (i)
-          {
-          case 3:
-          case 4:
-              assert(vals[i] == 'B');
-          break;
-          default:
-              assert(vals[i] == 'A');
-          break;
-          }
+         switch (i)
+         {
+         case 3:
+         case 4:
+            assert(vals[i] == 'B');
+            break;
+         default:
+            assert(vals[i] == 'A');
+            break;
+         }
       }
    }
 
@@ -147,27 +158,27 @@ private:
 
       for (size_t i = 0; i < 1000; ++i)
       {
-          if (0 == (i+1)%25)
-              std::cout<<"Test8_random no."<<(i+1)<<std::endl;
+         if (0 == (i+1)%25)
+            std::cout<<"Test8_random no."<<(i+1)<<std::endl;
 
-          Interval vals(0);
-          const ValueType noIntervals = rand() % 100 + 1;
-          for (ValueType i = 0; i < noIntervals; ++i)
-          {
-              const unsigned bottom = rand() % 100;
-              const unsigned size = rand() % 10 + 1;
+         Interval vals(0);
+         const ValueType noIntervals = rand() % 100 + 1;
+         for (ValueType i = 0; i < noIntervals; ++i)
+         {
+            const unsigned bottom = rand() % 100;
+            const unsigned size = rand() % 10 + 1;
 
-              const ValueType first = bottom ? vals[bottom-1] : 0;
-              const ValueType last = vals[bottom+size];
-              vals.assign(bottom, bottom+size, i+1);
-              //std::cout<<"("<<bottom<<","<<size<<","<<i<<")"<<std::endl;
-              //Print(vals);
+            const ValueType first = bottom ? vals[bottom-1] : 0;
+            const ValueType last = vals[bottom+size];
+            vals.assign(bottom, bottom+size, i+1);
+            //std::cout<<"("<<bottom<<","<<size<<","<<i<<")"<<std::endl;
+            //Print(vals);
 
-              assert(!bottom || (first == vals[bottom-1]));
-              assert(last == vals[bottom+size]);
-              for (size_t j = 0; j < size; ++j)
-                  assert(i+1 == vals[bottom+j]);
-          }
+            assert(!bottom || (first == vals[bottom-1]));
+            assert(last == vals[bottom+size]);
+            for (size_t j = 0; j < size; ++j)
+               assert(i+1 == vals[bottom+j]);
+         }
       }
       std::cout<<std::endl;
    }
@@ -177,6 +188,8 @@ private:
 
 void IntervalMapTest::Run()
 {
+   Test0_Limit();
+
    Test1();
    Test2();
    Test3();
