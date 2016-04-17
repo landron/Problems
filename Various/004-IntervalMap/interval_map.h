@@ -31,7 +31,7 @@ public:
     {
        MapType::const_iterator prev = vals.begin(), it = prev;
        ++it;
-       for (; vals.end() != it && prev->second != it->second; prev=it, ++it);
+       for (; vals.end() != it && !(prev->second == it->second); prev=it, ++it);
        return (vals.end() == it);
     }
     bool IsCanonical() const
@@ -61,6 +61,7 @@ public:
         typedef typename BaseMap::value_type MVT; 
 
         BaseMap::iterator end = m_map.upper_bound(keyEnd);
+        assert((end == m_map.end() || end->first < keyEnd || keyEnd < end->first) && "equality comparison is not permited");
         BaseMap::iterator previous(end);
         --previous;
         assert(previous != m_map.end() && "the container was already initialized");
@@ -74,18 +75,18 @@ public:
            previous = start;
            --previous;
            assert(previous != m_map.end());
-           if (val != previous->second)
+           if (!(val == previous->second))
               start = m_map.insert(start, MVT(keyBegin, val));
         }
         else if (keyBegin < start->first) {
             --start; // needed to allow the next erase
-            if (start == m_map.end() || (val != start->second))   // not already contained
+            if (start == m_map.end() || !(val == start->second))   // not already contained
                 start = m_map.insert(start, MVT(keyBegin, val));
         }
         else {
            previous = start;
            --previous;
-           if ((previous == m_map.end()) || (val != previous->second))
+           if ((previous == m_map.end()) || !(val == previous->second))
               start->second = val;
            else 
               start = previous;
@@ -94,7 +95,8 @@ public:
         //  insert end if needed
         //     (start value is missing when the new interval is enterily contained)
         if (start != m_map.end()) {
-           if (end == m_map.end() || (keyEnd > end->first) || (afterEnd.second != val))
+           assert((end == m_map.end() || end->first < keyEnd || keyEnd < end->first) && "equality comparison is not permited: second comparison");
+           if (end == m_map.end() || !(keyEnd < end->first) || !(afterEnd.second == val))
                end = m_map.insert(end, afterEnd);
 
             //  erase old values in between

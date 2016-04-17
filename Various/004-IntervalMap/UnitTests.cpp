@@ -3,6 +3,7 @@
 
 #include "interval_map.h"
 #include "interval_map_extra.h"
+#include "CustomKV.h"
 
 class IntervalMapTest
 {
@@ -240,8 +241,8 @@ private:
    {
       typedef interval_map<unsigned, char> Interval;
       Interval vals('A');
-      vals.assign(3,5,'B');
-      vals.assign(3,7,'B');
+      vals.assign(3, 5, 'B');
+      vals.assign(3, 7, 'B');
       assert(vals.m_map.size() == 3);
       assert(vals[6] == 'B');
       assert(vals[7] == 'A');
@@ -249,6 +250,23 @@ private:
       assert(vals.m_map.size() == 3);
       assert(vals[8] == 'B');
       assert(vals[9] == 'A');
+   }
+
+   void Test11_custom_classes() 
+   {
+      typedef CustomK<unsigned> KType;
+      typedef interval_map<KType, char> Interval;
+      Interval vals('A');
+      const KType start(3), end(5);
+      vals.assign(start, end, 'B');
+      assert(vals.m_map.size() == 3);
+
+      typedef CustomV<char> VType;
+      typedef interval_map<KType, VType> Interval2;
+      const VType A('A'), D('D');
+      Interval2 vals2(A);
+      vals2.assign(start, end, D);
+      assert(vals2.m_map.size() == 3);
    }
 };
 
@@ -265,6 +283,7 @@ void IntervalMapTest::Run()
    Test7_basic();
    Test9_validate_canonical();
    Test10_validate_canonical();
+   Test11_custom_classes();
 
 #ifdef _DEBUG
 #if 0
