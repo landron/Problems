@@ -70,6 +70,15 @@ private:
       assert(vals[6] == 'E');
       assert(vals[7] == 'B');
       assert(vals[8] == '*');
+
+      //std::cout<<(--vals.m_map.lower_bound(12))->first<<std::endl;
+      assert((--vals.m_map.lower_bound(12))->first == 10);
+      assert(vals.m_map.lower_bound(12) == vals.m_map.end());
+
+      for (int  i = 0; i < 15; ++i)
+         assert(vals[i] != 'A');
+      for (int  i = 10; i < 15; ++i)
+         assert(vals[i] == '*');
    }
 
    void Test4()
@@ -184,6 +193,50 @@ private:
    }
 #endif //_DEBUG
 
+   // not covered by assign_3
+   void Test9_validate_canonical() 
+   {
+      typedef interval_map<unsigned, char> Interval;
+      Interval vals('A');
+      vals.assign(3,5,'A');
+      assert(vals.m_map.size() == 1);
+      assert(vals[1] == 'A');
+
+      vals.assign(3,8,'B');
+      assert(vals.m_map.size() == 3);
+      vals.assign(2,7,'B');
+      assert(vals.m_map.size() == 3);
+      assert(vals[8] == 'A');
+
+      vals.assign(5,10,'B');
+      assert(vals.m_map.size() == 3);
+      assert(vals[1] == 'A');
+      assert(vals[2] == 'B');
+      assert(vals[9] == 'B');
+      assert(vals[10] == 'A');
+      vals.assign(2,6,'A');
+      assert(vals.m_map.size() == 3);
+      assert(vals[5] == 'A');
+      assert(vals[6] == 'B');
+      assert(vals[6] == 'B');
+
+      //Print(vals);
+   }
+
+   void Test10_validate_canonical() 
+   {
+      typedef interval_map<unsigned, char> Interval;
+      Interval vals('A');
+      vals.assign(3,5,'B');
+      vals.assign(3,7,'B');
+      assert(vals.m_map.size() == 3);
+      assert(vals[6] == 'B');
+      assert(vals[7] == 'A');
+      vals.assign(5,9,'B');
+      assert(vals.m_map.size() == 3);
+      assert(vals[8] == 'B');
+      assert(vals[9] == 'A');
+   }
 };
 
 void IntervalMapTest::Run()
@@ -197,6 +250,8 @@ void IntervalMapTest::Run()
    Test5();
    Test6();
    Test7_basic();
+   Test9_validate_canonical();
+   Test10_validate_canonical();
 
 #ifdef _DEBUG
 #if 0
