@@ -25,6 +25,8 @@ private:
       Interval vals('D');
 
       vals.assign(2,2,'A');
+      vals.assign(3,2,'B');
+      assert( vals.m_map.size() == 1);
       for (int i = -1; i < 4; ++i)
          assert(vals[i] == 'D');
    }
@@ -36,6 +38,17 @@ private:
       vals.assign(2,5,'A');
 
       assert(vals[4] == 'A');
+      assert(vals[1] == 'D');
+      assert(vals[5] == 'D');
+      assert(vals[6] == 'D');
+
+      assert( vals.m_map.size() == 3);
+      vals.assign(2,5,'A');
+      assert( vals.m_map.size() == 3);
+      vals.assign(2,5,'B');
+      assert( vals.m_map.size() == 3);
+
+      assert(vals[4] == 'B');
       assert(vals[1] == 'D');
       assert(vals[5] == 'D');
       assert(vals[6] == 'D');

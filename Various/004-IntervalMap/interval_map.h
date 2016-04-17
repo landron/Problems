@@ -47,12 +47,12 @@ public:
     // If !( keyBegin < keyEnd ), this designates an empty interval, 
     // and assign must do nothing.
 
-    //  protection against assigning same variable to (almost) the same interval / BUT allow enlarging the range
     void assign( K const& keyBegin, K const& keyEnd, const V& val ) {
        assign_4(keyBegin, keyEnd, val);
        assert(IsCanonical());
     }
 
+    //  allowing enlarging the range
     void assign_4( K const& keyBegin, K const& keyEnd, const V& val ) {
         if (!(keyBegin <  keyEnd))
             return;
