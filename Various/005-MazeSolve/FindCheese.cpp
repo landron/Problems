@@ -117,7 +117,6 @@ bool FindCheese_Maze(IMaze* maze, bool visited[2 * LIMIT_MAZE][2 * LIMIT_MAZE], 
       }
    }
 
-   assert(false && "the cheese must be out there");
    return false;
 }
 
@@ -153,7 +152,6 @@ bool FindCheese_Grid(IMaze* maze, bool visited[2 * LIMIT_MAZE][2 * LIMIT_MAZE], 
    }
    else
    {
-      assert(false && "the cheese must be out there");
       return false;
    }
 
@@ -163,7 +161,6 @@ bool FindCheese_Grid(IMaze* maze, bool visited[2 * LIMIT_MAZE][2 * LIMIT_MAZE], 
    if (FindCheese(maze, visited, current))
       return true;
 
-   assert(false && "the cheese must be out there");
    return false;
 }
 

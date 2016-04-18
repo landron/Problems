@@ -3,7 +3,8 @@
 
 extern bool FindCheese(IMaze* maze);
 
-static bool TestUnit1_AlreadyFound()
+static inline 
+bool TestUnit_AlreadyFound()
 {
    MazeAlreadyFound maze;
    const bool found = FindCheese(&maze);
@@ -11,7 +12,17 @@ static bool TestUnit1_AlreadyFound()
    return found;
 }
 
+static inline
+bool TestUnit_NoCheese()
+{
+   MazeNoCheese maze;
+   const bool found = FindCheese(&maze);
+   assert(!found);
+   return found;
+}
+
 void TestUnits()
 {
-   (void)TestUnit1_AlreadyFound();
+   (void)TestUnit_AlreadyFound();
+   (void)TestUnit_NoCheese();
 }

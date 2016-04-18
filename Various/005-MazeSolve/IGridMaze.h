@@ -46,8 +46,27 @@ public:
 
    virtual void Initialize()
    {
-      assert(!m_cheese.first && !m_cheese.first);
-      assert(!m_mouse.first && !m_mouse.first);
+      assert(!m_cheese.first && !m_cheese.second);
+      assert(!m_mouse.first && !m_mouse.second);
+   }
+
+   virtual bool Move(Direction)
+   {
+      return false;
+   }
+};
+
+class MazeNoCheese: public IGridMaze
+{
+   typedef IGridMaze ParentClass;
+
+public:
+   MazeNoCheese(): ParentClass(1) {}
+
+   virtual void Initialize()
+   {
+      assert(!m_mouse.first && !m_mouse.second);
+      m_cheese.first = 2;
    }
 
    virtual bool Move(Direction)
