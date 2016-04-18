@@ -22,5 +22,5 @@ struct IMaze
     virtual bool Move(Direction tryMovingMouseInThisDirection) = 0;
  
     // Will return true if the mouse and cheese are at the same location, false otherwise.
-    virtual bool Success() = 0;
+    virtual bool Success() const = 0;
 };

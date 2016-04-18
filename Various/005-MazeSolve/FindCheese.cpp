@@ -11,7 +11,7 @@ typedef std::pair<int, int> ValueType;
 static inline
 bool FindCheese(IMaze* maze, bool visited[2 * LIMIT_MAZE][2 * LIMIT_MAZE], ValueType& current);
 
-void FindCheese(IMaze* maze)
+bool FindCheese(IMaze* maze)
 {
    assert(maze);
     
@@ -21,7 +21,7 @@ void FindCheese(IMaze* maze)
    maze->Initialize();
 
    if (maze->Success())
-      return;
+      return true;
 
    // "The maze will be no larger than 100 by 100 units" => allow 100 units in any direction   
    bool visited[2 * LIMIT_MAZE][2 * LIMIT_MAZE] = {};
@@ -30,7 +30,12 @@ void FindCheese(IMaze* maze)
    visited[current.first][current.second] = true;
 
    if (FindCheese(maze, visited, current))
+   {
       std::cout<<"Success!"<<std::endl;
+      return true;
+   }
+   else
+      return false;
 }
 
 static
