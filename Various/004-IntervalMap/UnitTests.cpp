@@ -267,6 +267,9 @@ private:
       Interval2 vals2(A);
       vals2.assign(start, end, D);
       assert(vals2.m_map.size() == 3);
+
+      //test operator<<
+      Print(vals2);
    }
 };
 
