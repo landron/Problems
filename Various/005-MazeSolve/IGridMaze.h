@@ -5,16 +5,20 @@
 #include <stdexcept>
 #include <utility>   // std::pair
 
+/*
+   x is the first coordinate, left to right; y is the second, from bottom to above
+*/
 class IGridMaze: public IMaze
 {
-protected:
    bool m_grid[LIMIT_MAZE][LIMIT_MAZE];   // false for wall
    const size_t m_size;
    std::pair<unsigned, unsigned> m_cheese;
    std::pair<unsigned, unsigned> m_mouse;
 
+   unsigned m_movements;
+
 public:
-   IGridMaze(size_t size): m_size(size)
+   IGridMaze(size_t size): m_size(size), m_movements(0)
    {
       assert(size < LIMIT_MAZE);
       if (size >= LIMIT_MAZE)
@@ -29,6 +33,76 @@ public:
    virtual bool Success() const
    {
       return m_cheese == m_mouse;
+   }
+
+   virtual bool Move(Direction d)
+   {
+      const bool allowed = Allowed(d);
+      if (!allowed)
+         return false;
+
+      const std::pair<unsigned, unsigned> initial(m_mouse);
+      ReallyMove(d);
+      assert(m_mouse != initial);
+      return true;
+   }
+
+   unsigned Movements() const {return m_movements;}
+
+protected:
+   const std::pair<unsigned, unsigned>& Mouse() const {return m_mouse;}
+   bool MouseIs(unsigned x, unsigned y) const {return x == m_mouse.first && y == m_mouse.second;}
+
+   const std::pair<unsigned, unsigned>& Cheese() const {return m_cheese;}
+   void SetCheese(unsigned x, unsigned y) 
+   {
+      assert(x < m_size && y < m_size);
+      m_cheese.first = x;
+      m_cheese.second = y;
+   }
+   void SetNoCheese() 
+   {
+      m_cheese.first = 2*m_size+1;
+   }
+
+private:
+   // TODO: validate consistency = if right is possible, then left is possible also for the opposite point
+   virtual bool Allowed(Direction) const = 0;
+
+   void ReallyMove(Direction d)
+   {
+      switch (d)
+      {
+      case left: 
+         {
+            assert(m_mouse.first);
+            --m_mouse.first;
+         }
+         break;
+      case up: 
+         {
+            assert(m_mouse.second < m_size);
+            ++m_mouse.second;
+         }
+         break;
+      case down: 
+         {
+            assert(m_mouse.second);
+            --m_mouse.second;
+         }
+         break;
+      case right: 
+         {
+            assert(m_mouse.first < m_size);
+            ++m_mouse.first;
+         }
+         break;
+
+      default:
+         assert(false);
+      };
+
+      ++m_movements;
    }
 
 private:
@@ -46,11 +120,11 @@ public:
 
    virtual void Initialize()
    {
-      assert(!m_cheese.first && !m_cheese.second);
-      assert(!m_mouse.first && !m_mouse.second);
+      assert(!Cheese().first && !Cheese().second);
+      assert(!Mouse().first && !Mouse().second);
    }
 
-   virtual bool Move(Direction)
+   virtual bool Allowed(Direction) const
    {
       return false;
    }
@@ -65,12 +139,68 @@ public:
 
    virtual void Initialize()
    {
-      assert(!m_mouse.first && !m_mouse.second);
-      m_cheese.first = 2;
+      assert(!Mouse().first && !Mouse().second);
+      SetNoCheese();
    }
 
-   virtual bool Move(Direction)
+   virtual bool Allowed(Direction) const
    {
       return false;
+   }
+};
+
+// one route possible: up, right, down
+template <bool _hasCheese>
+class Maze4x4_1: public IGridMaze
+{
+   typedef IGridMaze ParentClass;
+
+public:
+   Maze4x4_1(): ParentClass(2) {}
+
+   virtual void Initialize();
+
+   virtual bool Allowed(Direction d) const
+   {
+      switch (d)
+      {
+      case left:  return MouseIs(1,1);
+      case right: return MouseIs(0,1);
+      case up:    return 0 == Mouse().second;
+      case down:  return 1 == Mouse().second;
+      };
+
+      assert(false);
+      return false;
+   }
+};
+
+template <>
+virtual void Maze4x4_1<true>::Initialize()
+{
+   SetCheese(1, 0);
+}
+
+template <>
+virtual void Maze4x4_1<false>::Initialize()
+{
+   SetNoCheese();
+}
+
+// two routes possible: up, right, down + right
+template <bool _hasCheese>
+class Maze4x4_2: public Maze4x4_1<_hasCheese>
+{
+   typedef Maze4x4_1<_hasCheese> ParentClass;
+
+public:
+   virtual bool Allowed(Direction d) const
+   {
+      switch (d)
+      {
+         case left:  return 1 == Mouse().first;
+         case right: return 0 == Mouse().first;
+      }
+      return ParentClass::Allowed(d);
    }
 };
