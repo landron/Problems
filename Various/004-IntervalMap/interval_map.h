@@ -61,7 +61,7 @@ public:
         typedef typename BaseMap::value_type MVT; 
 
         BaseMap::iterator end = m_map.upper_bound(keyEnd);
-        assert((end == m_map.end() || end->first < keyEnd || keyEnd < end->first) && "equality comparison is not permitted");
+        assert((end == m_map.end() || keyEnd < end->first) && "equality comparison is not permitted (later)");
         BaseMap::iterator previous(end);
         --previous;
         assert(previous != m_map.end() && "the container was already initialized");
@@ -95,7 +95,7 @@ public:
         //  insert end if needed
         //     (start value is missing when the new interval is enterily contained)
         if (start != m_map.end()) {
-           assert((end == m_map.end() || end->first < keyEnd || keyEnd < end->first) && "equality comparison is not permitted (for the second comparison)");
+           assert((end == m_map.end() || (end->first < keyEnd || keyEnd < end->first)) && "equality comparison is not permitted (for the second comparison)");
            if (end == m_map.end() || !(keyEnd < end->first) || !(afterEnd.second == val))
                end = m_map.insert(end, afterEnd);
 

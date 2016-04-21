@@ -268,8 +268,9 @@ private:
       vals2.assign(start, end, D);
       assert(vals2.m_map.size() == 3);
 
-      //test operator<<
-      Print(vals2);
+      //test operator<<, but not execute
+      if (VType('X') == vals2[KType(6)])
+         Print(vals2);
    }
 };
 
