@@ -149,14 +149,21 @@ public:
    }
 };
 
+enum
+{
+   TYPE_CHEESE_NO_CHEESE = 1,
+   TYPE_CHEESE_HAS_CHEESE,
+   TYPE_CHEESE_RANDOM_CHEESE
+};
+
 // one route possible: up, right, down
-template <bool _hasCheese>
-class Maze4x4_1: public IGridMaze
+template <unsigned _cheese>
+class Maze2x2_1: public IGridMaze
 {
    typedef IGridMaze ParentClass;
 
 public:
-   Maze4x4_1(): ParentClass(2) {}
+   Maze2x2_1(): ParentClass(2) {}
 
    virtual void Initialize();
 
@@ -176,22 +183,28 @@ public:
 };
 
 template <>
-virtual void Maze4x4_1<true>::Initialize()
+virtual void Maze2x2_1<TYPE_CHEESE_RANDOM_CHEESE>::Initialize()
 {
    SetCheese(1, 0);
 }
 
 template <>
-virtual void Maze4x4_1<false>::Initialize()
+virtual void Maze2x2_1<TYPE_CHEESE_HAS_CHEESE>::Initialize()
+{
+   SetCheese(1, 0);
+}
+
+template <>
+virtual void Maze2x2_1<TYPE_CHEESE_NO_CHEESE>::Initialize()
 {
    SetNoCheese();
 }
 
 // two routes possible: up, right, down + right
-template <bool _hasCheese>
-class Maze4x4_2: public Maze4x4_1<_hasCheese>
+template <unsigned _cheese>
+class Maze2x2_2: public Maze2x2_1<_hasCheese>
 {
-   typedef Maze4x4_1<_hasCheese> ParentClass;
+   typedef Maze2x2_1<_hasCheese> ParentClass;
 
 public:
    virtual bool Allowed(Direction d) const

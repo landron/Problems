@@ -1,5 +1,6 @@
 
 #include "IGridMaze.h"
+#include "time.h"
 
 extern bool FindCheese(IMaze* maze);
 
@@ -22,16 +23,16 @@ bool TestUnit_NoCheese()
 }
 
 static inline
-bool TestUnit4x4_1()
+bool TestUnit2x2_HasCheese()
 {
-   Maze4x4_1<true> maze1;
+   Maze2x2_1<true> maze1;
    bool found = FindCheese(&maze1);
    assert(found);
    assert(3 == maze1.Movements());
    if (!found)
       return false;
 
-   Maze4x4_1<false> maze2;
+   Maze2x2_1<false> maze2;
    found = FindCheese(&maze2);
    assert(!found);
    // 3 * 2 (the route back)
@@ -39,16 +40,16 @@ bool TestUnit4x4_1()
    return found;
 }
 
-bool TestUnit4x4_2()
+bool TestUnit2x2_NoCheese()
 {
-   Maze4x4_2<true> maze1;
+   Maze2x2_2<true> maze1;
    bool found = FindCheese(&maze1);
    assert(found);
    assert(3 == maze1.Movements() || 1 == maze1.Movements());
    if (!found)
       return false;
 
-   Maze4x4_2<false> maze2;
+   Maze2x2_2<false> maze2;
    found = FindCheese(&maze2);
    assert(!found);
    // 3 * 2 (the route back); all visited
@@ -58,8 +59,10 @@ bool TestUnit4x4_2()
 
 void TestUnits()
 {
+   srand ((unsigned)time (NULL));
+
    (void)TestUnit_AlreadyFound();
    (void)TestUnit_NoCheese();
-   (void)TestUnit4x4_1();
-   (void)TestUnit4x4_2();
+   (void)TestUnit2x2_HasCheese();
+   (void)TestUnit2x2_NoCheese();
 }
