@@ -1,7 +1,7 @@
 '''
     http://www.hackerrank.com/challenges/maxsubarray
          find the maximum possible sum of a contiguous subarray
-    Version 2016.08.05
+    Version 2016.05.08
 
     >pylint --version
         No config file found, using default configuration
