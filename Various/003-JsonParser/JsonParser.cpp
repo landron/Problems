@@ -1,4 +1,10 @@
 
+// TODO
+/*
+   1. a better implementation, usign some regex
+        http://boost-spirit.com/
+*/
+
 /*
    Knowledge base
    1. format http://www.json.org/ , http://en.wikipedia.org/wiki/JSON
