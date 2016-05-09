@@ -13,4 +13,8 @@ Algorithms
 	
 Python
 
-	Points: 155.00 Rank: 8814
+	Points: 205.00 Rank: 6621
+
+SQL
+
+	Points: 225.00 Rank: 8010
