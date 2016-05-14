@@ -1,5 +1,4 @@
-# hackerrank
-
+# hackerrank (keeping the highest postion, meaning not updating all the entries every time)
 
 Project Euler
 
@@ -13,7 +12,7 @@ Algorithms
 	
 Python
 
-	Points: 205.00 Rank: 6621
+	Points: 425.00 Rank: 2773
 
 SQL
 
