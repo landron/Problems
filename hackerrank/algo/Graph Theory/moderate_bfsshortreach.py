@@ -2,6 +2,7 @@
     http://www.hackerrank.com/challenges/bfsshortreach
         Breadth First Search: Shortest Reach
     Direct Dijkstra application.
+    tag_dijkstra
 
     Version 2016.05.08
 
