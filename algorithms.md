@@ -1,4 +1,4 @@
-### Algorithms and interesting problems 
+### Algorithms (and other interesting problems)
 
 ##### Algorithms
 	
