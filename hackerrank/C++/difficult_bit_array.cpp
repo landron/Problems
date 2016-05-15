@@ -89,7 +89,7 @@ void debug_validations()
    assert(1000 == get_distinct_by_prev_validation(1000, 2, 2147483647, 2));
 }
 
-int main() 
+int removePrefixFor_main() 
 {
    debug_validations();
    //read_and_solve();
