@@ -3,6 +3,8 @@
 ##### Algorithms
 	
 	tag_dijkstra, tag_floyd
+	
+	Combinatorial optimization:	tag_knapsack
 
 ##### Generic problems
 
