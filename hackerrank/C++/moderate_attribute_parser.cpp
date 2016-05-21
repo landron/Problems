@@ -278,7 +278,7 @@ void debug_validations()
    debug_validations_3();
 }
 
-int main() 
+int removePrefixFor_main() 
 {
    const char* text = "<tag1 v1 = \"123\" v2 = \"43.4\" v3 = \"hello\">\
                       </tag1>\
