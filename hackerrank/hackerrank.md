@@ -13,12 +13,12 @@
 	
 ######C++
 
-	Points: 410.00 Rank: 1176
+	Points: 495.00 Rank: 593
 	
 ######Python
 
-	Points: 845.00 Rank: 999
+	Points: 945.00 Rank: 848
 
 ######SQL
 
-	Points: 225.00 Rank: 8010
+	Points: 455.00 Rank: 2973
