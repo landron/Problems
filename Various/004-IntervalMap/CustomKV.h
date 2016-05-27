@@ -3,7 +3,7 @@
 /*
    "does not implement any other operations, in particular no equality comparison or arithmetic operators"
    help me found an error:
-      Error	1	error C2676: binary '>' : 'const KType' does not define this operator or a conversion to a type acceptable to the predefined operator	f:\devel\extra\problems\various\004-intervalmap\interval_map.h	97	1	think-cell
+      Error	1	error C2676: binary '>' : 'const KType' does not define this operator or a conversion to a type acceptable to the predefined operator	f:\devel\extra\problems\various\004-intervalmap\interval_map.h	97	1
 */
 template<class K>
 class CustomK
