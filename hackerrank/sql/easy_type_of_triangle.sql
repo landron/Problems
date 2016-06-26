@@ -8,10 +8,10 @@ MySQL
 SELECT
 (
     CASE
-        WHEN t.A = t.B and t.B = t.C THEN "Equilateral"
-        WHEN t.A + t.B <= t.C OR t.A + t.C <= t.B OR t.C + t.B <= t.A THEN "Not A Triangle"
-        WHEN t.A = t.B or t.B = t.C or t.A = t.C THEN "Isosceles"
+        WHEN A = B and B = C THEN "Equilateral"
+        WHEN A + B <= C OR A + C <= B OR C + B <= A THEN "Not A Triangle"
+        WHEN A = B or B = C or A = C THEN "Isosceles"
         ELSE "Scalene"
     END
 )
-FROM TRIANGLES t;
+FROM TRIANGLES;
