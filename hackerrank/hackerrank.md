@@ -21,4 +21,4 @@
 
 ######SQL
 
-	Points: 650.00 Rank: 1372
+	Points: 730.00 Rank: 1096
