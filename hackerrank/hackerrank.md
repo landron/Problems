@@ -17,8 +17,8 @@
 	
 ######Python
 
-	Points: 945.00 Rank: 848
+	Points: 1005.00 Rank: 1044		2016.07.16
 
 ######SQL
 
-	Points: 730.00 Rank: 1096
+	Points: 730.00 Rank: 1096		2016.07.15
