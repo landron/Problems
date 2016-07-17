@@ -13,3 +13,4 @@
 ##### Parsers
 
 	tag_parser
+	tag_regex
