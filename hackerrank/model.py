@@ -13,17 +13,17 @@
 
 import io
 
-def solve(func):
+def solve_with_iofunc(func):
     '''solve the problem getting text using the given function'''
 
 def solve_with_text(text):
     '''hackerrank test function'''
     buf = io.StringIO(text)
-    return solve(buf.readline)
+    return solve_with_iofunc(buf.readline)
 
 def read_and_solve():
     '''Hackerrank test function'''
-    print(solve(input))
+    solve_with_iofunc(input)
 
 def debug_validations():
     '''unit testing'''
