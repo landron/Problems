@@ -21,6 +21,11 @@ def solve_with_text(text):
     buf = io.StringIO(text)
     return solve_with_iofunc(buf.readline)
 
+def solve_with_file(filename):
+    '''hackerrank test function: get input from frile'''
+    file = open(filename, 'r')
+    return solve_with_iofunc(file.readline)
+
 def read_and_solve():
     '''Hackerrank test function'''
     solve_with_iofunc(input)
