@@ -1,7 +1,7 @@
 '''
     https://www.hackerrank.com/challenges/re-group-groups
 
-    Version 2016.07.18
+    Version 2016.07.19
 
     >pylint --version
         No config file found, using default configuration
@@ -22,8 +22,8 @@ def displaymatch(match):
         return None
     return '<Match: %r, groups=%r>' % (match.group(), match.groups())
 
-def solve(string, print_it=True):
-    '''find first alphanumerical duplicate character'''
+def solve1(string, print_it=True):
+    '''find first alphanumerical duplicate character: match solution'''
     # Adding ? after the qualifier makes it perform the match in non-greedy or minimal fashion;
     #   as few characters as possible will be matched.
     find_duplicate = re.compile(r'.*?([A-Za-z0-9])\1')
@@ -33,6 +33,19 @@ def solve(string, print_it=True):
     if print_it:
         print(result)
     return result
+
+def solve2(string, print_it=True):
+    '''find first alphanumerical duplicate character: search solution'''
+    find_duplicate = re.compile(r'([A-Za-z0-9])\1')
+    match = find_duplicate.search(string)
+    result = match.group(1) if match else '-1'
+    if print_it:
+        print(result)
+    return result
+
+def solve(string, print_it=True):
+    '''find first alphanumerical duplicate character'''
+    return solve1(string, print_it)
 
 def solve_with_iofunc(func):
     '''solve the problem getting text using the given function'''
@@ -54,10 +67,16 @@ def read_and_solve():
 
 def debug_validations():
     '''unit testing'''
-    assert solve('..1234567891028..', False) == '-1'
-    assert solve('..123456789110228..', False) == '1'
-    assert solve('..12345678910111213141516171820212223', False) == '1'
-    assert solve('..__commit__..', False) == 'm'
+    assert solve1('..1234567891028..', False) == '-1'
+    assert solve1('..123456789110228..', False) == '1'
+    assert solve1('..12345678910111213141516171820212223', False) == '1'
+    assert solve2('..__commit__..', False) == 'm'
+    assert solve2('..1234567891028..', False) == '-1'
+    assert solve2('..123456789110228..', False) == '1'
+    assert solve2('..12345678910111213141516171820212223', False) == '1'
+    assert solve2('..__commit__..', False) == 'm'
+    assert solve1('..Hackerrank..', False) == 'r'
+    assert solve2('..Hackerrank..', False) == 'r'
 
 def main():
     '''main function: accessible from exterior'''
