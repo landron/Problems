@@ -27,6 +27,7 @@ INNER JOIN
     GROUP BY sel.total
 ) stats ON stats.total = sel.total
 WHERE stats.count = 1 OR 
+        --  this should be easier: using stats somehow ?
         sel.total = (SELECT MAX(total) FROM 
                      (SELECT COUNT(Challenges.challenge_id) AS total FROM Challenges GROUP BY Challenges.hacker_id) counts)
 ORDER BY sel.total DESC, Hackers.hacker_id;
