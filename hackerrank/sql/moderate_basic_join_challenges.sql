@@ -27,5 +27,7 @@ INNER JOIN
     ) sel ON Hackers.hacker_id = sel.hacker_id 
     GROUP BY sel.total
 ) stats ON stats.total = sel.total
-WHERE stats.count = 1 OR sel.total = (SELECT MAX(total) FROM (SELECT COUNT(Challenges.challenge_id) AS total FROM Challenges GROUP BY Challenges.hacker_id) counts)
+WHERE stats.count = 1 OR 
+        sel.total = (SELECT MAX(total) FROM 
+                     (SELECT COUNT(Challenges.challenge_id) AS total FROM Challenges GROUP BY Challenges.hacker_id) counts)
 ORDER BY sel.total DESC, Hackers.hacker_id;
