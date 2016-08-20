@@ -18,14 +18,14 @@ INNER JOIN
 ) sel ON Hackers.hacker_id = sel.hacker_id 
 INNER JOIN
 (
-	SELECT COUNT(sel.total) AS count, sel.total AS total FROM Hackers
-	INNER JOIN
-	(
-	    SELECT COUNT(Challenges.challenge_id) AS total, Hackers.hacker_id AS hacker_id FROM Challenges
-	    INNER JOIN Hackers ON Hackers.hacker_id = Challenges.hacker_id
-	    GROUP BY Hackers.hacker_id
-	) sel ON Hackers.hacker_id = sel.hacker_id 
-	GROUP BY sel.total
+    SELECT COUNT(sel.total) AS count, sel.total AS total FROM Hackers
+    INNER JOIN
+    (
+        SELECT COUNT(Challenges.challenge_id) AS total, Hackers.hacker_id AS hacker_id FROM Challenges
+        INNER JOIN Hackers ON Hackers.hacker_id = Challenges.hacker_id
+        GROUP BY Hackers.hacker_id
+    ) sel ON Hackers.hacker_id = sel.hacker_id 
+    GROUP BY sel.total
 ) stats ON stats.total = sel.total
 WHERE stats.count = 1 OR sel.total = (SELECT MAX(total) FROM (SELECT COUNT(Challenges.challenge_id) AS total FROM Challenges GROUP BY Challenges.hacker_id) counts)
 ORDER BY sel.total DESC, Hackers.hacker_id;
