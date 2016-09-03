@@ -4,6 +4,18 @@ https://www.hackerrank.com/challenges/symmetric-pairs
 f(f(X)) = X, but 2 lines if f(X) = X
 */
 
+-- \todo:	for X = Y: it should find the solution COUNT(X)/2 times
+
+-- SQLite, MS SQL Server, MySQL, Oracle, DB2
+SELECT X, Y FROM Functions
+WHERE X = Y 
+GROUP BY X,Y HAVING COUNT(X) >= 2
+UNION
+SELECT f.X, f.Y FROM Functions f
+INNER JOIN Functions g ON f.Y = g.X AND f.X = g.Y 
+WHERE f.X < f.Y
+ORDER BY X;
+
 -- SQLite, MS SQL Server, MySQL: %; MySQL, Oracle, DB2: MOD
 SELECT X, Y FROM Functions
 WHERE X = Y 
