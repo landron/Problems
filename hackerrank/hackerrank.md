@@ -1,5 +1,5 @@
 ## hackerrank 
-(keeping the highest postion, meaning I am not updating all the entries every time)
+(keeping the highest position, meaning I am not updating all the entries every time)
 
 ######Project Euler
 
@@ -7,13 +7,13 @@
 	
 ######Algorithms
 
-	Badge 1, 8th Percentile
+	40th Percentile
 	
-	Points: 296.00 Rank: 59950
+	Points: 711.95 Rank: 46040		2017.07.04
 	
 ######C++
 
-	Points: 495.00 Rank: 593
+	Points: 495.00 Rank: 3297		2017.05.25
 	
 ######Python
 
