@@ -1,24 +1,24 @@
-## hackerrank 
+## [hackerrank](https://www.hackerrank.com/Liviul)
 (keeping the highest position, meaning I am not updating all the entries every time)
 
-######Project Euler
+### Project Euler
 
-	Current Rank: 5807/32489
+	Current Rank: 2460/71579		2017.12.24
 	
-######Algorithms
+### Algorithms
 
-	40th Percentile
+	58th Percentile
 	
-	Points: 711.95 Rank: 46040		2017.07.04
+	Points: 1081.95 Rank: 31027		2017.12.24
 	
-######C++
+### C++
 
 	Points: 495.00 Rank: 3297		2017.05.25
 	
-######Python
+### Python
 
 	Points: 1205.00 Rank: 793		2016.09.17
 
-######SQL
+### SQL
 
 	Points: 910.00 Rank: 364		2016.08.21
