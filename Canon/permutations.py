@@ -47,7 +47,7 @@ def permutations_1_get_prev(taken, seq, seq_len):
     limit = size
 
     if seq_len <= 1:
-        return (seq_len, False)
+        return (0, False)
 
     # decrease the total number
     taken[seq[seq_len-1]] = False
@@ -99,11 +99,61 @@ def gen_permutations_1(limit, print_it=False):
         print("Found({0}):".format(limit), found)
     return found
 
+def gen_permutations_2_rec(limit, seq_len, partial, print_it):
+    '''
+        Purpose:    the recursive worker of this permutations variant
+                        the nth level is responsible for the nth value
+
+        The third parameter is a structure to avoid 'too-many-arguments'
+    '''
+    assert seq_len < limit
+
+    for next_val in range(limit):
+        if partial.taken[next_val]:
+            continue
+        partial.seq[seq_len] = next_val
+
+        # print('gen_permutations_2_rec_111', seq_len, seq, next_val, taken)
+
+        if seq_len+1 == limit:
+            if print_it:
+                print("Solution", partial.seq)
+            partial.found += 1
+        else:
+            partial.taken[next_val] = True
+            gen_permutations_2_rec(limit, seq_len+1, partial, print_it)
+            partial.taken[next_val] = False
+
+#   tag_next
+#
+#   full recursivity permutations
+#     - the solution is much more simple
+#     - the level of recursivity equals the size of the set (limit variable)
+#
+
+def gen_permutations_2(limit, print_it=False):
+    '''
+        Purpose:    permutations with (simple, brute) recursivity
+
+        generate numbers from 0 to simplify indexes use
+    '''
+    assert limit != 0
+
+    partial = lambda: None
+    partial.taken = [False] * limit
+    partial.seq = [0] * limit
+    partial.found = 0
+
+    gen_permutations_2_rec(limit, 0, partial, print_it)
+    if print_it:
+        print("Found({0}):".format(limit), partial.found)
+    return partial.found
+
 def gen_permutations(limit):
     '''
         generate permutations using one of the functions
     '''
-    return gen_permutations_1(limit)
+    return gen_permutations_2(limit)
 
 #
 #   combinations without full recursivity
@@ -191,6 +241,7 @@ def debug_assertions():
     '''
     for i in range(1, 7):
         assert math.factorial(i) == gen_permutations_1(i)
+        assert math.factorial(i) == gen_permutations_2(i)
 
     for i in range(2, 10):
         for j in range(2, i):
@@ -200,8 +251,10 @@ def main():
     '''main function'''
     debug_assertions()
 
+    # tests
     # print(gen_permutations_1(7, True))
     # print(gen_combinations_1(10, 5, True), combinations_no(10, 5))
+    # print(gen_permutations_2(5, True), math.factorial(5))
 
 if __name__ == "__main__":
     main()
