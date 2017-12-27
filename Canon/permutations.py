@@ -54,7 +54,7 @@ def permutations_1_get_prev(taken, seq, seq_len):
     seq_len -= 1
 
     # advance the previous
-    assert 0 != seq_len
+    assert seq_len != 0
     next_val = seq[seq_len-1]
     taken[next_val] = False
     next_val += 1
@@ -139,9 +139,9 @@ def combinations_1_get_prev(seq, seq_len, limit):
     next_val = seq[seq_len-1] + 1
     if next_val == limit:
         return combinations_1_get_prev(seq, seq_len, limit)
-    else:
-        seq[seq_len-1] = next_val
-        return (seq_len, True)
+
+    seq[seq_len-1] = next_val
+    return (seq_len, True)
 
 def gen_combinations_1(limit, size, print_it=False):
     '''
