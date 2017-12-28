@@ -17,7 +17,7 @@ import math
 
 #   tag_next
 #
-#   permutations without full recursivity
+#   permutations without full recursion
 #     - permutations_get_prev is still recursive
 #
 
@@ -71,7 +71,7 @@ def permutations_1_get_prev(taken, seq, seq_len):
 
 def gen_permutations_1(limit, print_it=False):
     '''
-        Purpose:    permutations without full recursivity
+        Purpose:    permutations without full recursion
 
         generate numbers from 0 to simplify indexes use
     '''
@@ -127,14 +127,14 @@ def gen_permutations_2_rec(limit, seq_len, partial, print_it):
 
 #   tag_next
 #
-#   full recursivity permutations
+#   full recursion permutations
 #     - the solution is much more simple
-#     - the level of recursivity equals the size of the set (limit variable)
+#     - the level of recursion equals the size of the set (limit variable)
 #
 
 def gen_permutations_2(limit, print_it=False):
     '''
-        Purpose:    permutations with (simple, brute) recursivity
+        Purpose:    permutations with (simple, brute) recursion
 
         generate numbers from 0 to simplify indexes use
     '''
@@ -158,7 +158,7 @@ def gen_permutations(limit):
 
 #   tag_next
 #
-#   combinations without full recursivity
+#   combinations without full recursion
 #
 
 def combinations_no(limit, size):
@@ -197,10 +197,10 @@ def combinations_1_get_prev(seq, seq_len, limit):
 
 def gen_combinations_1(limit, size, print_it=False):
     '''
-        Purpose:    combinations without full recursivity
+        Purpose:    combinations without full recursion
 
         see gen_permutations_1
-            combining the two in one prev/next/gen common trunk seemed simple at the beginning
+            combining the two in one previous/next/generate common trunk seemed simple at the beginning
     '''
     assert limit != 0
 
@@ -241,7 +241,7 @@ def gen_combinations(limit, size):
 #
 
 def sum_v(seq, where, limit_side, needed_sum):
-    '''calcutae the sum of a column'''
+    '''calculate the sum of a column'''
     sump = 0
     for i in range(where, -1, -limit_side):
         sump += (1+seq[i])
@@ -366,7 +366,7 @@ def gen_square_permutations(limit, print_it=False):
 
 def debug_assertions():
     '''unit tests
-    \todo:  use real unittests framework
+    \todo:  use real unittest framework (https://docs.python.org/3.6/library/unittest.html)
     '''
     for i in range(1, 7):
         assert math.factorial(i) == gen_permutations_1(i)
