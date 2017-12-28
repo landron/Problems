@@ -7,9 +7,9 @@
 	
 ### Algorithms
 
-	61th Percentile
-	
-	Points: 1191 Rank: 26908		2017.12.28
+	70th Percentile
+
+	Points: 1486 Rank: 18717		2017.12.28
 	
 ### C++
 
