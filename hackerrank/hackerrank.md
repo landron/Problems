@@ -3,13 +3,13 @@
 
 ### Project Euler
 
-	Current Rank: 2460/71579		2017.12.24
-	
+	Current Rank: 1507/78915		2018.05.13
+
 ### Algorithms
 
-	70th Percentile
+	85th Percentile
 
-	Points: 1486 Rank: 18717		2017.12.28
+	Points: 2221 Rank: 8711			2018.05.13
 	
 ### C++
 
