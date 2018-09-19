@@ -1,18 +1,14 @@
-#!/bin/python3
+#!/usr/bin/env python3
+# coding=utf-8
 '''
     Purpose:    find a difference between a given square and a "magic" one
-                (magic: distinct digits, same sum on lines, columns and diagonals)
+                (magic: distinct digits,
+                        same sum on lines, columns and diagonals)
 
     https://www.hackerrank.com/challenges/magic-square-forming/problem
       not at all easy
-
-    pylint --version
-        No config file found, using default configuration
-        pylint 1.8.1,
-        astroid 1.6.0
-        Python 3.5.1
-    "Your code has been rated at 10.00/10"
 '''
+
 
 # h => 2.86 (0, 16, 20, 21, 22)
 def get_estimate_simple_1(square):
@@ -25,6 +21,7 @@ def get_estimate_simple_1(square):
         diff_h += abs(sum_-15)
 
     return diff_h
+
 
 # h+v//2 + diag//2 => 0.95
 def get_estimate_simple_2(square):
@@ -48,6 +45,7 @@ def get_estimate_simple_2(square):
     diff = (diff_h+diff_v)//2 + diff_d//2
     return diff
 
+
 def get_difference_between(square, square2):
     '''calculate the difference between two given squares'''
     sump = 0
@@ -55,13 +53,16 @@ def get_difference_between(square, square2):
         sump += abs(elem-square2[i])
     return sump
 
+
 def get_min_difference(square):
     '''
-        calculate the real minimum difference using precalculated (... elsewhere) magic squares
+        calculate the real minimum difference using precalculated
+            (... elsewhere) magic squares
 
         Observations:
             - the sum is 15 ... and the center is always 5
-            - generated them from a (not very easy) permutations generation program
+            - generated them from a (not very easy) permutations
+                generation program
     '''
 
     diff_min = 9*9
@@ -73,12 +74,12 @@ def get_min_difference(square):
             [6, 1, 8, 7, 5, 3, 2, 9, 4],
             [6, 7, 2, 1, 5, 9, 8, 3, 4],
             [8, 1, 6, 3, 5, 7, 4, 9, 2],
-            [8, 3, 4, 1, 5, 9, 6, 7, 2]
-        ]:
+            [8, 3, 4, 1, 5, 9, 6, 7, 2]]:
         diff = get_difference_between(square, i)
         if diff_min > diff:
             diff_min = diff
     return diff_min
+
 
 def solve(input_func):
     '''solve the hackerrank problem using the given input function'''
@@ -92,6 +93,7 @@ def solve(input_func):
 
     print(get_min_difference(square))
 
+
 def debug_assertions():
     '''unit tests'''
     assert get_min_difference([4, 9, 2, 3, 5, 7, 8, 1, 5]) == 1
@@ -99,10 +101,12 @@ def debug_assertions():
     assert get_min_difference([4, 5, 8, 2, 4, 1, 1, 9, 7]) == 14
     assert get_min_difference([7, 6, 5, 7, 2, 8, 5, 3, 4]) == 18
 
+
 def main():
     '''main function'''
     debug_assertions()
     solve(input)
+
 
 if __name__ == "__main__":
     main()
