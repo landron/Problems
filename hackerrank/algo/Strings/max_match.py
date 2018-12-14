@@ -11,7 +11,10 @@
         50 chars strings: from 83s to 10s
 
         15/60 points : 9/15 tests in timeout
+    optimization 2: is_max_possible reused
+        cannot squeeze more from this solution
 '''
+import datetime
 import time
 
 
@@ -20,12 +23,16 @@ class StringRec():
         structure used for the recursivity match search:
             - str : immutable
     '''
-    def __init__(self, string, dic_letters):
+    def __init__(self, string):
         assert string
 
         self.str = string
-        self.dic = dic_letters
         self.pos = 0
+
+        # lowercase and uppercase ASCII
+        self.dic = 128 * [0]
+        for i in self.str:
+            self.dic[ord(i)] += 1
 
     def __str__(self):
         result = "("
@@ -44,6 +51,10 @@ class StringRec():
     def value(self):
         '''the current (next to process) value of the string'''
         return self.str[self.pos:]
+
+    def length(self):
+        '''the length of the value of the string'''
+        return len(self.str)-self.pos
 
     def next(self):
         '''the next character to process'''
@@ -118,7 +129,7 @@ def max_match_rec(str1, str2, recursive):
 
     # this tiny optimization: 83s -> 9s
     def is_max_possible(recursive, str1, str2):
-        max_possible = len(str1.max_possible(str2))
+        max_possible = len(str1.max_possible(str2)) if str2 else str1.length()
         result = len(recursive.max_match) < len(recursive.match) +\
             max_possible
         # if not result:
@@ -148,7 +159,9 @@ def max_match_rec(str1, str2, recursive):
 
         while str1.can_advance() and not str2.contains(str1.next()):
             str1.advance()
-        if not str1.can_advance():
+        # optimization 2: 8s -> 6s
+        if not str1.can_advance() or \
+           not is_max_possible(recursive, str1, None):
             break
 
         while str2.next() != str1.next():
@@ -166,8 +179,7 @@ def max_match_rec(str1, str2, recursive):
         recursive.level -= 1
 
         str1.reset(data1)
-        if not str1.can_advance():
-            break
+        assert str1.can_advance()
         str1.advance()
         str2.reset(data2_saved)
         # if recursive.debug:
@@ -176,27 +188,24 @@ def max_match_rec(str1, str2, recursive):
 
 def find_max_match(str1, str2, debug=False):
     '''determine the maximum submatch string between the two'''
-    dic1 = 128 * [0]
-    dic2 = 128 * [0]
-    for i in str1:
-        dic1[ord(i)] += 1
-    for i in str2:
-        dic2[ord(i)] += 1
 
-    s_rec_1 = StringRec(str1, dic1)
-    s_rec_2 = StringRec(str2, dic2)
+    s_rec_1 = StringRec(str1)
+    s_rec_2 = StringRec(str2)
     max_possible = s_rec_1.max_possible(s_rec_2)
+    if len(max_possible) <= 1:
+        return max_possible
 
     if debug:
         print("find_max_match", s_rec_1, s_rec_2)
         print("max possible: ", len(max_possible), max_possible)
+        print("start: ", datetime.datetime.now().time())
         print()
 
     # lists because strings are immutable
     rec_data = lambda: None  # noqa: E731 do not assign a lambda expression,
     #                                use a def
     rec_data.match = []
-    rec_data.max_match = []
+    rec_data.max_match = [max_possible[0]]
     rec_data.level = 0
     rec_data.debug = debug
     rec_data.start = time.time()
@@ -243,6 +252,14 @@ def tests():
         print(result)
         assert result == 'DGCGTRMZJRBAJJV'
 
+    # more of 10 min and still working
+    # max possible:  73 ABBBBCDDEEEEFFFGGHHIJJJKKLLLMMMNNNOOOPQQQRRRRSSSTTTT
+    #                   UUVVVVWWWXXYYYYYYYZZZ
+    # update_max_match EGYWYVSZYTERTJNMF 17
+    # update_max_match EGKYEWVSZYTERTJNMF 18
+    # max_match_rec_02 LGGYJWKTDHLXJRBJLRYEJWVSUFZKYHOIKBGTVUTTOCGMLEXWDSX
+    #                  EBKRZTQUVCJNGKKRMUUBACVOEQKBFFYBUQEMYNENKYYGUZSP 308
+    # update_max_match LGGKYEWVSZYTERTJNMF 19
     if 1:  # pylint: disable=using-constant-test
         result = find_max_match(
             'ELGGYJWKTDHLXJRBJLRYEJWVSUFZKYHOIKBGTVUTTOCGMLEXWDSXEBKRZTQU'
