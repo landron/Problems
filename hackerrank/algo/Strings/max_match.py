@@ -6,6 +6,7 @@
     tag_class
     tag_string_match
 '''
+import time
 
 
 class StringRec():
@@ -21,7 +22,6 @@ class StringRec():
         self.pos = 0
 
     def __str__(self):
-        # return self.str[self.pos:]
         result = "("
         result += self.str[self.pos:]
         result += ", "
@@ -34,6 +34,10 @@ class StringRec():
         result = result[:-1]
         result += ")"
         return result
+
+    def value(self):
+        '''the current (next to process) value of the string'''
+        return self.str[self.pos:]
 
     def next(self):
         '''the next character to process'''
@@ -72,15 +76,15 @@ class StringRec():
     def reset(self, data):
         '''reset mutable data to restart the search'''
         self.__seek(data[0])
-        self.dic = data[1]
+        self.dic = data[1][:]
 
 
-def max_match_rec(str1, str2, match, max_match, level):
+def max_match_rec(str1, str2, recursive):
     '''
         determine recursively the maximum submatch string between the
          two entries
     '''
-    if level == 1:
+    if recursive.debug and recursive.level == 0:
         print("max_match_rec_in", str1, str2)
 
     def update_match(str1, str2, match):
@@ -92,18 +96,27 @@ def max_match_rec(str1, str2, match, max_match, level):
     def can_advance(str1, str2):
         return str1.can_advance() and str2.can_advance()
 
+    def update_max_match(match, max_match):
+        if len(match) > len(max_match):
+            # print("update_max_match", match, max_match)
+            max_match[:] = match
+
     while str1.next() == str2.next():
-        update_match(str1, str2, match)
-        assert match
+        update_match(str1, str2, recursive.match)
+        assert recursive.match
+        update_max_match(recursive.match, recursive.max_match)
 
         if not can_advance(str1, str2):
             return
 
-    data2 = str2.current()
+    data2_saved = str2.current()
     # match is immutable inside the loop
+    match_saved = recursive.match[:]
 
     while True:
-        # print("max_match_rec_02", str1, str2)
+        if recursive.debug and recursive.level == 0:
+            print("max_match_rec_02", str1.value(),
+                  time.time() - recursive.start)
 
         while str1.can_advance() and not str2.contains(str1.next()):
             str1.advance()
@@ -117,21 +130,23 @@ def max_match_rec(str1, str2, match, max_match, level):
 
         data1 = str1.current()
 
-        next_match = match[:]
-        max_match_rec(str1, str2, next_match, max_match, level+1)
-        if len(next_match) > len(max_match):
-            # print(next_match)
-            max_match[:] = next_match
+        recursive.level += 1
+        max_match_rec(str1, str2, recursive)
+        update_max_match(recursive.match, recursive.max_match)
+        recursive.match = match_saved[:]
+        assert recursive.level
+        recursive.level -= 1
 
         str1.reset(data1)
         if not str1.can_advance():
             break
         str1.advance()
-        str2.reset(data2)
-        # print("max_match_rec_04", str1, str2)
+        str2.reset(data2_saved)
+        # if recursive.debug:
+        #     print("max_match_rec_04", str1, str2, recursive.match)
 
 
-def find_max_match(str1, str2):
+def find_max_match(str1, str2, debug=False):
     '''determine the maximum submatch string between the two'''
     dic1 = 128 * [0]
     dic2 = 128 * [0]
@@ -150,25 +165,34 @@ def find_max_match(str1, str2):
 
     s_rec_1 = StringRec(str1, dic1)
     s_rec_2 = StringRec(str2, dic2)
-    print("find_max_match", s_rec_1, s_rec_2)
-    max_match = max_possible(s_rec_1, s_rec_2)
-    print("max possible: ", len(max_match), max_match)
+
+    if debug:
+        print("find_max_match", s_rec_1, s_rec_2)
+        max_match = max_possible(s_rec_1, s_rec_2)
+        print("max possible: ", len(max_match), max_match)
+        print()
 
     # lists because strings are immutable
-    match = []
-    max_match = []
+    rec_data = lambda: None  # noqa: E731 do not assign a lambda expression,
+    #                                use a def
+    rec_data.match = []
+    rec_data.max_match = []
+    rec_data.level = 0
+    rec_data.debug = debug
+    rec_data.start = time.time()
 
-    max_match_rec(s_rec_1, s_rec_2, match, max_match, 0)
-    if len(match) > len(max_match):
-        max_match[:] = match
-    return ''.join(max_match)
+    max_match_rec(s_rec_1, s_rec_2, rec_data)
+    if debug:
+        print("Elapsed time:", time.time() - rec_data.start)
+
+    return ''.join(rec_data.max_match)
 
 
 def tests():
     '''
         tests for the current problem
     '''
-    if 0:  # pylint: disable=using-constant-test
+    if 1:  # pylint: disable=using-constant-test
         assert find_max_match('AquaVitae', 'AruTaVae') == 'AuaVae'
         assert find_max_match('HARRY', 'SALLY') == 'AY'
         assert find_max_match('AA', 'BB') == ''
@@ -182,11 +206,17 @@ def tests():
         # first partial solution is 'HA'
         assert find_max_match('SHINCHAN', 'NOHARAAA') == 'NHA'
 
-    # WEWOCUIC
-    result = find_max_match(
-        'WEWOUCUIDGCGTRMEZEPXZFEJWISRSBBSYXAYDFEJJDLEBVHHKS',
-        'FDAGCXGKCTKWNECHMRXZWMLRYUCOCZHJRRJBOAJOQJZZVUYXIC')
-    print(result)
+    # DGCGTRMZJRBAJJV
+    # Elapsed time: 83.42077136039734
+    if 1:  # pylint: disable=using-constant-test
+        result = find_max_match(
+            'WEWOUCUIDGCGTRMEZEPXZFEJWISRSBBSYXAYDFEJJDLEBVHHKS',
+            'FDAGCXGKCTKWNECHMRXZWMLRYUCOCZHJRRJBOAJOQJZZVUYXIC', True)
+        print(result)
+        assert result == 'DGCGTRMZJRBAJJV'
+
+    # result = find_max_match('AquaVitae', 'AruTaVae', True)
+    # print(result)
 
 
 if __name__ == "__main__":
