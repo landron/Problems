@@ -13,6 +13,7 @@
 
     tag_tree, tag_tree_binary
     tag_recursion, tag_no_recursion
+    tag_class
 '''
 # import sys # setrecursionlimit
 
