@@ -245,7 +245,7 @@ def tests():
 
     # DGCGTRMZJRBAJJV
     # Elapsed time: 83.42077136039734 -> 10s after optimization 1
-    if 0:  # pylint: disable=using-constant-test
+    if 1:  # pylint: disable=using-constant-test
         result = find_max_match(
             'WEWOUCUIDGCGTRMEZEPXZFEJWISRSBBSYXAYDFEJJDLEBVHHKS',
             'FDAGCXGKCTKWNECHMRXZWMLRYUCOCZHJRRJBOAJOQJZZVUYXIC', True)
@@ -260,7 +260,7 @@ def tests():
     # max_match_rec_02 LGGYJWKTDHLXJRBJLRYEJWVSUFZKYHOIKBGTVUTTOCGMLEXWDSX
     #                  EBKRZTQUVCJNGKKRMUUBACVOEQKBFFYBUQEMYNENKYYGUZSP 308
     # update_max_match LGGKYEWVSZYTERTJNMF 19
-    if 1:  # pylint: disable=using-constant-test
+    if 0:  # pylint: disable=using-constant-test
         result = find_max_match(
             'ELGGYJWKTDHLXJRBJLRYEJWVSUFZKYHOIKBGTVUTTOCGMLEXWDSXEBKRZTQU'
             'VCJNGKKRMUUBACVOEQKBFFYBUQEMYNENKYYGUZSP',
