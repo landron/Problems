@@ -7,6 +7,9 @@
     tag_class , tag_string_match , tag_elapsed_time
     tag_dynamic_prog
 
+    tag_lcs
+    https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
     - backtracking
         optimization 1: is_max_possible
             50 chars strings: from 83s to 10s
@@ -26,6 +29,23 @@
         various little optimizations failed:
         - avoid calculating dictionary every time
         - get the pivot in the larger string (even wrong result!)
+
+    - lcs
+        recursively: "RecursionError: maximum recursion depth exceeded
+            while calling a Python object"
+        table: still does not passes all the cases in Python 3
+            Python 2, PyPy3
+
+            memory can still be reduced: only two lines needed at
+                any given time
+
+            >py -3 ./prob.py
+            Result 1417
+            Elapsed time: 22 sec.
+
+            >py -2 ./prob.py
+            ('Result', 1417)
+            ('Elapsed time:', 12, 'sec.')
 '''
 import datetime
 import time
@@ -167,7 +187,11 @@ def find_max_match_rec(str1, str2, rec):
         return best_match
 
     def split_string_without_pivot(pivot):
-        '''optimization needed'''
+        '''optimization needed
+
+            eliminating the pivot in the second string (like the pivot
+            variant) is even much slower
+        '''
         first = dict1.str[:pivot-1] + dict1.str[pivot+1:]
         return find_max_match_rec(first, dict2.str, rec)
 
@@ -194,13 +218,10 @@ def find_max_match_rec(str1, str2, rec):
     return with_or_without_pivot()
 
 
-def find_max_match(str1, str2, debug=False):
-    '''determine the maximum submatch string between the two'''
-
-    if debug:
-        print("find_max_match", str1, str2)
-        print("start: ", datetime.datetime.now().time())
-        print()
+def find_max_match_dp(str1, str2, debug):
+    '''determine the maximum submatch string between the two
+        using dynamic programming with a pivot
+    '''
 
     rec_data = lambda: None  # noqa: E731 do not assign a lambda expression,
     #                                use a def
@@ -209,10 +230,193 @@ def find_max_match(str1, str2, debug=False):
     rec_data.best_match_len = 0
     rec_data.match_len = 0
 
-    result = find_max_match_rec(str1, str2, rec_data)
+    return find_max_match_rec(str1, str2, rec_data)
+
+
+def find_max_match_lcs_rec(str1, str2, rec):
+    '''determine the maximum submatch string between the two
+        using "Longest common subsequence problem"
+        https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+    '''
+
+    if not str1 or not str2:
+        return ''
+    if rec.table[len(str1)-1][len(str2)-1]:
+        return rec.table[len(str1)-1][len(str2)-1]
+
+    solution = ''
+    if str1[-1] == str2[-1]:
+        solution = find_max_match_lcs_rec(str1[:-1], str2[:-1], rec) + str1[-1]
+    else:
+        first = find_max_match_lcs_rec(str1[:-1], str2, rec)
+        second = find_max_match_lcs_rec(str1, str2[:-1], rec)
+        solution = first if len(first) > len(second) else second
+    rec.table[len(str1)-1][len(str2)-1] = solution
+    return solution
+
+
+def find_max_match_lcs_no_rec_1(str1, str2, rec):
+    '''determine the maximum submatch string between the two
+        using "Longest common subsequence problem"
+        https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
+        RecursionError: maximum recursion depth exceeded while calling
+            a Python object
+
+        But this gives timeout on certain samples
+    '''
+    table = rec.table
+    len1 = len(str1)
+    len2 = len(str2)
+
+    for i in range(len1):
+        table[i][0] = 0
+    for i in range(len2):
+        table[0][i] = 0
+
+    for i in range(1, 1+len1):
+        # print(i)
+        for j in range(1, 1+len2):
+            if str1[i-1] == str2[j-1]:
+                table[i][j] = table[i-1][j-1] + 1
+            else:
+                table[i][j] = max(table[i][j-1], table[i-1][j])
+    # print(table)
+    return table[len1][len2]
+
+
+def find_max_match_lcs_no_rec(str1, str2):
+    '''determine the maximum submatch string between the two
+        using "Longest common subsequence problem"
+        https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
+        RecursionError: maximum recursion depth exceeded while calling
+            a Python object
+
+        But this gives timeout on certain samples (Python3):
+            only two lines & columns necessary, not all this table
+    '''
+    len1 = len(str1)
+    len2 = len(str2)
+
+    line1 = [0 for _ in range(1+len1)]
+    line2 = [0 for _ in range(1+len1)]
+
+    for i in range(1, 1+len2):
+        for j in range(1, 1+len1):
+            if str1[j-1] == str2[i-1]:
+                line2[j] = line1[j-1] + 1
+            else:
+                line2[j] = max(line2[j-1], line1[j])
+        line1, line2 = line2, line1
+
+    # print(table)
+    return line1[-1]
+
+
+def find_max_match_lcs_rec_only_len(str1, str2, rec):
+    '''determine the maximum submatch string between the two
+        using "Longest common subsequence problem"
+        https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
+        RecursionError: maximum recursion depth exceeded while calling
+            a Python object
+    '''
+
+    if not str1 or not str2:
+        return 0
+    if -1 != rec.table[len(str1)-1][len(str2)-1]:
+        return rec.table[len(str1)-1][len(str2)-1]
+
+    solution = 0
+    if str1[-1] == str2[-1]:
+        eq_len = 1
+        while len(str1) >= eq_len+1 and len(str2) >= eq_len+1\
+            and str1[-(eq_len+1)] == str2[-(eq_len+1)]:
+            eq_len += 1
+
+        solution = find_max_match_lcs_rec_only_len(
+            str1[:-eq_len], str2[:-eq_len], rec) + eq_len
+    else:
+        first = find_max_match_lcs_rec_only_len(str1[:-1], str2, rec)
+        second = find_max_match_lcs_rec_only_len(str1, str2[:-1], rec)
+        solution = first if first > second else second
+
+    # rec.calculated += 1
+    # print(rec.calculated)
+
+    rec.table[len(str1)-1][len(str2)-1] = solution
+    return solution
+
+
+def find_max_match_lcs(str1, str2, debug, only_len=False):
+    '''determine the maximum submatch string between the two
+        using "Longest common subsequence problem"
+        https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+    '''
+    rec = lambda: None  # noqa: E731 do not assign a lambda expression,
+    #                                use a def
+    rec.debug = debug
+    # rec.calculated = 0
+
+    len1 = len(str1)
+    len2 = len(str2)
+
+    if not only_len:
+        rec.table = [[None for _ in range(1+len2)]
+                     for _ in range(1+len1)]
+        return find_max_match_lcs_rec(str1, str2, rec)
+
+    # rec.table = [[-1 for _ in range(1+len2)]
+    #              for _ in range(1+len1)]
+    # # return find_max_match_lcs_rec_only_len(str1, str2, rec)
+    # return find_max_match_lcs_no_rec(str1, str2, rec)
+    return find_max_match_lcs_no_rec(str1, str2)
+
+
+def find_max_match(str1, str2, debug=False):
+    '''determine the maximum submatch string between the two'''
+
+    start = time.time()
     if debug:
-        print("Elapsed time:", int(time.time() - rec_data.start), "sec.")
+        print("find_max_match", str1, str2)
+        print("start: ", datetime.datetime.now().time())
+        print()
+
+    # result = find_max_match_dp(str1, str2, debug)
+    result = find_max_match_lcs(str1, str2, debug)
+    if debug:
+        print("Elapsed time:", int(time.time() - start), "sec.")
     return result
+
+
+def large_test():
+    '''
+        test that crashes python
+    '''
+    start = time.time()
+
+    # filename = "input04.txt"
+
+    # Result 1417
+    # Elapsed time: 28 sec.
+    #
+    # Python 2:
+    # 'Result', 1417)
+    # 'Elapsed time:', 16, 'sec.')
+    filename = "input05.txt"
+
+    with open(filename) as file:
+        content = file.readlines()
+        str1 = content[0]
+        str2 = content[1]
+
+        # print(len(str1), len(str2))
+
+        result = find_max_match_lcs(str1, str2, True, True)
+        print("Result", result)
+        print("Elapsed time:", int(time.time() - start), "sec.")
+        return result
 
 
 def tests():
@@ -229,7 +433,7 @@ def tests():
         assert find_max_match('bac', 'fed') == ''
         assert find_max_match('abc', 'dcf') == 'c'
         assert find_max_match('abcd', 'befc') == 'bc'
-        assert find_max_match('abcd', 'cefb') == 'b'
+        assert find_max_match('abcd', 'cefb') in ['b', 'c']
         assert find_max_match('abcd', 'beca') == 'bc'
         assert find_max_match('abcd', 'abec') == 'abc'
         assert find_max_match('abcd', 'abdc') in ['abc', 'abd']
@@ -247,15 +451,20 @@ def tests():
         # first partial solution is 'HA'
         assert find_max_match('SHINCHAN', 'NOHARAAA') == 'NHA'
 
+        assert find_max_match_lcs(
+            'WEWOUCUIDGCGTRMEZEPXZFEJWISRSBBSYXAYDFEJJDLEBVHHKS',
+            'FDAGCXGKCTKWNECHMRXZWMLRYUCOCZHJRRJBOAJOQJZZVUYXIC',
+            False, True) == 15
+
     #   elapsed time: around 0.5s
-    if 0:  # pylint: disable=using-constant-test
+    if 1:  # pylint: disable=using-constant-test
         result = find_max_match(
             'WEWOUCUIDGCGTRMEZEPXZFEJWISRSBBSYXAYDFEJJDLEBVHHKS',
             'FDAGCXGKCTKWNECHMRXZWMLRYUCOCZHJRRJBOAJOQJZZVUYXIC', True)
         print(result)
         assert len(result) == 15
         assert result in ['DGCGTRMZJRBAJJV', 'DGCGTMZZJRBAJJV',
-                          'DGCGTRXZJRBAJJV']
+                          'DGCGTRXZJRBAJJV', 'DGCGTEXZWRYJJBV']
 
     # should be 27 : YLBRYFZYIVMWSZTKMVOQKYEEYSP 27
     #   (and not YLBRUIBVXDSQJKMVOQBYEEYSP 25: when only the fast "with pivot"
@@ -275,10 +484,12 @@ def tests():
             'OUQBKYEWEYVOLSHCMHPAZYTENRNONTJWDANAMFRX', True)
         print(result, len(result))
         assert len(result) == 27
-        assert result == 'YLBRYFZYIVMWSZTKMVOQKYEEYSP'
+        assert result in ['YLBRYFZYIVMWSZTKMVOQKYEEYSP',
+                          'RJYVUFZYIVMWSQGKMVOQBYEEYSP']
 
-    # result = find_max_match('abcd', 'abdc', True)
-    # print(result, len(result))
+    # result = find_max_match_lcs('SHINCHAN', 'NOHARAAA', True, True)
+    # print(result)
+    # large_test()
 
 
 if __name__ == "__main__":
