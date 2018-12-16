@@ -46,6 +46,8 @@
             >py -2 ./prob.py
             ('Result', 1417)
             ('Elapsed time:', 12, 'sec.')
+
+            Python 3 : do not use max !!!
 '''
 import datetime
 import time
@@ -295,6 +297,8 @@ def find_max_match_lcs_no_rec(str1, str2):
 
         But this gives timeout on certain samples (Python3):
             only two lines & columns necessary, not all this table
+
+            it passes even Python 3 after replacing the function 'max'
     '''
     len1 = len(str1)
     len2 = len(str2)
@@ -307,7 +311,7 @@ def find_max_match_lcs_no_rec(str1, str2):
             if str1[j-1] == str2[i-1]:
                 line2[j] = line1[j-1] + 1
             else:
-                line2[j] = max(line2[j-1], line1[j])
+                line2[j] = line2[j-1] if line2[j-1] > line1[j] else line1[j]
         line1, line2 = line2, line1
 
     # print(table)
