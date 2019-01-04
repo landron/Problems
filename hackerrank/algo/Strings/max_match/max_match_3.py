@@ -335,8 +335,8 @@ def find_max_match_lcs_rec_only_len(str1, str2, rec):
     solution = 0
     if str1[-1] == str2[-1]:
         eq_len = 1
-        while len(str1) >= eq_len+1 and len(str2) >= eq_len+1\
-            and str1[-(eq_len+1)] == str2[-(eq_len+1)]:
+        while len(str1) >= eq_len+1 and len(str2) >= eq_len+1 and \
+                str1[-(eq_len+1)] == str2[-(eq_len+1)]:
             eq_len += 1
 
         solution = find_max_match_lcs_rec_only_len(

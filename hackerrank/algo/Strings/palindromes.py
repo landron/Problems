@@ -29,7 +29,7 @@ def calculate(cnt_prev, cnt_after, print_it=False):
     return palindroms_nb
 
 
-def substrCount(size_string, string):
+def substr_count(size_string, string):
     '''
         calculate the number of palindromes for the entire string
         accumulate as much as possible in a sequence, than calculate it
@@ -37,8 +37,8 @@ def substrCount(size_string, string):
     assert size_string == len(string)
 
     print_it = False
-    if print_it:
-        print(string)
+    # if print_it:
+    #     print(string)
 
     palindroms_nb = 0
 
@@ -49,9 +49,9 @@ def substrCount(size_string, string):
     cnt_curr = 0
 
     for i in string:
-        if print_it:
-            print(i, "in:", cnt_prev, cnt_curr, cnt_after)
-            print(prev, curr)
+        # if print_it:
+        #     print(i, "in:", cnt_prev, cnt_curr, cnt_after)
+        #     print(prev, curr)
 
         if i == prev:
             cnt_after += 1
@@ -83,9 +83,9 @@ def substrCount(size_string, string):
 
         assert prev != curr
 
-        if print_it:
-            print(i, "out:", cnt_prev, cnt_curr, cnt_after)
-            print(prev, curr)
+        # if print_it:
+        #     print(i, "out:", cnt_prev, cnt_curr, cnt_after)
+        #     print(prev, curr)
 
     if cnt_after or cnt_prev:
         palindroms_nb += calculate(cnt_prev, cnt_after, print_it)
@@ -101,7 +101,7 @@ def substrCount(size_string, string):
 
 def palindroms(string):
     '''calculate the number of palindroms for this string'''
-    return substrCount(len(string), string)
+    return substr_count(len(string), string)
 
 
 def from_file(file_path):
@@ -151,7 +151,7 @@ def tests():
     '''
     debug_assertions()
     # string_size, string = from_file("input02.txt")
-    # n = substrCount(string_size, string) # 1272919
+    # n = substr_count(string_size, string) # 1272919
     # print(n)
 
 
