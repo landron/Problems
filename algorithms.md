@@ -9,9 +9,21 @@
 
     (also see Project Euler problems)
 
+###### Sequences
+
+    tag_lcs
+
 ##### Generic problems
 
     tag_cycle
+
+##### Glossary
+
+	LCS
+		The longest common subsequence (LCS) problem is the problem of finding
+		the longest subsequence common to all sequences in a set of sequences
+		(often just two sequences).
+		tag_lcs
 
 ##### Parsers
 
