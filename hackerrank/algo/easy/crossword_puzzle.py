@@ -9,7 +9,7 @@
         "Stop writing classes... "
         https://news.ycombinator.com/item?id=3717715
 
-    tag_struct, tag_python_struct
+    tag_struct_python : prefer lambda for simple structures
 '''
 # import collections
 
