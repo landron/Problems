@@ -11,9 +11,9 @@
         solution 1:   sys.setrecursionlimit(1500)
         solution 2:   traverse the binary tree without recursion
 
-    tag_tree, tag_tree_binary
+    tag_tree, tag_tree_binary, tag_tree_node
     tag_recursion, tag_no_recursion
-    tag_class
+    tag_class_python
 '''
 # import sys # setrecursionlimit
 
