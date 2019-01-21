@@ -102,7 +102,10 @@ def find_max_match_lcs(str1, str2):
 def find_some_max_match_lcs(list1, list2):
     '''
         find a maximum submatch string between the two
-        (not only the length, but also a sample).
+        (not only the length, but also a submatch string (a "sample")).
+
+        A generalized version of the previous, find_max_match_lcs, more
+            memory hungry.
     '''
     len1 = len(list1)
     len2 = len(list2)
@@ -209,7 +212,7 @@ def tests():
 
     if 1:  # pylint: disable=using-constant-test
         assert find_some_max_match_lcs([1, 2, 3, 4, 1], [3, 4, 1, 2, 1, 3])\
-                == [3, 4, 1]
+                == [3, 4, 1]  # attention: multiple solutions
         assert max_match_lcs_str('ANAAF', 'ARAA') == 'AAA'
         assert max_match_lcs_str('SHINCHAN', 'NOHARAAA') == 'NHA'
 
