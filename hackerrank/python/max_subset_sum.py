@@ -86,7 +86,7 @@ def parse_input():
     src = open('input00.txt', 'r')
     input_func = src.readline  # vs input
 
-    _ = int(input_func())
+    int(input_func())
     arr = list(map(int, input_func().rstrip().split()))
 
     res = maxSubsetSum(arr)
