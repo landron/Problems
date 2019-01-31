@@ -1,14 +1,26 @@
 #!/usr/bin/env python3
 # coding=utf-8
 '''
+    ## Problem
+
+    https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
     https://www.hackerrank.com/challenges/common-child/problem
         This is a tough enough problem, not a medium one anyway
+
+    Later:
+        find_some_max_match_lcs: not only the maximum length,
+            but also a substring
+        https://www.hackerrank.com/challenges/dynamic-programming-classics-the-longest-common-subsequence/problem
+
+    ## tags
 
     tag_class , tag_string_match , tag_elapsed_time
     tag_optimization
 
     tag_lcs
-    https://en.wikipedia.org/wiki/Longest_common_subsequence_problem
+
+    ## Tries history
 
     - backtracking
         optimization 1: is_max_possible
@@ -65,6 +77,9 @@ def find_max_match_lcs(str1, str2):
             only two lines & columns necessary, not all this table
 
             it passes even Python 3 after replacing the function 'max'
+
+        Can be implemented using the next function, find_some_max_match_lcs,
+            which really finds a substring.
     '''
     len1 = len(str1)
     len2 = len(str2)
@@ -82,6 +97,40 @@ def find_max_match_lcs(str1, str2):
 
     # print(table)
     return line1[-1]
+
+
+def find_some_max_match_lcs(list1, list2):
+    '''
+        find a maximum submatch string between the two
+        (not only the length, but also a submatch string (a "sample")).
+
+        A generalized version of the previous, find_max_match_lcs, more
+            memory hungry.
+    '''
+    len1 = len(list1)
+    len2 = len(list2)
+
+    line1 = [[] for i in range(1+len1)]
+    line2 = [[] for i in range(1+len1)]
+
+    for i in range(1, 1+len2):
+        for j in range(1, 1+len1):
+            if list1[j-1] == list2[i-1]:
+                line2[j] = line1[j-1] + [list1[j-1]]
+            elif len(line2[j-1]) > len(line1[j]):
+                line2[j] = line2[j-1]
+            else:
+                line2[j] = line1[j]
+        line1, line2 = line2, line1
+        # print(line1)
+
+    # print(table)
+    return line1[-1]
+
+
+def max_match_lcs_str(str1, str2):
+    '''find_some_max_match_lcs shortcut for strings'''
+    return ''.join(find_some_max_match_lcs(str1, str2))
 
 
 def large_test(filename):
@@ -160,6 +209,12 @@ def tests():
         # Elapsed time: 17 sec.
         result = large_test("input05.txt")
         assert result == 1417
+
+    if 1:  # pylint: disable=using-constant-test
+        assert find_some_max_match_lcs([1, 2, 3, 4, 1], [3, 4, 1, 2, 1, 3])\
+                == [3, 4, 1]  # attention: multiple solutions
+        assert max_match_lcs_str('ANAAF', 'ARAA') == 'AAA'
+        assert max_match_lcs_str('SHINCHAN', 'NOHARAAA') == 'NHA'
 
 
 if __name__ == "__main__":
