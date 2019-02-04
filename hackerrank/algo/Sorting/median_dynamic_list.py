@@ -15,7 +15,7 @@
 import bisect
 
 # not used because no remove support
-# #import heapq
+# import heapq
 #   \todo:  try to use heapq with an attached dictionary
 #           https://stackoverflow.com/questions/13800947/deleting-from-python-heapq-in-ologn/
 #   idea: keep components - heap-max, median, heap-min and update them => logn
