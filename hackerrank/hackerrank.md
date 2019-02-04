@@ -7,7 +7,9 @@
 
 ### Project Euler
 
-    Current Rank: 1507/78915        2018.05.13
+    34 challenges solved perfectly out of 44 attempted.        
+                                   2019.02.04
+    Current Rank: 904/94649
 
 ### Problem solving (algorithms and data structures)
 
@@ -15,13 +17,14 @@
 
     169/563 challenges solved       2019.02.04
     * Points: 3591 Rank: 3920
-    * algorithms: 4253/1962840
-    * data structures: 13187/560660 
+        * algorithms: 4253/1962840
+        * data structures: 13187/560660 
     
 ### C++
     done!
 
-    Points: 1085 Rank: 1            2019.02.04
+    40/40 challenges solved         2019.02.04
+    Points: 1085 Rank: 1            
     
 ### Python
     
