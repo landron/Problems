@@ -43,7 +43,7 @@ def get_triplets_number_2(list1, list2, list_sup):
         '''
         assert lista
         assert all(lista[i] <= lista[i+1] for i in range(len(lista)-1))
-        
+
         size = len(lista)
         last = lista[0]
         # it does not correctly work: size calculated only in the beginning

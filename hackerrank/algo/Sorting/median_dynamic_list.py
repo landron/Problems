@@ -9,12 +9,14 @@
     bisect.insort
         "Keep in mind that the O(log n) search is dominated by
         the slow O(n) insertion step."
+
+    flake8
 '''
 import bisect
 
-# not used because not remove support
-#import heapq
-#   \todo:  try to use heapq with an attached dictionary 
+# not used because no remove support
+# #import heapq
+#   \todo:  try to use heapq with an attached dictionary
 #           https://stackoverflow.com/questions/13800947/deleting-from-python-heapq-in-ologn/
 #   idea: keep components - heap-max, median, heap-min and update them => logn
 

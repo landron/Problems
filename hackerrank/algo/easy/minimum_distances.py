@@ -1,28 +1,29 @@
 #!/bin/python3
-#
-#   https://www.hackerrank.com/challenges/minimum-distances
-#       "In other words, find the minimum distance between any pair of equal elements in the array."
-#
 '''
-6
-7 1 3 4 1 7
+    Purpose
+       "In other words, find the minimum distance between any pair of equal
+    elements in the array."
+        https://www.hackerrank.com/challenges/minimum-distances
 
-=>
+    6
+    7 1 3 4 1 7
+    =>
+    3
 
-3
+    flake8
 '''
 
-import sys
 
 def distance(first, second):
     return first-second if first > second else second-first
+
 
 n = int(input().strip())
 A = [int(A_temp) for A_temp in input().strip().split(' ')]
 
 list_pos = []
 for i in range(n):
-   list_pos.append((i, A[i]))
+    list_pos.append((i, A[i]))
 list_pos.sort(key=lambda tup: tup[1])
 
 dmin = n+1
