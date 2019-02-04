@@ -1,24 +1,39 @@
-## [hackerrank](https://www.hackerrank.com/Liviul)
+## About
+  * "Terminated due to timeout" is not "wrong answer" (2019.02.04)    
+    tested with a 30s sleep
+
+## Account: [hackerrank](https://www.hackerrank.com/Liviul)
 (keeping the highest position, meaning I am not updating all the entries every time)
 
 ### Project Euler
 
-	Current Rank: 1507/78915		2018.05.13
+    Current Rank: 1507/78915        2018.05.13
 
-### Algorithms
+### Problem solving (algorithms and data structures)
 
-	85th Percentile
+    Ranking is for practice, not competition.
 
-	Points: 2221 Rank: 8711			2018.05.13
-	
+    169/563 challenges solved       2019.02.04
+    * Points: 3591 Rank: 3920
+    * algorithms: 4253/1962840
+    * data structures: 13187/560660 
+    
 ### C++
+    done!
 
-	Points: 495.00 Rank: 3297		2017.05.25
-	
+    Points: 1085 Rank: 1            2019.02.04
+    
 ### Python
-
-	Points: 1205.00 Rank: 793		2016.09.17
+    
+    101/115 challenges solved       2019.02.04
+    Points: 1745 Rank: 3247/480360         
 
 ### SQL
+    
+    54/58 challenges solved         2019.02.04
+    Points: 950 Rank: 6263/403320
 
-	Points: 910.00 Rank: 364		2016.08.21
+### Functional Programming
+    
+    20/93 challenges solved         2019.02.04
+    Points: 138 Rank: 7903/71140
