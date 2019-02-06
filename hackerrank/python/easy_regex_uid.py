@@ -9,26 +9,34 @@ import io
 import re
 
 
-def solve(source):
-    '''problem:  validate UID
-
+def is_uid(candidate):
+    '''
         ?= Matches if ... matches next, but doesn’t consume any of the string.
         ?! Matches if ... doesn’t match next. This is a negative lookahead
         assertion.
 
         Rules:
         - No character should repeat.
+            \\1 = matches the (.) => character repeating
+            (\\ doubled above because of Sublime Text)
         - 10 alphanumeric characters
         - at least 2 uppercase characters
         - at least 3 numbers
 
         It can be done with several matches instead of this big expression
     '''
+    reg_expr = (r'(?!.*(.).*\1)(?=[a-zA-Z0-9]{10})(?=.*?[A-Z].*?[A-Z])'
+                r'(?=.*?[0-9].*?[0-9].*?[0-9])')
+    return re.match(reg_expr, candidate)
+
+
+def solve(source):
+    '''
+        validate UID and print the result
+    '''
     result = ''
     for line in source.split('\n'):
-        reg_expr = (r'(?!.*(.).*\1)(?=[a-zA-Z0-9]{10})(?=.*?[A-Z].*?[A-Z])'
-                    r'(?=.*?[0-9].*?[0-9].*?[0-9])')
-        if re.match(reg_expr, line):
+        if is_uid(line):
             result += 'Valid'
         else:
             result += 'Invalid'
@@ -75,6 +83,13 @@ def debug_validations():
     assert solve("B2GS4DFSH0") == "Invalid"
     assert solve("B2GS4DFTHI") == "Invalid"
     assert solve("B1CDEF2354") == "Valid"
+
+    assert is_uid("AB123abcde")
+    assert not is_uid("AB123abcd")
+    # assert not is_uid("AB123abcdef")
+    assert not is_uid("Az123abcde")
+    assert not is_uid("ABC23abcde")
+    assert not is_uid("AB123ab!de")
 
 
 def main():
