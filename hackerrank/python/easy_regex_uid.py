@@ -25,7 +25,7 @@ def is_uid(candidate):
 
         It can be done with several matches instead of this big expression
     '''
-    reg_expr = (r'(?!.*(.).*\1)(?=[a-zA-Z0-9]{10})(?=.*?[A-Z].*?[A-Z])'
+    reg_expr = (r'(?!.*(.).*\1)(?=[a-zA-Z0-9]{10}$)(?=.*?[A-Z].*?[A-Z])'
                 r'(?=.*?[0-9].*?[0-9].*?[0-9])')
     return re.match(reg_expr, candidate)
 
@@ -86,7 +86,7 @@ def debug_validations():
 
     assert is_uid("AB123abcde")
     assert not is_uid("AB123abcd")
-    # assert not is_uid("AB123abcdef")
+    assert not is_uid("AB123abcdef")
     assert not is_uid("Az123abcde")
     assert not is_uid("ABC23abcde")
     assert not is_uid("AB123ab!de")
