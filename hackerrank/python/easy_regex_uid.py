@@ -1,24 +1,20 @@
 '''
     https://www.hackerrank.com/challenges/validating-uid
 
-    Version 2016.09.17
+    Version 2019.02.06
 
-    >pylint --version
-        No config file found, using default configuration
-        pylint 1.5.5,
-        astroid 1.4.5
-        Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)]
-    Your code has been rated at 10.00/10
+    pylint, flake8
 '''
-
 import io
 import re
+
 
 def solve(source):
     '''problem:  validate UID
 
         ?= Matches if ... matches next, but doesn’t consume any of the string.
-        ?! Matches if ... doesn’t match next. This is a negative lookahead assertion.
+        ?! Matches if ... doesn’t match next. This is a negative lookahead
+        assertion.
 
         Rules:
         - No character should repeat.
@@ -28,11 +24,10 @@ def solve(source):
 
         It can be done with several matches instead of this big expression
     '''
-
     result = ''
     for line in source.split('\n'):
-        reg_expr = r'(?!.*(.).*\1)(?=[a-zA-Z0-9]{10})(?=.*?[A-Z].*?[A-Z])'\
-                    '(?=.*?[0-9].*?[0-9].*?[0-9])'
+        reg_expr = (r'(?!.*(.).*\1)(?=[a-zA-Z0-9]{10})(?=.*?[A-Z].*?[A-Z])'
+                    r'(?=.*?[0-9].*?[0-9].*?[0-9])')
         if re.match(reg_expr, line):
             result += 'Valid'
         else:
@@ -40,6 +35,7 @@ def solve(source):
         result += '\n'
     result = result[:-1]
     return result
+
 
 def solve_with_iofunc(func):
     '''solve the problem getting text using the given function'''
@@ -51,22 +47,25 @@ def solve_with_iofunc(func):
     if source:
         source = source[:-1]
         return solve(source)
-    else:
-        return ''
+    return ''
+
 
 def solve_with_text(text):
     '''hackerrank test function: get input from string'''
     buf = io.StringIO(text)
     return solve_with_iofunc(buf.readline)
 
+
 def solve_with_file(filename):
     '''hackerrank test function: get input from frile'''
     file = open(filename, 'r')
     return solve_with_iofunc(file.readline)
 
+
 def read_and_solve():
     '''Hackerrank test function'''
     print(solve_with_iofunc(input))
+
 
 def debug_validations():
     '''unit testing'''
@@ -77,11 +76,13 @@ def debug_validations():
     assert solve("B2GS4DFTHI") == "Invalid"
     assert solve("B1CDEF2354") == "Valid"
 
+
 def main():
     '''main function: accessible from exterior'''
     debug_validations()
     # read_and_solve()
     # solve_with_file('test.txt')
+
 
 if __name__ == "__main__":
     main()
