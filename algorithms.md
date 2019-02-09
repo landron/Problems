@@ -1,36 +1,31 @@
-### About algorithms
+# About algorithms
 
-##### Algorithms
+## Algorithms
     
-    tag_dijkstra, tag_floyd
-    tag_dynamic
+tag_dijkstra, tag_floyd     
+tag_dynamic
     
-    Combinatorial optimization: tag_knapsack
+Combinatorial optimization: tag_knapsack
 
-    (also see Project Euler problems)
+### Reverse engineering
 
-###### Reverse engineering
+  \todo : https://crackmes.one/ .    
+  tag_decrypt
 
-    \todo : https://crackmes.one/ .    
-    tag_decrypt
+### Sequences
+tag_lcs
 
-###### Sequences
+## Generic problems
+tag_cycle
 
-    tag_lcs
+## Glossary
 
-##### Generic problems
-
-    tag_cycle
-
-##### Glossary
-
-    LCS
+   *  LCS
         The longest common subsequence (LCS) problem is the problem of finding
         the longest subsequence common to all sequences in a set of sequences
-        (often just two sequences).
-        tag_lcs
+        (often just two sequences).   
+      tag_lcs
 
-##### Parsers
-
-    tag_parser
-    tag_regex
+## Parsers
+* tag_parser
+* tag_regex
