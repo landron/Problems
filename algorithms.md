@@ -9,6 +9,11 @@
 
     (also see Project Euler problems)
 
+###### Reverse engineering
+
+    \todo : https://crackmes.one/ .    
+    tag_decrypt
+
 ###### Sequences
 
     tag_lcs
@@ -19,11 +24,11 @@
 
 ##### Glossary
 
-	LCS
-		The longest common subsequence (LCS) problem is the problem of finding
-		the longest subsequence common to all sequences in a set of sequences
-		(often just two sequences).
-		tag_lcs
+    LCS
+        The longest common subsequence (LCS) problem is the problem of finding
+        the longest subsequence common to all sequences in a set of sequences
+        (often just two sequences).
+        tag_lcs
 
 ##### Parsers
 
