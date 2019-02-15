@@ -7,8 +7,8 @@
 
     tag_nice
         I still do not know why they do not work (and I am fine with):
-        - get_triplets_2 vs get_triplets_number_2
-        - eliminate_duplicates_2 vs eliminate_duplicates_1
+        - get_triplets_number_2 works (vs get_triplets_2 that does not work)
+        - eliminate_duplicates_2 works (vs eliminate_duplicates_1 that doesn't)
             long integers ?
 '''
 
