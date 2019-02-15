@@ -2,15 +2,20 @@
 
 ## Algorithms
     
-tag_dijkstra, tag_floyd     
-tag_dynamic
+ * graphs: tag_dijkstra, tag_floyd     
+ * tag_dynamic
     
 Combinatorial optimization: tag_knapsack
 
+### Attributes
+
+ * tag_nice: ... simply a nice problem
+ * tag_recurrence_relation
+
 ### Reverse engineering
 
-  \todo : https://crackmes.one/ .    
-  tag_decrypt
+\todo : https://crackmes.one/ .    
+tag_decrypt
 
 ### Sequences
 tag_lcs
