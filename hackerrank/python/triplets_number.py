@@ -1,11 +1,12 @@
 #!/bin/python3
 '''
     https://www.hackerrank.com/challenges/triple-sum
+    Solution: get_triplets_number_2
 
     flake8, pylint
 
     tag_nice
-        I still do not know why the do not work (and I am fine with):
+        I still do not know why they do not work (and I am fine with):
         - get_triplets_2 vs get_triplets_number_2
         - eliminate_duplicates_2 vs eliminate_duplicates_1
             long integers ?
@@ -28,7 +29,8 @@ def get_triplets_number_2(list1, list2, list_sup):
             O(n*logn) because of the initial sorting
 
         Results
-            9/10 tests passed: test 4 fails
+            eliminate_duplicates_2 : all tests pass
+            eliminate_duplicates_1 : 9/10 tests passed (4 fails)
     '''
     assert list1 and list2 and list_sup
 
