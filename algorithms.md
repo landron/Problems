@@ -20,6 +20,9 @@ tag_decrypt
 ### Sequences
 tag_lcs
 
+### Various
+tag_big_int
+
 ## Generic problems
 tag_cycle
 
