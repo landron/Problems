@@ -2,6 +2,8 @@
 '''
     https://www.hackerrank.com/challenges/largest-rectangle
 
+    Version 2019.02.18
+
     flake8, pylint
 '''
 
@@ -72,9 +74,6 @@ def tests():
     assert solve([1, 2, 3, 2, 3]) == 8
     assert solve([1, 2, 3, 2, 3, 4, 3]) == 12
     assert solve([1, 2, 3, 2, 3, 4, 3, 5, 6, 4]) == 18
-
-    result = solve([3, 2, 3])
-    print(result)
 
 
 def main():
