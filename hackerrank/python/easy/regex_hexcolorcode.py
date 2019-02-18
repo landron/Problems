@@ -2,17 +2,13 @@
     https://www.hackerrank.com/challenges/hex-color-code
 
     Version 2016.09.03
+        (minor later)
 
-    >pylint --version
-        No config file found, using default configuration
-        pylint 1.5.5,
-        astroid 1.4.5
-        Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)]
-    Your code has been rated at 10.00/10
+    pylint, flake8
 '''
-
 import io
 import re
+
 
 def solve(source):
     '''problem:  validate whether it's a HEX Color Code'''
@@ -25,6 +21,7 @@ def solve(source):
         result = result[:-1]
     return result
 
+
 def solve_with_iofunc(func):
     '''solve the problem getting text using the given function'''
     no_lines = int(func().strip())
@@ -36,19 +33,23 @@ def solve_with_iofunc(func):
         source = source[:-1]
     return solve(source)
 
+
 def solve_with_text(text):
     '''hackerrank test function: get input from string'''
     buf = io.StringIO(text)
     return solve_with_iofunc(buf.readline)
+
 
 def solve_with_file(filename):
     '''hackerrank test function: get input from frile'''
     file = open(filename, 'r')
     return solve_with_iofunc(file.readline)
 
+
 def read_and_solve():
     '''Hackerrank test function'''
     print(solve_with_iofunc(input))
+
 
 def debug_validations():
     '''unit testing'''
@@ -73,6 +74,7 @@ def debug_validations():
 #ABC
 #fff"""
 
+
 def main():
     '''main function: accessible from exterior'''
     debug_validations()
@@ -89,6 +91,7 @@ def main():
     background-color: #ABC;
     border: 2px dashed #fff;
 }"""))
+
 
 if __name__ == "__main__":
     main()
