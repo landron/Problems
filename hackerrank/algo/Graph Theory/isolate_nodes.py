@@ -5,6 +5,8 @@
         - all connected by n-1 edges ;)
 
     Version 2019.02.23: 4/12 (4 failed, 5 time-outs)
+    Version 2019.02.24: 5/12 (7 time-outs)
+                        with get_solution_try_all
 
     tag_hard !?
     tag_graph
@@ -81,7 +83,11 @@ def minimize_cost_brute_force(nodes, edges, to_eliminate, cost_min, trace):
             - get the minimal edge:
                 if nodes are eliminated/different components, keep this one
             - get next edge until all are separated
+
+        Obsolete: too slow
     '''
+    # pylint: disable=too-many-statements
+
     def get_components(nodes, ignored_edges):
         component = [i for i, _ in enumerate(nodes)]
         visited = [False] * len(nodes)
@@ -113,37 +119,127 @@ def minimize_cost_brute_force(nodes, edges, to_eliminate, cost_min, trace):
             known_components[component[i]] = True
         return False
 
-    def more_components(component, to_remove, to_eliminate):
+    def improve_components(component_old, nodes, to_remove, to_eliminate):
         '''
             any improvement with the newly added edge ?
         '''
-        component_old = component[:]
-        component[:] = get_components(nodes, to_remove)
+        component_new = get_components(nodes, to_remove)
         for _, node in enumerate(to_eliminate):
-            if component[node] != component_old[node]:
-                return True
-        return False
+            if component_new[node] != component_old[node]:
+                return component_new
+        return None
+
+    def improve_components_by_no(components_no, nodes, to_remove,
+                                 to_eliminate):
+        '''
+            any improvement with the newly added edge ?
+        '''
+        def get_components_no(component, to_eliminate):
+            component_to_separate = {}
+            count = 0
+            for _, node in enumerate(to_eliminate):
+                if component[node] not in component_to_separate:
+                    component_to_separate[component[node]] = True
+                    count += 1
+            return count
+        component_new = get_components(nodes, to_remove)
+        assert component_new
+        no2 = get_components_no(component_new, to_eliminate)
+
+        if 0:  # unfinished business
+            if components_no > no2:
+                print(components_no, no2)
+                print(component_new)
+            assert components_no <= no2
+
+        return None if components_no == no2 else (component_new, no2)
+
+    def get_solution_lucky(  # pylint: disable=unused-variable
+            nodes, edges, to_eliminate):
+        to_remove = {}
+        component = [0] * len(nodes)
+
+        for _, edge in enumerate(edges):
+            assert edge[0] < edge[1]
+            to_remove[(edge[0], edge[1])] = edge[2]
+            component_new = improve_components(component, nodes, to_remove,
+                                               to_eliminate)
+            if not component_new:
+                del to_remove[(edge[0], edge[1])]
+                continue
+            component = component_new
+
+            if trace:
+                # print(edge, component)
+                pass
+            if not are_nodes_connected(component, to_eliminate):
+                break
+
+        cost = 0
+        for _, key in enumerate(to_remove):
+            cost += to_remove[key]
+        return cost
+
+    def get_solution_try_all(nodes, edges, to_eliminate, cost_min,
+                             trace):  # pylint: disable=unused-argument
+        to_remove = {}
+        component_next = improve_components_by_no(
+            0, nodes, to_remove, to_eliminate)
+        _, component_no_init = component_next
+
+        for i, first in enumerate(edges):
+            if first[2] > cost_min:
+                break
+
+            component_no = component_no_init
+            cost = 0
+            solution = []
+
+            j = i
+            while j < len(edges):
+                edge = edges[j]
+                assert edge[0] < edge[1]
+                to_remove[(edge[0], edge[1])] = edge[2]
+                component_next = improve_components_by_no(
+                    component_no, nodes, to_remove, to_eliminate)
+                if not component_next:
+                    del to_remove[(edge[0], edge[1])]
+                    j += 1
+                    continue
+
+                component_new, component_no_with = component_next
+                assert component_new
+
+                cost += edge[2]
+                finish = cost > cost_min
+                if not finish:
+                    finish = not are_nodes_connected(
+                        component_new, to_eliminate)
+                    if finish:
+                        cost_min = cost
+
+                if finish:
+                    cost -= edge[2]
+                    del to_remove[(edge[0], edge[1])]
+
+                    if not solution:
+                        break
+                    j, component_no = solution.pop()
+                    edge = edges[j]
+                    del to_remove[(edge[0], edge[1])]
+                else:
+                    solution.append((j, component_no))
+                    component_no = component_no_with
+
+                j += 1
+
+        return cost_min
 
     edges.sort(key=lambda e: e[2])
-    to_remove = {}
-    component = [0] * len(nodes)
 
-    for _, edge in enumerate(edges):
-        assert edge[0] < edge[1]
-        to_remove[(edge[0], edge[1])] = edge[2]
-        if not more_components(component, to_remove, to_eliminate):
-            del to_remove[(edge[0], edge[1])]
-            continue
-
-        if trace:
-            # print(edge, component)
-            pass
-        if not are_nodes_connected(component, to_eliminate):
-            break
-
-    cost = 0
-    for _, key in enumerate(to_remove):
-        cost += to_remove[key]
+    # get_solution_lucky is good enough for the simple tests()
+    # cost = get_solution_lucky(nodes, edges, to_eliminate)
+    cost = get_solution_try_all(nodes, edges, to_eliminate, cost_min, trace)
     if cost_min > cost:
         cost_min = cost
 
@@ -285,10 +381,18 @@ def tests():
     assert isolate_nodes([[0, 3, 3], [1, 4, 4], [1, 3, 4], [2, 0, 5]],
                          [1, 3, 4]) == 8
 
+    # new tests
+    # result = isolate_nodes([[1, 0, 1], [0, 2, 2], [0, 3, 3]],
+    #                        [1, 2, 3], True)
+    # print(result)
+
 
 def main():
     '''main'''
     tests()
+    # result = isolate_nodes([[1, 0, 1], [0, 2, 2], [0, 3, 3]],
+    #                        [1, 2, 3], True)
+    # print(result)
 
     # parse_input()
     parse_big_test()
