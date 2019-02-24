@@ -11,7 +11,19 @@
 '''
 
 
-def merge_components(component, node1, node2):
+def get_final_component_node(component, node):
+    '''
+        get the final component node (ID) of a chain
+
+        see merge_components_onlyvalid for how we keep those IDs
+    '''
+    assert len(component[node-1]) == 1
+    while len(component[node-1]) == 1:
+        node = component[node-1][0]
+    return node
+
+
+def merge_components_onlyvalid(component, node1, node2):
     '''
         keep components as a list:
         - if None => no edge found yet
@@ -75,53 +87,56 @@ def merge_components(component, node1, node2):
     return True
 
 
-def get_final_component_node(component, node):
+def merge_components(component, node1, node2):
     '''
-        get the final component node (ID) of a chain
+        Purpose:
+            merge components (merge_components_onlyvalid ony does it
+                for "valid" components = nodes with edges attached)
 
-        see merge_components for how we keep those IDs
+        Return value:
+            False = the nodes already have the same component
+                (it happens when adding "cyclic" edges)
+
+        see merge_components_onlyvalid for details
     '''
-    assert len(component[node-1]) == 1
-    while len(component[node-1]) == 1:
-        node = component[node-1][0]
-    return node
+    if not component[node1-1]:
+        node1, node2 = node2, node1
+
+    component1 = component[node1-1]
+    component2 = component[node2-1]
+
+    if component1:
+        if component2:
+            if not merge_components_onlyvalid(component, node1, node2):
+                return False
+        else:
+            node_id = node1 if len(component1) > 1 else\
+                      get_final_component_node(component, node1)
+            component[node_id-1].append(node2)
+            component[node2-1] = [node_id]
+    else:
+        assert not component2
+
+        if node1 > node2:
+            node1, node2 = node2, node1
+        component[node1-1] = [node1, node2]
+        component[node2-1] = [node1]
+
+    return True
 
 
 def get_edge_cover(nodes_no, edges, trace):
     '''
         get the edge cover, but keep the components
 
-        see merge_components for how we keep the components
+        see merge_components_onlyvalid for how we keep the components
     '''
     edges_cover_no = 0
     component = [None] * nodes_no
 
     for i in edges:
-        node1 = i[0]
-        node2 = i[1]
-        if not component[node1-1]:
-            node1, node2 = node2, node1
-
-        component1 = component[node1-1]
-        component2 = component[node2-1]
-
-        if component1:
-            if component2:
-                if not merge_components(component, node1, node2):
-                    continue
-            else:
-                node_id = node1 if len(component1) > 1 else\
-                          get_final_component_node(component, node1)
-                component[node_id-1].append(node2)
-                component[node2-1] = [node_id]
-        else:
-            assert not component2
-
-            if node1 > node2:
-                node1, node2 = node2, node1
-            component[node1-1] = [node1, node2]
-            component[node2-1] = [node1]
-
+        if not merge_components(component, i[0], i[1]):
+            continue
         edges_cover_no += 1
         if trace:
             print(i, component)
