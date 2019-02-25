@@ -7,10 +7,24 @@
     Version 2019.02.23: 4/12 (4 failed, 5 time-outs)
     Version 2019.02.24: 5/12 (7 time-outs)
                         with get_solution_try_all
+    Version 2019.02.24: 6/12 (5 failed, 1 time-out)
+                        with minimize_cost_by_maximizing_components
+    OBSOLETE: restart with a fresh approach
 
     tag_hard !?
     tag_graph
         combination of: BFS, connected components
+
+    tag_kruskal
+        https://en.wikipedia.org/wiki/Kruskal%27s_algorithm
+        minimum spanning tree (forest): ... but Kruskal it is easy
+
+        The idea is the same: expand components with the heaviest edges,
+            so that they contain one forbidden node at most. Also, there
+            are always forbidden-1 edges eliminated.
+
+    flake8
+    pylint: "Your code has been rated at 9.80/10"
 '''
 import bisect
 
@@ -180,8 +194,7 @@ def minimize_cost_brute_force(nodes, edges, to_eliminate, cost_min, trace):
             cost += to_remove[key]
         return cost
 
-    def get_solution_try_all(nodes, edges, to_eliminate, cost_min,
-                             trace):  # pylint: disable=unused-argument
+    def get_solution_try_all(nodes, edges, to_eliminate, cost_min):
         to_remove = {}
         component_next = improve_components_by_no(
             0, nodes, to_remove, to_eliminate)
@@ -239,11 +252,241 @@ def minimize_cost_brute_force(nodes, edges, to_eliminate, cost_min, trace):
 
     # get_solution_lucky is good enough for the simple tests()
     # cost = get_solution_lucky(nodes, edges, to_eliminate)
-    cost = get_solution_try_all(nodes, edges, to_eliminate, cost_min, trace)
+    cost = get_solution_try_all(nodes, edges, to_eliminate, cost_min)
     if cost_min > cost:
         cost_min = cost
 
     return cost_min
+
+
+def get_final_component_node(component, node):
+    '''
+        get the final component node (ID) of a chain
+        see merge_components for how we keep those IDs
+
+        https://github.com/landron/Problems/blob/public-master/hackerrank/algo/Graph%20Theory/components_edge_cover.py
+    '''
+    assert len(component[node-1]) == 1
+    while len(component[node-1]) == 1:
+        node = component[node-1][0]
+    return node
+
+
+def merge_components_onlyvalid(component, node1, node2):
+    '''
+        keep components as a list:
+        - if None => no edge found yet
+        - if len == 1 => it indirects to the ID node of the component
+        - else: it contains all the nodes of the component
+        when components are merged, we do not update all the individual nodes
+
+        Reference
+            https://github.com/landron/Problems/blob/public-master/hackerrank/algo/Graph%20Theory/components_edge_cover.py
+    '''
+    assert component[node1-1] and component[node2-1]
+
+    def merge_components_base(component, node1, node2):
+        assert node1 != node2
+        assert len(component[node1-1]) > 1
+        assert len(component[node2-1]) > 1
+
+        size1 = len(component[node1-1])
+        size2 = len(component[node2-1])
+        if size1 < size2 or (size1 == size2 and node1 > node2):
+            node1, node2 = node2, node1
+
+        component[node1-1].extend(component[node2-1])
+        component[node2-1] = [node1]
+
+    def merge_components_secondary(component, node1, node2):
+        assert len(component[node1-1]) == 1 or len(component[node2-1]) == 1
+        assert len(component[node1-1]) != 1 or len(component[node2-1]) != 1
+
+        size1 = len(component[node1-1])
+        size2 = len(component[node2-1])
+        if size1 < size2 or (size1 == size2 and node1 > node2):
+            node1, node2 = node2, node1
+
+        # node_id = component[node2-1][0]
+        node_id = get_final_component_node(component, node2)
+        if node_id == node1:
+            return False
+        merge_components_base(component, node1, node_id)
+        component[node2-1] = [node_id]
+
+        return True
+
+    component1 = component[node1-1]
+    component2 = component[node2-1]
+
+    if len(component1) > 1:
+        if len(component2) > 1:
+            merge_components_base(component, node1, node2)
+            # assert component[node1-1] == component[node2-1]
+        else:
+            if not merge_components_secondary(component, node1, node2):
+                return False
+    elif len(component2) > 1:
+        if not merge_components_secondary(component, node1, node2):
+            return False
+    else:
+        node_id = get_final_component_node(component, node1)
+        if not merge_components_secondary(component, node_id, node2):
+            return False
+        component[node1-1] = component[node2-1]
+
+    return True
+
+
+def merge_components(component, node1, node2):
+    '''
+        Purpose:
+            merge components (merge_components_onlyvalid ony does it
+                for "valid" components = nodes with edges attached)
+
+        Return value:
+            False = the nodes already have the same component
+                (it happens when adding "cyclic" edges)
+
+        see merge_components_onlyvalid for details
+
+        Reference
+            https://github.com/landron/Problems/blob/public-master/hackerrank/algo/Graph%20Theory/components_edge_cover.py
+    '''
+    if not component[node1-1]:
+        node1, node2 = node2, node1
+
+    component1 = component[node1-1]
+    component2 = component[node2-1]
+
+    if component1:
+        if component2:
+            if not merge_components_onlyvalid(component, node1, node2):
+                return False
+        else:
+            node_id = node1 if len(component1) > 1 else\
+                      get_final_component_node(component, node1)
+            component[node_id-1].append(node2)
+            component[node2-1] = [node_id]
+    else:
+        assert not component2
+
+        if node1 > node2:
+            node1, node2 = node2, node1
+        component[node1-1] = [node1, node2]
+        component[node2-1] = [node1]
+
+    return True
+
+
+def minimize_cost_by_maximizing_components(nodes, edges, to_eliminate, trace):
+    '''
+        Purpose
+            isolate the nodes to eliminate
+
+        Idea
+            get the maximum edges sum which keeps forbidden nodes in
+                different connected components
+    '''
+    nodes_no = len(nodes)
+    if trace:
+        print("Init: nodes=", nodes_no, "to eliminate=", len(to_eliminate))
+
+    edges.sort(key=lambda e: e[2], reverse=True)
+    # edges.sort(key=lambda e: e[2])
+
+    cost_all = 0
+    for _, edge in enumerate(edges):
+        cost_all += edge[2]
+    cost_potential_init = cost_all
+
+    cost_max = 0
+    for i, _ in enumerate(edges):
+        if trace:
+            print("i", i)
+        if i:
+            cost_potential_init -= edges[i-1][2]
+            if cost_potential_init < cost_max:
+                if 0 and trace:
+                    print("Exit1:", cost_potential_init)
+                break
+
+        # component range: 1..nodes_no
+        component = [None] * (1+nodes_no)
+        forbidden = [False] * (1+nodes_no)
+        for node in to_eliminate:
+            forbidden[node+1] = True
+
+        def get_component(component, node):
+            if component[node-1] and len(component[node-1]) == 1:
+                return get_final_component_node(component, node)
+            return node
+
+        cost = 0
+        cost_potential = cost_potential_init
+        eliminated = 0
+        solution = []
+
+        j = i
+        while True:
+            while j < len(edges):
+                if trace and j < 20:
+                    print("j", j)
+                edge = edges[j]
+
+                component1 = get_component(component, edge[0]+1)
+                component2 = get_component(component, edge[1]+1)
+                if forbidden[component1] and forbidden[component2]:
+                    assert component1 != component2
+                    j += 1
+                    eliminated += 1
+                    cost_potential -= edge[2]
+                    if eliminated == len(to_eliminate):
+                        # print("Exit2:", j)
+                        break
+                    if cost_potential < cost_max:
+                        # print("Exit3:", cost_potential)
+                        break
+                    continue
+
+                solution.append((j, cost, cost_potential, eliminated,
+                                 component[:], forbidden[:]))
+
+                # too many combinations
+                if trace and 0:
+                    edges_selected = []
+                    for _, val in enumerate(solution):
+                        edges_selected.append(val[0])
+                    print(edges_selected)
+
+                merge_components(component, edge[0]+1, edge[1]+1)
+                if forbidden[component1] or forbidden[component2]:
+                    forbidden[component1] = forbidden[component2] = True
+
+                cost += edge[2]
+                j += 1
+
+            if cost > cost_max:
+                cost_max = cost
+                if trace:
+                    print("Found:", cost_max, eliminated, len(solution))
+
+            if not solution:
+                break
+
+            # slow and memory consuming
+            j, cost, cost_potential, eliminated, component, forbidden =\
+                solution.pop()
+            j += 1
+
+            # if j == len(edges) or edges[j][2] != edges[j-1][2]:
+            #     break
+            # print("Equal edges", edges[j][2])
+            break
+
+    if trace:
+        print("Best:", cost_max)
+    return cost_all-cost_max
 
 
 def minimize_cost(nodes, edges, to_eliminate, cost_min, trace):
@@ -262,8 +505,12 @@ def minimize_cost(nodes, edges, to_eliminate, cost_min, trace):
                 if nodes are eliminated/different components, keep this one
             - get next edge until all are separated
     '''
-    return minimize_cost_brute_force(nodes, edges, to_eliminate, cost_min,
-                                     trace)
+    assert cost_min, "not used later"
+
+    # return minimize_cost_brute_force(nodes, edges, to_eliminate, cost_min,
+    #                                  trace)
+    return minimize_cost_by_maximizing_components(
+        nodes, edges, to_eliminate, trace)
 
 
 def isolate_nodes(edges, to_eliminate, trace=False):
@@ -367,11 +614,16 @@ def tests():
     assert isolate_nodes([[1, 0, 3], [1, 2, 1]], [0, 1]) == 3
 
     # simple
+    assert isolate_nodes([[1, 0, 1], [0, 2, 2]], [1, 2]) == 1
     assert isolate_nodes([[1, 0, 3], [1, 2, 1]], [0, 2]) == 1
     assert isolate_nodes([[1, 0, 3], [1, 2, 1], [0, 3, 1]], [0, 2]) == 1
     assert isolate_nodes([[1, 0, 1], [0, 2, 2], [0, 3, 3]], [1, 2, 3]) == 3
     assert isolate_nodes([[1, 0, 1], [0, 2, 2], [0, 3, 3]], [1, 2, 0]) == 3
     assert isolate_nodes([[1, 0, 1], [0, 2, 2], [0, 3, 3]], [1, 3, 0]) == 4
+
+    # complex
+    assert isolate_nodes(
+        [[1, 0, 3], [1, 2, 2], [1, 3, 4], [4, 3, 5], [4, 5, 1]], [1, 4]) == 4
 
     # problem samples
     assert isolate_nodes([[1, 0, 4], [1, 2, 3], [1, 3, 7], [0, 4, 2]],
@@ -390,8 +642,10 @@ def tests():
 def main():
     '''main'''
     tests()
-    # result = isolate_nodes([[1, 0, 1], [0, 2, 2], [0, 3, 3]],
-    #                        [1, 2, 3], True)
+
+    # result = isolate_nodes(
+    #     [[1, 0, 3], [1, 2, 2], [1, 3, 4], [4, 3, 5], [4, 5, 1]],
+    #     [1, 4], True)
     # print(result)
 
     # parse_input()
