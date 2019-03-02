@@ -40,3 +40,7 @@
     
     20/93 challenges solved         2019.02.04
     Points: 138 Rank: 7903/71140
+
+## Reference
+  * https://www.reddit.com/r/learnprogramming/comments/4zd2gd/how_difficult_are_the_challenges_at_hackerrank/
+        easy, moderate/medium, difficult/hard, advanced, expert
