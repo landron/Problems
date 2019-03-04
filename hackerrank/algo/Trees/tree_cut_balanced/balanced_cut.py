@@ -85,6 +85,7 @@ class Tree:
         assert nodes_no == len(edges) + 1
 
         self.root = TreeNode(1, None, cost[0])
+        self.size = nodes_no
         self.cost_tree = []
 
         adj_list = Tree.make_adjacency_list(edges)
@@ -98,6 +99,8 @@ class Tree:
                 node.add_child(child)
                 if adj_list[i-1]:
                     queue.append(child)
+
+        self.cost_tree = Tree.calculate_tree(self)
 
     def __str__(self):
         description = ''
@@ -114,6 +117,14 @@ class Tree:
                 for i in node.adj_list:
                     queue.append((level+1, i))
         return description
+
+    @staticmethod
+    def get_list_ids(list_of_nodes):
+        '''get the list of ids from the list of tree nodes'''
+        nids = []
+        for i in list_of_nodes:
+            nids.append(i.nid)
+        return nids
 
     @staticmethod
     def make_adjacency_list(edges):
@@ -148,6 +159,45 @@ class Tree:
             adj[i] = list(adj[i])
 
         return adj
+
+    @staticmethod
+    def calculate_tree(tree):
+        '''calculate the subtree cost for each node:
+           - first go down to the leaves
+           - then calculate to the top
+        '''
+        def calculate_node(node, calculated):
+            '''Returns extended list to calculate'''
+            idx = node.nid-1
+            if calculated[idx]:
+                return []
+            if not node.adj_list:  # leaf
+                calculated[idx] = node.cost
+                return []
+
+            cost = 0
+            to_calculate = []
+            for i in node.adj_list:
+                if not calculated[i.nid-1]:
+                    to_calculate.append(i)
+                cost += calculated[i.nid-1]
+            if to_calculate:
+                return to_calculate
+            calculated[idx] = cost + node.cost
+            return []
+
+        to_process = [tree.root]
+        calculated = [0] * tree.size  # cost(node) >= 1
+        while to_process:
+            to_calculate = calculate_node(to_process[-1], calculated)
+            if not to_calculate:
+                to_process.pop()
+            else:
+                to_process.extend(to_calculate)
+            # print(Tree.get_list_ids(to_process), calculated)
+
+        # print(calculated)
+        return calculated
 
 
 def tests():
