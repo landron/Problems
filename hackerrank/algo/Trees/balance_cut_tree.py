@@ -7,6 +7,8 @@
 
     Version 02.03.2019:     3/8 (3 failures, 2 time-outs)
     Version 02.03.2019, 2:  5/8 (1 failure, 2 time-outs)
+    Next:                   precalculate tree, but with new approach,
+                            this one is too messy
 
     tag_python_class
     tag_python_class_copy
@@ -17,6 +19,7 @@
 
     flake8, pylint
 '''
+import sys
 
 
 def calculate_tree(node, costs, adj, exclude):
@@ -129,6 +132,7 @@ class Components:
 
         # immutable(s)
         self.costs = costs
+        # self.precalculated = precalculated
         self.trace = trace
 
     def __str__(self):
@@ -194,7 +198,8 @@ class Components:
         cost = [0] * 3
         for i in range(3):
             if self.component[i]:
-                cost[i] = calculate_tree(self.component[i], self.costs,
+                node = self.component[i]
+                cost[i] = calculate_tree(node, self.costs,
                                          adj_list, exclude)
         cost.sort()
         if self.trace:
@@ -268,7 +273,8 @@ def balanced_forest(costs, edges, trace=False):
 
     # adjacency list
 
-    def make_adjancey_list(edges):
+    def make_adjacency_list(edges):
+        '''make the adjacency list of the children'''
         nodes_no = len(edges) + 1
 
         adj = [None] * nodes_no
@@ -300,7 +306,39 @@ def balanced_forest(costs, edges, trace=False):
 
         return adj
 
-    adj = make_adjancey_list(edges)
+    adj = make_adjacency_list(edges)
+    # print(adj)
+
+    # precalculate trees
+    def precalculate_trees(costs, adj):
+        '''precalculate the costs in each node'''
+        def calculate_tree_with(node, costs, adj, precalculated):
+            '''
+                calculate the cost of the subtree
+            '''
+            cost = 0
+            queue = [node]
+            while queue:
+                node = queue.pop(0)
+                if precalculated[node-1]:
+                    cost += precalculated[node-1]
+                    continue
+                cost += costs[node-1]
+                if adj[node-1]:
+                    for i in adj[node-1]:
+                        queue.append(i)
+            return cost
+
+        nodes_no = len(costs)
+        costs_tree = [0] * nodes_no
+        for i in range(nodes_no):
+            j = nodes_no-i
+            costs_tree[j-1] = calculate_tree_with(j, costs, adj, costs_tree)
+        return costs_tree
+
+    costs_tree = precalculate_trees(costs, adj)
+    if trace:
+        print(costs_tree)
 
     # define recursive data
 
@@ -339,11 +377,12 @@ def parse_big_test():
     '''
         parse some big file HackerRank input
 
-        correct: -1 10 13 5 297
-        vs
-        me: -1 -1 13 5 -1
+        input03.txt : "RecursionError: maximum recursion depth exceeded"
     '''
-    fptr = open('input01.txt', 'r')
+    sys.setrecursionlimit(2000)
+
+    fptr = open('input01.txt', 'r')  # -1 10 13 5 297
+    # fptr = open('input03.txt', 'r')
     parse_with(fptr.readline, print)
 
 
