@@ -12,6 +12,8 @@
                                 for a node
     Version 05.03.2019:     6/8 (2 time-outs)
                                 save the parents in a set ?
+    Version 05.03.2019, 2:  8/8 - keep the parents in a set
+                            no need to update the tree of costs
 
     tag_hard
 
@@ -26,7 +28,10 @@ class TreeNode:
     '''
     def __init__(self, node_id, parent, cost=0):
         self.nid = node_id
-        self.parent = parent
+        self.parents = set()
+        if parent:
+            self.parents = parent.parents.copy()
+            self.parents.add(parent.nid)
         self.adj_list = None
         self.cost = cost
 
@@ -39,19 +44,19 @@ class TreeNode:
         def get_adj_list(adj):
             description = "("
             for i in adj:
-                description += str(i.id)
+                description += str(i.nid)
                 description += ', '
             description = description[:-2]
             description += ")"
             return description
 
         description = "("
-        if not self.parent:
+        if not self.parents:
             description += "root (1)"
             assert self.nid == 1, "only for test"
         else:
             if with_parent:
-                description += str(self.parent.nid)
+                description += str(self.parents)
                 description += ' -> '
             description += str(self.nid)
         if self.cost:
@@ -72,7 +77,7 @@ class TreeNode:
 
     def add_child(self, node):
         '''add a child to this node'''
-        assert self == node.parent
+        assert self.nid in node.parents
         if self.adj_list:
             self.adj_list.append(node)
         else:
@@ -140,7 +145,7 @@ class Tree:
             if only_costs:
                 to_show.append(i[0])
             else:
-                to_show.append((i[1].nid, i[2], i[0]))
+                to_show.append((i[1].nid, i[0]))
         return to_show
 
     @staticmethod
@@ -260,41 +265,33 @@ class Tree:
                 bisect works for tuples:
                     https://stackoverflow.com/questions/45155345/python-search-a-sorted-list-of-tuples
             '''
-            assert node_removed, "not (always) used"
+            assert cost_to_search
 
+            # first search for the value itself:
+            #   not between the children or parents !
             found = bisect.bisect_left(cost_tree, (cost_to_search, ))
             for i in range(found, len(cost_tree)):
                 node = cost_tree[i]
                 if node[0] != cost_to_search:
-                    return False
-                # if node[0][1].nid == node_removed:
-                #     return False
+                    break
+                if node[1].nid == node_removed[1].nid or\
+                   node_removed[1].nid in node[1].parents or\
+                   node[1].nid in node_removed[1].parents:
+                    continue
                 return True
+
+            # then search for the value updated between the parents !
+            cost_updated = cost_to_search + node_removed[0]
+            found = bisect.bisect_left(cost_tree, (cost_updated, ))
+            for i in range(found, len(cost_tree)):
+                node = cost_tree[i]
+                if node[0] != cost_updated:
+                    return False
+                if node[1].nid not in node_removed[1].parents:
+                    continue
+                return True
+
             return False
-
-        def update_tree(cost_tree_in, tree_val_removed):
-            cost_tree = cost_tree_in[:]
-            cost_removed, node_removed = tree_val_removed
-
-            # parents
-            node = node_removed
-            while node.parent:
-                node = node.parent
-                val = cost_tree[node.nid-1]
-                assert val[0] >= cost_removed
-                cost_new = val[0] - cost_removed
-                cost_tree[node.nid-1] = (cost_new, val[1])
-            # children
-            queue = [node_removed]
-            while queue:
-                node = queue.pop()
-                val = cost_tree[node.nid-1]
-                cost_tree[node.nid-1] = (0, val[1])
-                if node.adj_list:
-                    queue.extend(node.adj_list)
-
-            cost_tree.sort(key=lambda t: t[0])
-            return cost_tree
 
         total_tree_cost = self.cost_tree[0][0]
         cost_min = total_tree_cost+1
@@ -317,26 +314,22 @@ class Tree:
                 cost_min = cost
                 continue
 
-            # now update the tree by removing this subtree
-            #   and then search for subtree_to_search
-            # \todo: this update is very costly
-            cost_tree_u = update_tree(self.cost_tree, i)
-            # cost_tree_u = self.cost_tree
-
             # if self.trace:
             #     print(Tree.get_precalculated_printable(cost_tree_u,
             #                                            only_costs=False))
-            if find_subtree(cost_tree_u, to_search_1, i[1].nid):
+            if find_subtree(cost_tree, to_search_1, i):
                 cost_min = cost
                 continue
-            if to_search_2 and find_subtree(cost_tree_u, to_search_2, i[1].nid):
+            if to_search_2 and find_subtree(cost_tree, to_search_2, i):
                 cost_min = cost
                 continue
 
         return -1 if cost_min == (total_tree_cost+1) else cost_min
 
     def minimal_balanced_cost(self):
+        '''choose variant'''
         return self.minimal_balanced_cost_correct()
+
 
 def parse_with(input_func, output_func):
     '''
