@@ -1,6 +1,6 @@
 ## About
   * "Terminated due to timeout" is not "wrong answer" (2019.02.04)    
-    tested with a 30s sleep
+    (tested with a 30s sleep)
 
 ## Account: [hackerrank](https://www.hackerrank.com/Liviul)
 (keeping the highest position, meaning I am not updating all the entries every time)
@@ -42,5 +42,5 @@
     Points: 138 Rank: 7903/71140
 
 ## Reference
-  * https://www.reddit.com/r/learnprogramming/comments/4zd2gd/how_difficult_are_the_challenges_at_hackerrank/
+  * https://www.reddit.com/r/learnprogramming/comments/4zd2gd/how_difficult_are_the_challenges_at_hackerrank/   
         easy, moderate/medium, difficult/hard, advanced, expert
