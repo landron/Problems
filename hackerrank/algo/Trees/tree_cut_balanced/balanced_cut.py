@@ -15,6 +15,8 @@
     Version 05.03.2019, 2:  8/8 - keep the parents in a set
                             no need to update the tree of costs
 
+    tag_python_class
+    tag_tree
     tag_hard
 
     flake8, pylint

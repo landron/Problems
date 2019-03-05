@@ -15,8 +15,6 @@
         https://stackoverflow.com/questions/35470379/proper-idiomatic-way-to-implement-clone-method-in-python-class
     tag_tree
 
-    tag_hard
-
     flake8, pylint
 '''
 import sys
