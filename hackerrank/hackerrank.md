@@ -43,12 +43,11 @@
 
 ## Unfinished business
 
-  1. "Project Euler #92: Square digit chains"
-     https://www.hackerrank.com/contests/projecteuler/challenges/euler092
+  1. ["Project Euler #92: Square digit chains"](https://www.hackerrank.com/contests/projecteuler/challenges/euler092)
 
-     75/100 PyPy3, 62.5/100 C++
+     Scores: 75/100 (PyPy3), 62.5/100 (C++).
 
-     Next: finish own C++ BigInteger class. 
+     Next: finish own C++ BigInteger class.      
      bigint library ("vcpkg install bigint --triplet x64-windows") is too large to be submitted with the problem (50k limit).
   2.     
 
