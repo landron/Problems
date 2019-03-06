@@ -363,7 +363,7 @@ def parse_big_test(file_to_test=0):
             https://stackoverflow.com/questions/16085292
         '''
         def __init__(self, fileName):
-            self.file = open(fileName, 'wb')
+            self.file = open(fileName, 'w')  # 'wb' for binary
             # PrettyFileWriter.set_crlf(False)
 
         def __enter__(self):
