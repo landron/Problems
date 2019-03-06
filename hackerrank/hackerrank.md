@@ -49,7 +49,10 @@
 
      Next: finish own C++ BigInteger class.      
      bigint library ("vcpkg install bigint --triplet x64-windows") is too large to be submitted with the problem (50k limit).
-  2.     
+     
+  2. ["Project Euler #79: Passcode derivation"](https://www.hackerrank.com/contests/projecteuler/challenges/euler079)
+     
+     Next: a Python substring iterator class, so string fragments can be combined to obtain the best lexicographical match.
 
   (tag_ub_<no problem>: tag_ub_3, by exemple)
 
