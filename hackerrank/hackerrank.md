@@ -41,6 +41,19 @@
     20/93 challenges solved         2019.02.04
     Points: 138 Rank: 7903/71140
 
+## Unfinished business
+
+  1. "Project Euler #92: Square digit chains"
+     https://www.hackerrank.com/contests/projecteuler/challenges/euler092
+
+     75/100 PyPy3, 62.5/100 C++
+
+     Next: finish own C++ BigInteger class. 
+     bigint library ("vcpkg install bigint --triplet x64-windows") is too large to be submitted with the problem (50k limit).
+  2.     
+
+  (tag_ub_<no problem>: tag_ub_3, by exemple)
+
 ## Reference
   * https://www.reddit.com/r/learnprogramming/comments/4zd2gd/how_difficult_are_the_challenges_at_hackerrank/   
         easy, moderate/medium, difficult/hard, advanced, expert
