@@ -49,9 +49,16 @@
 
      Next: finish own C++ BigInteger class.      
      bigint library ("vcpkg install bigint --triplet x64-windows") is too large to be submitted with the problem (50k limit).
-  2.     
+     
+  2. ["Project Euler #79: Passcode derivation"](https://www.hackerrank.com/contests/projecteuler/challenges/euler079)
+     
+     Next: a Python substring iterator class, so string fragments can be combined to obtain the best lexicographical match.
+     
+  3. https://www.hackerrank.com/challenges/maximum-xor
 
-  (tag_ub_<no problem>: tag_ub_3, by exemple)
+     Next: find a clear algorithm, the aproach around the ideal match does not work well (in refining the scope)
+
+     (tag_ub_<no problem>: tag_ub_3, by exemple)
 
 ## Reference
   * https://www.reddit.com/r/learnprogramming/comments/4zd2gd/how_difficult_are_the_challenges_at_hackerrank/   
