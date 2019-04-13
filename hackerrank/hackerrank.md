@@ -64,8 +64,8 @@
 
   4. https://www.hackerrank.com/challenges/minimum-operations/problem
 
-     Practice > Algorithms > Debugging > Minimum Operations
-     Next: understand the algorithm to be able to really debug it (it fails for simple tests)
+     Practice > Algorithms > Debugging > Minimum Operations   
+     Next: understand the algorithm in order to be able to really debug it (it fails even for simple tests)
 
 ## Reference
   * https://www.reddit.com/r/learnprogramming/comments/4zd2gd/how_difficult_are_the_challenges_at_hackerrank/   
