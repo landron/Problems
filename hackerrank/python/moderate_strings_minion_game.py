@@ -1,17 +1,13 @@
 '''
     http://www.hackerrank.com/challenges/the-minion-game
 
+    OPT:    maybe add a time-out case
+
     Version 2016.05.14
 
-    >pylint --version
-        No config file found, using default configuration
-        pylint 1.5.5,
-        astroid 1.4.5
-        Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)]
-    Your code has been rated at 10.00/10
-
-    OPT:    maybe add a time-out case
+    pylint, flake8
 '''
+
 
 def play_1(string):
     '''solve the game: first variant, time-outs'''
@@ -23,6 +19,7 @@ def play_1(string):
             else:
                 consonants += 1
     return (vowels, consonants)
+
 
 def play_2(string):
     '''solve the game: still 4 time-outs'''
@@ -45,6 +42,7 @@ def play_2(string):
         consonants_game += consonants
     return (vowels_game, consonants_game)
 
+
 def play_3(string):
     '''solve the game: the good solution'''
     vowels = consonants = 0
@@ -55,9 +53,11 @@ def play_3(string):
             consonants += (len(string)-i)
     return (vowels, consonants)
 
+
 def play(string):
     '''solve the game'''
     return play_3(string)
+
 
 def read_and_solve():
     '''Hackerrank test function'''
@@ -70,6 +70,7 @@ def read_and_solve():
     else:
         print("Stuart", consonants)
 
+
 def debug_validations():
     '''unit testing'''
     play_func = [play, play_1, play_2, play_3]
@@ -79,11 +80,13 @@ def debug_validations():
         assert func("ANANAN") == (12, 9)
         assert func("UHTI") == (5, 5)
 
+
 def main():
     '''main function: accessible from exterior'''
     debug_validations()
     # read_and_solve()
     # print(play("UHTI"))
+
 
 if __name__ == "__main__":
     main()
