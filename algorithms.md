@@ -12,23 +12,14 @@ Combinatorial optimization: tag_knapsack
  * tag_nice: ... simply a nice problem
  * tag_recurrence_relation
 
-## Generic problems
-tag_cycle
-
-### Maths
-tag_formula: solved in a simple way with a mathematical formula
-tag_totient
-
-### Reverse engineering
-
-\todo : https://crackmes.one/ .
-tag_decrypt
-
 ### Sequences
 tag_lcs
 
 ### Various
 tag_big_int
+
+## Generic problems
+tag_cycle
 
 ## Glossary
 
@@ -43,6 +34,15 @@ tag_big_int
         integer that are relatively prime to it.
       tag_totient
 
+## Maths
+* tag_formula: solved in a simple way with a mathematical formula
+* tag_totient
+
 ## Parsers
 * tag_parser
 * tag_regex
+
+### Reverse engineering
+
+\todo : https://crackmes.one/ .
+* tag_decrypt
