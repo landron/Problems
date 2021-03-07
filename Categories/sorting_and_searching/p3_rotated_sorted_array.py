@@ -72,7 +72,8 @@ def find_rotated_array_no_rec(array, element):
 
         Complexity: O(logN) time, O(1) space
 
-        Solution 2, suggested by book's solution.
+        Solution 2: the book's solution.
+
         NOT WORKING: it fails for one of
             [2, 3, 2, 2, 2]
             [2, 2, 2, 3, 2]
@@ -133,7 +134,7 @@ def debug_validations():
     for i, j in enumerate([11, 13, 17, 9, 10]):
         assert find_rotated_array([11, 13, 17, 9, 10], j) == i
 
-    # edge cases suggested by the book
+    # duplicates cases suggested by the book
     assert find_rotated_array([2, 2, 3, 2, 2], 2) != -1
     assert find_rotated_array([2, 2, 3, 2, 2], 3) == 2
     assert find_rotated_array([2, 3, 2, 2], 3) == 1
@@ -141,9 +142,9 @@ def debug_validations():
     assert find_rotated_array([2, 3, 2, 2, 2], 3) == 1
     assert find_rotated_array([2, 2, 3, 2, 2, 2, 2, 2, 2], 3) == 2
 
-    # the book solution is not working
+    # the book solution is not working in one of the two cases
     assert find_rotated_array_no_rec([2, 2, 2, 3, 2], 3) == 3
-    # The result should be 1
+    # The result here should be 1
     assert find_rotated_array_no_rec([2, 3, 2, 2, 2], 3) == -1
 
 
