@@ -3,7 +3,10 @@
         It didn't pass with Python 3, but it did with PyPy3.
 
     Reference
-        https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+        Floyd–Warshall algorithm
+            https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+        for further small optimizations:
+            https://www.hackerrank.com/challenges/floyd-city-of-blinding-lights/forum/comments/221588
 
     tag_floyd
 
@@ -37,14 +40,18 @@ def floyd_warshall(edges):
         Reference
             see "Pseudocode for this basic version follows"
             https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+
+        O(N^3)
     '''
     distances = [w[:] for w in edges]
 
     nodes_no = len(edges)
     for k in range(nodes_no):
         for i in range(nodes_no):
+            if distances[i][k] == NO_PATH:
+                continue
             for j in range(nodes_no):
-                if NO_PATH not in (distances[i][k], distances[k][j]):
+                if NO_PATH != distances[k][j]:
                     new = distances[i][k] + distances[k][j]
                     if NO_PATH == distances[i][j] or new < distances[i][j]:
                         distances[i][j] = new
@@ -127,4 +134,4 @@ def debug_validations():
 
 if __name__ == "__main__":
     debug_validations()
-    parse_input()
+    # parse_input()
