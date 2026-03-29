@@ -2,7 +2,8 @@
 
 #include "../common/linked_list_utils.hpp"
 
-Node* kth_to_last(Node* head, size_t k) {
+template <typename NodePtr>
+NodePtr kth_to_last_impl(NodePtr head, size_t k) noexcept {
     if (!head) return nullptr;
 
     auto distance = k;
@@ -24,6 +25,14 @@ Node* kth_to_last(Node* head, size_t k) {
     return first;
 }
 
+Node* kth_to_last(Node* head, size_t k) noexcept {
+    return kth_to_last_impl(head, k);
+}
+
+const Node* kth_to_last(const Node* head, size_t k) noexcept {
+    return kth_to_last_impl(head, k);
+}
+
 TEST(test_limits, k_greater_than_length) {
     auto list = create_linked_list({1, 2, 3});
     auto node = kth_to_last(list.get(), 4); // k is larger than the list
@@ -41,6 +50,18 @@ TEST(test_limits, single_node) {
     auto node = kth_to_last(list.get(), 1);
     ASSERT_NE(node, nullptr);
     EXPECT_EQ(node->data, 55);
+}
+
+TEST(test_overloads, const_and_non_const) {
+    auto list = create_linked_list({1, 2, 3, 4, 5});
+    auto* mutable_result = kth_to_last(list.get(), 2);
+    ASSERT_NE(mutable_result, nullptr);
+    EXPECT_EQ(mutable_result->data, 4);
+
+    const Node* const_head = list.get();
+    auto const_result = kth_to_last(const_head, 2);
+    ASSERT_NE(const_result, nullptr);
+    EXPECT_EQ(const_result->data, 4);
 }
 
 TEST(test_limits, boundaries) {
