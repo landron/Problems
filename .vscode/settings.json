@@ -1,0 +1,17 @@
+{
+    "cmake.sourceDirectory": "/home/livio/Documents/Code/Problems/hackerrank/algo",
+    "cmake.generator": "Ninja",
+
+    // unavoidable for the cmake tools extension to work: CMake/Build terminal is not bash
+    //    even if Terminal it is:
+    //    "terminal.integrated.defaultProfile.linux": "bash",
+    //    "terminal.integrated.profiles.linux": {
+    //        "bash": {
+    //            "path": "/bin/bash",
+    //            "args": ["-l"]
+    //        }
+    //    },
+    "cmake.configureSettings": {
+        "CMAKE_TOOLCHAIN_FILE": "~/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    }, 
+}

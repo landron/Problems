@@ -8,9 +8,12 @@
 
 	Cracking the Coding Interview
 ]]
-
 cmake_minimum_required(VERSION 3.21...4.2)
 
+# https://vcpkg.readthedocs.io/en/latest/users/integration/
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "")
+endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
