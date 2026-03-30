@@ -2,8 +2,12 @@
 
 #include "../common/linked_list_utils.hpp"
 
+/** Returns the kth to last node in a singly linked list. 
+ * 
+ * Single-pass two-pointer approach is optimal: O(n) time, O(1) extra space.
+*/
 template <typename NodePtr>
-NodePtr kth_to_last_impl(NodePtr head, size_t k) noexcept {
+[[nodiscard]] NodePtr kth_to_last_impl(NodePtr head, size_t k) noexcept {
     if (!head) return nullptr;
 
     auto distance = k;
