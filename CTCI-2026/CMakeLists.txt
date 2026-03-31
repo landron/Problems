@@ -4,7 +4,7 @@
 	* ninja
 
 	with build folder outside this repository, you can do:
-		cmake -G Ninja ../Problems/CTCI-2026
+		cmake -G Ninja ../../Problems/CTCI-2026
 
 	Cracking the Coding Interview
 ]]
@@ -21,7 +21,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(ctci-2026)
 
-add_executable(${PROJECT_NAME} Ch02_Linked_Lists/q2_2_kth_to_last.cpp)
+add_executable(
+    ${PROJECT_NAME}
+	Ch01_Arrays_Strings/q1_10_merge_intervals.cpp
+    Ch02_Linked_Lists/q2_2_kth_to_last.cpp
+)
 
 # Enable common warnings - vital for troubleshooting performance/bugs
 if(MSVC)
