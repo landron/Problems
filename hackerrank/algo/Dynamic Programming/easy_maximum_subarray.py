@@ -3,12 +3,7 @@
          find the maximum possible sum of a contiguous subarray
     Version 2016.05.08
 
-    >pylint --version
-        No config file found, using default configuration
-        pylint 1.5.5,
-        astroid 1.4.5
-        Python 3.5.1 (v3.5.1:37a07cee5969, Dec  6 2015, 01:38:48) [MSC v.1900 32 bit (Intel)]
-    Your code has been rated at 10.00/10
+    pylint, ruff
 '''
 
 # keeping the current sum IF positive is enough
@@ -25,8 +20,7 @@ def find_max_subarrays(arr):
             sum_positives += arr[i]
             if first_positive < 0 and arr[i] != 0:
                 first_positive = i
-            if sum_curr < 0:
-                sum_curr = 0
+            sum_curr = max(sum_curr, 0)
         elif sum_curr > max_seq:
             max_seq = sum_curr
         sum_curr += arr[i]
@@ -34,8 +28,7 @@ def find_max_subarrays(arr):
     if first_positive == -1:
         maximum = max(arr)
         return (maximum, maximum)
-    elif sum_curr > max_seq:
-        max_seq = sum_curr
+    max_seq = max(max_seq, sum_curr)
 
     assert sum_positives != 0 and max_seq != 0
     return (max_seq, sum_positives)
@@ -51,14 +44,14 @@ def read_and_solve():
 
 def read_and_solve_input_1():
     '''hackerrank missed test case'''
-    file = open('input01.txt', 'r')
-    tests_no = int(file.readline())
-    for _ in range(tests_no):
-        file.readline()
-        arr_str = file.readline()
-        array = [int(arr_temp) for arr_temp in arr_str.strip().split(' ')]
-        (sum1, sum2) = find_max_subarrays(array)
-        print(sum1, sum2)
+    with open('input01.txt', 'r', encoding='utf-8') as file:
+        tests_no = int(file.readline())
+        for _ in range(tests_no):
+            file.readline()
+            arr_str = file.readline()
+            array = [int(arr_temp) for arr_temp in arr_str.strip().split(' ')]
+            (sum1, sum2) = find_max_subarrays(array)
+            print(sum1, sum2)
 
 def debug_validations():
     '''unit testing'''
