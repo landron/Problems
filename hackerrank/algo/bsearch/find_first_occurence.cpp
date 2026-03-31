@@ -97,9 +97,10 @@ TEST(test_sample, test1) {
 }
 
 TEST(test_ranges, array_and_span) {
-    int arr[] = {1, 2, 3, 4, 4, 5};
+    const int arr[] = {1, 2, 3, 4, 4, 5};
     EXPECT_EQ(findFirstOccurrence(arr, 4), 3);
 
-    std::span<const int> sp(arr);
+    // const span not necessary
+    /*const*/ std::span<const int> sp(arr);
     EXPECT_EQ(findFirstOccurrence(sp, 4), 3);
 }
