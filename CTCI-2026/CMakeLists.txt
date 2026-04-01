@@ -23,7 +23,7 @@ project(ctci-2026)
 
 add_executable(
     ${PROJECT_NAME}
-	Ch01_Arrays_Strings/q1_10_merge_intervals.cpp
+	Ch01_Arrays_Strings/q1_10_merge_intervals.cpp Ch01_Arrays_Strings/q1_11_bounded_pairs.cpp
     Ch02_Linked_Lists/q2_2_kth_to_last.cpp
 )
 

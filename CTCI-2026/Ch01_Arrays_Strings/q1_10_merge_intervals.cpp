@@ -4,10 +4,11 @@ Constraints:
     Time complexity goal: O(nlogn).
     Space complexity goal: O(n) (for the output).
 */
-#include "gtest/gtest.h"
 #include <algorithm>
 #include <ranges>
 #include <vector>
+
+#include "gtest/gtest.h"
 
 // https://gemini.google.com version
 template<std::ranges::random_access_range R>
