@@ -4,6 +4,7 @@
 
  * graphs: tag_dijkstra, tag_floyd
  * tag_dynamic
+ * #greedy
 
 Combinatorial optimization: tag_knapsack
 
