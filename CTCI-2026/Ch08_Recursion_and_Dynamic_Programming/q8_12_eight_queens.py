@@ -2,7 +2,9 @@
 N-Queens problem: place N non-attacking queens on an NxN board.
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/shortest-path-with-processing-delays/
 
-#backtracking #recursion #dynamic-programming
+Complexity: O(N!) Time | O(N) Space
+Tags: #backtracking #recursion #dynamic-programming
+ruff & pylint clean.
 
 Time Complexity: O(N!)
 ======================
