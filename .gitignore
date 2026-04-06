@@ -1,4 +1,7 @@
 *.ncb
 *.suo
+__pycache__/
 
 build/
+test.py
+z-TODO/
