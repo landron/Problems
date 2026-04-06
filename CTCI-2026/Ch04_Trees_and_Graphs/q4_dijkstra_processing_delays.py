@@ -8,12 +8,17 @@ Compliance: ruff & pylint clean.
 """
 
 import bisect
+import heapq
 import sys
 import unittest
 
 
 def _build_adjacency_list(n, edges):
-    """Build adjacency list, keeping minimum weight for duplicate edges."""
+    """Build adjacency list, keeping minimum weight for duplicate edges.
+
+    OPT: List of Lists of Tuples (instead of Dict of Dicts) would be more space-efficient, 
+        but less convenient for duplicate edge handling. 
+    """
     neighbors = {i: {} for i in range(n)}
     for i, j, w in edges:
         if i == j:
@@ -23,15 +28,60 @@ def _build_adjacency_list(n, edges):
     return neighbors
 
 
+def compute_cost_dijkstra_heapq(costs, edges, source):
+    """Dijkstra's algorithm with processing delays using min-heap.
+
+    Complexity: O((n + m)*log(m)) Time | O(N + M) Space
+        Time: O((n + m)*log(m)) - heappush/heappop are O(log m),
+              called O(n + m) times for at most O(m) relaxations.
+        Space: O(n + m)
+    Note: complexity drops from O(m*n) to O((n + m)*log(m)) by using a priority
+        queue (min-heap) instead of a sorted list.
+
+    Note: Tuples (cost, node) work with heapq because Python compares
+        lexicographically: first by cost, then by node index as tiebreaker.
+    """
+    n = len(costs)
+    neighbors = _build_adjacency_list(n, edges)
+
+    min_costs = [-1] * n
+    min_costs[source] = 0
+    visited = set([source])
+    heap = []
+    for i, w in neighbors[source].items():
+        # costs[source] is ignored
+        min_costs[i] = w
+        # heappush with (cost, node) tuple: heap orders by cost; node breaks ties
+        heapq.heappush(heap, (w, i))
+
+    while heap:
+        current_cost, current = heapq.heappop(heap)
+        # ignore older (higher) costs for the same node
+        if current in visited or current_cost != min_costs[current]:
+            continue
+
+        visited.add(current)
+        for i, w in neighbors[current].items():
+            if i in visited:
+                continue
+            min_cost = current_cost + costs[current] + w
+            if min_costs[i] != -1 and min_costs[i] <= min_cost:
+                continue
+            min_costs[i] = min_cost
+            heapq.heappush(heap, (min_cost, i))
+
+    return min_costs
+
+
 def compute_cost_dijkstra(costs, edges, source):
     """Dijkstra's algorithm with processing delays.
 
     Complexity: O(n + m*m) Time | O(N + M) Space
-        Time: O(n + m*m) - bisect.insort is O(m) per insertion, O(m) insertions.
+        Time: O(n + m*m) - bisect.insort is O(m) per insertion (O(log m) search +
+              O(m) shift), with O(m) insertions max.
         Space: O(n + m)
 
-    Note: 15/15 test cases passed.
-    TODO: Optimize to O(m*log(m)) using priority queue.
+    Note: Optimized to O(m*log(m)) using priority queue (heapq variant exists).
     """
     n = len(costs)
     neighbors = _build_adjacency_list(n, edges)
@@ -43,6 +93,7 @@ def compute_cost_dijkstra(costs, edges, source):
     for i, w in neighbors[source].items():
         # costs[source] is ignored
         min_costs[i] = w
+        # bisect.insort: O(m) per call (binary search O(log m) + shift O(m))
         bisect.insort(unvisited, (w, i))
 
     while unvisited:
@@ -59,7 +110,7 @@ def compute_cost_dijkstra(costs, edges, source):
             if min_costs[i] != -1 and min_costs[i] <= min_cost:
                 continue
             min_costs[i] = min_cost
-            # older costs will be ignored because of the check at the beginning of the loop
+            # Reinsert: O(m) cost. Duplicates filtered by re-check at loop start.
             bisect.insort(unvisited, (min_cost, i))
 
     return min_costs
@@ -146,47 +197,76 @@ class TestComputeCost(unittest.TestCase):
             },
         ]
         for case in test_cases:
-            result = compute_cost_mine(case["costs"], case["edges"], 0)
-            self.assertEqual(result, case["expected"])
-            result = compute_cost_dijkstra(case["costs"], case["edges"], 0)
-            self.assertEqual(result, case["expected"])
+            result_mine = compute_cost_mine(case["costs"], case["edges"], 0)
+            self.assertEqual(result_mine, case["expected"])
+            result_bisect = compute_cost_dijkstra(case["costs"], case["edges"], 0)
+            self.assertEqual(result_bisect, case["expected"])
+            result_heapq = compute_cost_dijkstra_heapq(case["costs"], case["edges"], 0)
+            self.assertEqual(result_heapq, case["expected"])
 
     def test_complex_path(self):
         """Test more complex graph"""
-        result = compute_cost_dijkstra(
-            [0, 5, 2, 3, 4],
-            [[0, 1, 2], [0, 2, 8], [1, 3, 7], [2, 3, 1], [3, 4, 3], [1, 4, 15]],
-            0,
-        )
-        self.assertEqual(result, [0, 2, 8, 11, 17])
+        costs = [0, 5, 2, 3, 4]
+        edges = [[0, 1, 2], [0, 2, 8], [1, 3, 7], [2, 3, 1], [3, 4, 3], [1, 4, 15]]
+        expected = [0, 2, 8, 11, 17]
+        self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
+
+    def test_heapq_vs_bisect(self):
+        """Verify heapq and bisect Dijkstra variants produce same results"""
+        test_cases = [
+            ([1, 2, 3], [[0, 1, 4], [1, 2, 5], [0, 2, 10]]),
+            (
+                [0, 5, 2, 3, 4],
+                [[0, 1, 2], [0, 2, 8], [1, 3, 7], [2, 3, 1], [3, 4, 3], [1, 4, 15]],
+            ),
+            ([0, 1, 1], [[0, 1, 5], [0, 1, 3]]),
+            ([0, 2, 2], [[0, 1, 10], [0, 1, 4], [0, 1, 7]]),
+        ]
+        for costs, edges in test_cases:
+            result_bisect = compute_cost_dijkstra(costs, edges, 0)
+            result_heapq = compute_cost_dijkstra_heapq(costs, edges, 0)
+            self.assertEqual(
+                result_bisect,
+                result_heapq,
+                f"Mismatch for costs={costs}, edges={edges}",
+            )
 
     def test_duplicate_edges_two(self):
         """Test that minimum edge weight is selected when two edges exist"""
-        result = compute_cost_dijkstra([0, 1, 1], [[0, 1, 5], [0, 1, 3]], 0)
-        self.assertEqual(result, [0, 3, -1])
-        result = compute_cost_mine([0, 1, 1], [[0, 1, 5], [0, 1, 3]], 0)
-        self.assertEqual(result, [0, 3, -1])
+        costs = [0, 1, 1]
+        edges = [[0, 1, 5], [0, 1, 3]]
+        expected = [0, 3, -1]
+        self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_mine(costs, edges, 0), expected)
 
     def test_duplicate_edges_three(self):
         """Test that minimum edge weight is selected when multiple edges exist"""
-        result = compute_cost_dijkstra([0, 2, 2], [[0, 1, 10], [0, 1, 4], [0, 1, 7]], 0)
-        self.assertEqual(result, [0, 4, -1])
-        result = compute_cost_mine([0, 2, 2], [[0, 1, 10], [0, 1, 4], [0, 1, 7]], 0)
-        self.assertEqual(result, [0, 4, -1])
+        costs = [0, 2, 2]
+        edges = [[0, 1, 10], [0, 1, 4], [0, 1, 7]]
+        expected = [0, 4, -1]
+        self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_mine(costs, edges, 0), expected)
 
     def test_unreachable_node(self):
         """Test that unreachable nodes return -1"""
-        result = compute_cost_dijkstra([0, 1], [[0, 0, 5]], 0)
-        self.assertEqual(result, [0, -1])
-        result = compute_cost_mine([0, 1], [[0, 0, 5]], 0)
-        self.assertEqual(result, [0, -1])
+        costs = [0, 1]
+        edges = [[0, 0, 5]]
+        expected = [0, -1]
+        self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_mine(costs, edges, 0), expected)
 
     def test_single_node(self):
         """Test with single node"""
-        result = compute_cost_dijkstra([5], [], 0)
-        self.assertEqual(result, [0])
-        result = compute_cost_mine([5], [], 0)
-        self.assertEqual(result, [0])
+        costs = [5]
+        edges = []
+        expected = [0]
+        self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_mine(costs, edges, 0), expected)
 
     def test_mine_fails_longer_relay_path(self):
         """compute_cost_mine misses shorter path 0->4->1->3 (cost 47 vs 63)"""
@@ -203,7 +283,9 @@ class TestComputeCost(unittest.TestCase):
             [0, 2, 16],
         ]
         expected = [0, 22, 16, 47, 4]
+        # Both Dijkstra variants pass
         self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
         # compute_cost_mine returns [0, 22, 16, 63, 4] — node 3 is wrong
         self.assertNotEqual(compute_cost_mine(costs, edges, 0), expected)
 
@@ -226,7 +308,9 @@ class TestComputeCost(unittest.TestCase):
             [3, 1, 9],
         ]
         expected = [0, 11, 43, 19, -1, 32, -1]
+        # Both Dijkstra variants pass
         self.assertEqual(compute_cost_dijkstra(costs, edges, 0), expected)
+        self.assertEqual(compute_cost_dijkstra_heapq(costs, edges, 0), expected)
         # compute_cost_mine returns [0, 11, 49, 19, -1, 32, -1] — node 2 is wrong
         self.assertNotEqual(compute_cost_mine(costs, edges, 0), expected)
 
