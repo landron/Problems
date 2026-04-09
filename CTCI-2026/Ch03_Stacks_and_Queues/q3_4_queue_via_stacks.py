@@ -142,6 +142,31 @@ class TestProcessFunction(unittest.TestCase):
         self.assertEqual(result[0], 42)  # First dequeue result
         self.assertEqual(result[1], 99)  # Peek result
 
+    def test_alternating_queue_operations(self):
+        """Test alternating queue operations."""
+        result = process(
+            ["enqueue", "peek", "size", "dequeue", "size"],
+            [10, None, None, None, None],
+        )
+        # Peek: 10, Size: 1, Dequeue: 10, Size: 0
+        self.assertEqual(result, [10, 1, 10, 0])
+
+    def test_multiple_peeks_same_element(self):
+        """Test multiple peeks on the same element."""
+        result = process(
+            ["enqueue", "peek", "peek", "peek"],
+            [42, None, None, None],
+        )
+        self.assertEqual(result, [42, 42, 42])
+
+    def test_fifo_order(self):
+        """Test FIFO order is maintained."""
+        result = process(
+            ["enqueue", "enqueue", "enqueue", "dequeue", "dequeue", "dequeue"],
+            [1, 2, 3, None, None, None],
+        )
+        self.assertEqual(result, [1, 2, 3])
+
 
 def main():
     """main"""
