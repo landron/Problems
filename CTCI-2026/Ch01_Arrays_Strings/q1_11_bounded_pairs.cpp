@@ -3,11 +3,12 @@ https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/count-
 
 the provided array is already sorted.
 */
-#include <vector>
+
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 // https://gemini.google.com version
 int countBoundedPairs(const std::vector<int>& prices, int budget) {

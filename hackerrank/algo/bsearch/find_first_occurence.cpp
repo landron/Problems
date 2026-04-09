@@ -1,7 +1,7 @@
 #include <vector>
 #include <span>
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 template <std::ranges::random_access_range R>
 // Only allows vectors, arrays, and spans
