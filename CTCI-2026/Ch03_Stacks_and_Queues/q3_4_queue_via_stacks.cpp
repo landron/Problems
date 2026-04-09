@@ -8,13 +8,22 @@ are actually needed or the stack is empty.
 Complexity: O(1) amortized Time (all operations) | O(n) Space
 Tags: #queue #stack #amortized
 Compliance: ruff & pylint clean.
+
+Modern C++ best practices:
+- Use std::optional for operations that may fail (e.g., dequeue on empty queue).
+- Use std::span for input parameters to allow flexible array-like inputs.
+- Use std::move and perfect forwarding for efficient value handling.
+- Use pipelining and ranges for string processing to improve readability and maintainability.
+    see trim_and_lower
 */
 
 #include <algorithm>
 #include <cassert>
 #include <cctype>
+#include <concepts>
 #include <cstdlib>
 #include <iostream>
+#include <optional>
 #include <span>
 #include <stack>
 #include <string>
@@ -23,82 +32,80 @@ Compliance: ruff & pylint clean.
 
 #include <gtest/gtest.h>
 
+#include "strings_op.hpp"
+
+template <std::move_constructible T>
 class Queue {
 public:
-    void enqueue(int value) {
-        stack_in.push(value);
+    void enqueue(T value) {
+        stack_in.push(std::move(value));
     }
 
-    auto size() const noexcept {
+    template <typename... Args>
+    void emplace(Args&&... args) {
+        stack_in.emplace(std::forward<Args>(args)...);
+    }
+
+    [[nodiscard]] std::size_t size() const noexcept {
         // size complexity: O(1) Time | O(1) Space
         return stack_in.size() + stack_out.size();
     }
 
-    auto dequeue() {
+    // returns std::optional: caller may ignore result for fire-and-forget dequeues
+    std::optional<T> dequeue() noexcept(std::is_nothrow_move_constructible_v<T>) {
         transfer();
-        auto value = stack_out.top();
+        if (stack_out.empty()) return std::nullopt;
+        auto value = std::move(stack_out.top());
         stack_out.pop();
         return value;
     }
 
-    auto peek() {
-        transfer();
+    // const method with mutable cache: internal transfer() is hidden from API
+    [[nodiscard]] std::optional<T> peek() const noexcept(std::is_nothrow_move_constructible_v<T>) {
+        const_cast<Queue*>(this)->transfer();
+        if (stack_out.empty()) return std::nullopt;
         return stack_out.top();
     }
 
 private:
-    void transfer() {
+    void transfer() noexcept(std::is_nothrow_move_constructible_v<T>) {
         if (!stack_out.empty()) return;
         while (!stack_in.empty()) {
-            stack_out.push(stack_in.top());
+            stack_out.push(std::move(stack_in.top()));
             stack_in.pop();
         }
     }
 
 private:
-    std::stack<int> stack_in;
-    std::stack<int> stack_out;
+    std::stack<T> stack_in;
+    std::stack<T> stack_out;
 };
 
 
-// This is painful.
-auto trim_and_lower(std::string_view str) -> std::string {
-    // Trim leading whitespace
-    auto start = str.find_first_not_of(" \t\n\r\f\v");
-    if (start == std::string_view::npos) return "";
-    
-    // Trim trailing whitespace
-    auto end = str.find_last_not_of(" \t\n\r\f\v");
-    str = str.substr(start, end - start + 1);
-    
-    // Convert to lowercase
-    std::string result(str);
-    std::transform(result.begin(), result.end(), result.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
-    return result;
-}
-
-
-auto process(std::span<const std::string> queries, std::span<const int> values) -> std::vector<int> {
-    assert (queries.size() == values.size());
+auto process(std::span<const std::string> queries, 
+             std::span<const int> values) -> std::vector<int> {
+    assert(queries.size() == values.size());
     if (queries.empty()) {
         return {};
     }
 
-    auto queue = Queue{};
+    auto queue = Queue<int>{};
     std::vector<int> result;
+    result.reserve(queries.size());
+
     for (size_t i = 0; i < queries.size(); ++i) {
         const auto query = trim_and_lower(queries[i]);
-        const auto value = values[i];
 
         if (query == "enqueue") {
-            queue.enqueue(value);
+            queue.enqueue(values[i]);
         } else if (query == "dequeue") {
-            result.push_back(queue.dequeue());
+            // safe to dereference: crashes allowed for invalid ops
+            result.push_back(*queue.dequeue());
         } else if (query == "peek") {
-            result.push_back(queue.peek());
+            // safe to dereference: crashes allowed for invalid ops
+            result.push_back(*queue.peek());
         } else if (query == "size") {
-            result.push_back(queue.size());
+            result.push_back(static_cast<int>(queue.size()));
         } else {
             throw std::invalid_argument("Invalid query: " + queries[i]);
         }
