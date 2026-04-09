@@ -1,6 +1,8 @@
 *.ncb
 *.suo
-__pycache__/
+/.python-version
+# use virtual environment to avoid caching pyc files in each directory
+# __pycache__/
 
 build/
 test.py

@@ -17,8 +17,14 @@ class Queue:
     """Queue implemented using two stacks."""
 
     def __init__(self):
+        # We use Python lists as the underlying Data Structure
+        # to implement the Stack behavior.
         self.stack_in = []
         self.stack_out = []
+
+        # We track size manually to remain implementation-agnostic.
+        # This ensures the Queue behavior is consistent even if
+        # the underlying stacks didn't support a len() operation.
         self.size = 0
 
     def enqueue(self, value):
@@ -37,7 +43,7 @@ class Queue:
         self.size -= 1
         return value
 
-    def length(self):
+    def __len__(self):
         """Return the number of elements in the queue."""
         return self.size
 
@@ -59,20 +65,23 @@ def process(operations, values):
     """Process a list of queue operations and return the results."""
     if not operations:
         return []
-    ret = []
+
     queue = Queue()
-    for op in operations:
+    ret = []
+
+    dispatch = {
+        "enqueue": queue.enqueue,
+        "dequeue": lambda v: ret.append(queue.dequeue()),
+        "size": lambda v: ret.append(len(queue)),
+        "peek": lambda v: ret.append(queue.peek()),
+    }
+
+    for i, op in enumerate(operations):
         op = op.strip().lower()
-        value = values.pop(0)
-        if op == "enqueue":
-            queue.enqueue(value)
-        elif op == "dequeue":
-            ret.append(queue.dequeue())
-        elif op == "size":
-            ret.append(queue.length())
-        else:
-            assert op == "peek"
-            ret.append(queue.peek())
+        # values.pop(0) is an O(N) operation
+        value = values[i]
+        dispatch[op](value)
+
     return ret
 
 
@@ -136,7 +145,6 @@ class TestProcessFunction(unittest.TestCase):
 
 def main():
     """main"""
-    main()
 
 
 if __name__ == "__main__":
