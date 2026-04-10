@@ -42,8 +42,8 @@ bool view_eq(auto&& view, std::string_view target) {
     str = str.substr(start, end - start + 1);
 
     std::string result(str);
-    std::ranges::transform(result, result.begin(), 
-                          [](unsigned char c) { return std::tolower(c); });
+    std::ranges::transform(result, result.begin(),
+                           [](unsigned char c) { return std::tolower(c); });
     return result;
 }
 
@@ -59,10 +59,12 @@ wrapped in the previous one.
 
     // Drop trailing whitespace by reversing, dropping, then reversing back
     auto back_trimmed =
+        // clang-format off
         trimmed 
         | std::views::reverse 
         | std::views::drop_while(is_space) 
         | std::views::reverse;
+    // clang-format on
 
     // Transform to lower case and collect into a string
     return back_trimmed | std::views::transform([](unsigned char c) {
@@ -73,8 +75,10 @@ wrapped in the previous one.
 
 // Test all three variants
 void expect_all_variants(std::string_view input, const std::string& expected) {
-    EXPECT_EQ(trim_and_lower_old(input), expected) << "trim_and_lower_old failed";
-    EXPECT_EQ(trim_and_lower_modern(input), expected) << "trim_and_lower_modern failed";
+    EXPECT_EQ(trim_and_lower_old(input), expected)
+        << "trim_and_lower_old failed";
+    EXPECT_EQ(trim_and_lower_modern(input), expected)
+        << "trim_and_lower_modern failed";
     EXPECT_EQ(trim_and_lower(input) | std::ranges::to<std::string>(), expected)
         << "trim_and_lower failed";
 }

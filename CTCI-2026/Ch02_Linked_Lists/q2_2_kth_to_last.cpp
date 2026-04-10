@@ -40,7 +40,7 @@ const Node* kth_to_last(const Node* head, size_t k) noexcept {
 TEST(test_limits, k_greater_than_length) {
     auto list = create_linked_list({1, 2, 3});
     auto node = kth_to_last(list.get(), 4); // k is larger than the list
-    EXPECT_EQ(node, nullptr);               // Or however you chose to handle errors
+    EXPECT_EQ(node, nullptr); // Or however you chose to handle errors
 }
 
 TEST(test_limits, empty_list) {

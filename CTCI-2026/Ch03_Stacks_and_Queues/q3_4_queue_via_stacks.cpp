@@ -14,8 +14,8 @@ Modern C++ best practices:
 - Use std::span for input parameters to allow flexible array-like inputs.
 - Use std::move and perfect forwarding for efficient value handling.
 - Use pipelining, views and ranges for string processing to improve readability
-and maintainability. 
-    * see trim_and_lower 
+and maintainability.
+    * see trim_and_lower
     * instantiate with std::string_view for zero-copy processing.
 */
 
@@ -55,7 +55,8 @@ class Queue {
     }
 
     // no [[nodiscard]]: caller may ignore result for fire-and-forget dequeues
-    std::expected<T, QueueError> dequeue() noexcept(std::is_nothrow_move_constructible_v<T>) {
+    std::expected<T, QueueError>
+    dequeue() noexcept(std::is_nothrow_move_constructible_v<T>) {
         transfer();
         if (stack_out.empty()) return std::unexpected(QueueError::Empty);
         auto value = std::move(stack_out.top());
@@ -65,8 +66,8 @@ class Queue {
 
     // const method: mutable stacks allow lazy transfer without const_cast
     // (logical const)
-    [[nodiscard]] std::expected<T, QueueError>
-    peek() const noexcept(std::is_nothrow_move_constructible_v<T>) {
+    [[nodiscard]] std::expected<T, QueueError> peek() const
+        noexcept(std::is_nothrow_move_constructible_v<T>) {
         transfer();
         if (stack_out.empty()) return std::unexpected(QueueError::Empty);
         return stack_out.top();
@@ -94,8 +95,8 @@ auto process(std::span<const std::string> queries, std::span<const int> values)
     std::vector<int> result;
     result.reserve(queries.size());
 
-    // const auto& can fail on temporary objects returned by modern views; auto&&
-    // never does.
+    // const auto& can fail on temporary objects returned by modern views;
+    // auto&& never does.
     for (auto&& [query_str, value] : std::views::zip(queries, values)) {
         auto query = trim_and_lower(query_str);
 
@@ -194,9 +195,9 @@ TEST(QueueFromStacks, PeekOperation) {
 }
 
 TEST(QueueFromStacks, ComplexSequence) {
-    std::vector<std::string> queries = {
-        "enqueue", "enqueue", "enqueue", "dequeue", "dequeue",
-        "enqueue", "peek",    "size",    "dequeue"};
+    std::vector<std::string> queries = {"enqueue", "enqueue", "enqueue",
+                                        "dequeue", "dequeue", "enqueue",
+                                        "peek",    "size",    "dequeue"};
     std::vector<int> values = {1, 2, 3, 0, 0, 4, 0, 0, 0};
     auto result = process(queries, values);
     // First dequeue: 1, Second dequeue: 2
@@ -206,7 +207,8 @@ TEST(QueueFromStacks, ComplexSequence) {
 }
 
 TEST(QueueFromStacks, CaseInsensitiveOperations) {
-    std::vector<std::string> queries = {"ENQUEUE", "ENQUEUE", "Dequeue", "PEEK"};
+    std::vector<std::string> queries = {"ENQUEUE", "ENQUEUE", "Dequeue",
+                                        "PEEK"};
     std::vector<int> values = {42, 99, 0, 0};
     auto result = process(queries, values);
     ASSERT_EQ(result.size(), 2);
@@ -215,7 +217,8 @@ TEST(QueueFromStacks, CaseInsensitiveOperations) {
 }
 
 TEST(QueueFromStacks, AlternatingOperations) {
-    std::vector<std::string> queries = {"enqueue", "peek", "size", "dequeue", "size"};
+    std::vector<std::string> queries = {"enqueue", "peek", "size", "dequeue",
+                                        "size"};
     std::vector<int> values = {10, 0, 0, 0, 0};
     auto result = process(queries, values);
     std::vector<int> expected = {10, 1, 10, 0};

@@ -12,7 +12,8 @@ Constraints:
 
 // https://gemini.google.com version
 template <std::ranges::random_access_range R>
-auto merge_intervals(R& intervals) -> std::vector<std::ranges::range_value_t<R>> {
+auto merge_intervals(R& intervals)
+    -> std::vector<std::ranges::range_value_t<R>> {
     using Interval = std::ranges::range_value_t<R>;
 
     if (std::ranges::empty(intervals)) return {};
@@ -43,7 +44,8 @@ auto merge_intervals(R& intervals) -> std::vector<std::ranges::range_value_t<R>>
 
 // also see merge_intervals_2 comment
 template <std::ranges::random_access_range R>
-auto merge_intervals_3(R& intervals) -> std::vector<std::ranges::range_value_t<R>> {
+auto merge_intervals_3(R& intervals)
+    -> std::vector<std::ranges::range_value_t<R>> {
     if (std::ranges::empty(intervals)) return {};
 
     // std::pair already has an operator< that performs exactly that
@@ -73,7 +75,8 @@ auto merge_intervals_3(R& intervals) -> std::vector<std::ranges::range_value_t<R
 template <std::ranges::random_access_range R>
 // Here, using auto ... -> is a stylistic choice that signals: "I am writing
 // modern, template-heavy C++."
-auto merge_intervals_2(R& intervals) -> std::vector<std::ranges::range_value_t<R>> {
+auto merge_intervals_2(R& intervals)
+    -> std::vector<std::ranges::range_value_t<R>> {
     if (std::ranges::empty(intervals)) return {};
 
     // Since C++17, lambdas are implicitly constexpr if they satisfy the
@@ -105,15 +108,15 @@ auto merge_intervals_2(R& intervals) -> std::vector<std::ranges::range_value_t<R
 using Intervals = std::vector<std::pair<size_t, size_t>>;
 
 Intervals merge_intervals_1(Intervals& intervals) {
-    if (intervals.empty())
-        return {};
+    if (intervals.empty()) return {};
 
-    std::sort(intervals.begin(), intervals.end(), [](const auto& a, const auto& b) {
-        if (a.first == b.first) {
-            return a.second < b.second;
-        }
-        return a.first < b.first;
-    });
+    std::sort(intervals.begin(), intervals.end(),
+              [](const auto& a, const auto& b) {
+                  if (a.first == b.first) {
+                      return a.second < b.second;
+                  }
+                  return a.first < b.first;
+              });
 
     Intervals merged;
     auto current = intervals.begin();

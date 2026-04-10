@@ -63,7 +63,8 @@ int countBoundedPairs_1(const std::vector<int>& prices, int budget) {
     return count;
 }
 
-static void expect_bounded_pairs(const std::vector<int>& prices, int budget, int expected) {
+static void expect_bounded_pairs(const std::vector<int>& prices, int budget,
+                                 int expected) {
     EXPECT_EQ(countBoundedPairs_1(prices, budget), expected);
     EXPECT_EQ(countBoundedPairs_2(prices, budget), expected);
     EXPECT_EQ(countBoundedPairs(prices, budget), expected);

@@ -1,11 +1,14 @@
 ---
 BasedOnStyle: LLVM
 IndentWidth: 4
-ColumnLimit: 100
+ColumnLimit: 80
 
-AlwaysBreakTemplateDeclarations: Yes
+AllowAllArgumentsOnNextLine: false
+AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AlwaysBreakTemplateDeclarations: Yes
+BinPackArguments: true
 PointerAlignment: Left
 
 # Optional: keep braces on the same line for classes/functions
