@@ -2,20 +2,21 @@
 Queue from Two Stacks
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/queue-from-two-stacks
 
-To achieve amortized O(1), you must keep the elements in the second stack until they
-are actually needed or the stack is empty.
+To achieve amortized O(1), you must keep the elements in the second stack until
+they are actually needed or the stack is empty.
 
 Complexity: O(1) amortized Time (all operations) | O(n) Space
 Tags: #queue #stack #amortized
-Compliance: ruff & pylint clean.
+Style: clang-format clean. (ninja format)
 
 Modern C++ best practices:
 - Use std::expected for operations that may fail (e.g., dequeue on empty queue).
 - Use std::span for input parameters to allow flexible array-like inputs.
 - Use std::move and perfect forwarding for efficient value handling.
-- Use pipelining and ranges for string processing to improve readability and maintainability.
-    see trim_and_lower
-    instantiate with std::string_view for zero-copy processing.
+- Use pipelining, views and ranges for string processing to improve readability
+and maintainability. 
+    * see trim_and_lower 
+    * instantiate with std::string_view for zero-copy processing.
 */
 
 #include <cassert>
@@ -34,9 +35,9 @@ Modern C++ best practices:
 
 template <std::move_constructible T>
 class Queue {
-public:
+  public:
     enum class QueueError {
-        Empty,  // empty queue on peek/dequeue
+        Empty, // empty queue on peek/dequeue
     };
 
     void enqueue(T value) {
@@ -62,15 +63,17 @@ public:
         return value;
     }
 
-    // const method with mutable cache: internal transfer() is hidden from API
-    [[nodiscard]] std::expected<T, QueueError> peek() const noexcept(std::is_nothrow_move_constructible_v<T>) {
-        const_cast<Queue*>(this)->transfer();
+    // const method: mutable stacks allow lazy transfer without const_cast
+    // (logical const)
+    [[nodiscard]] std::expected<T, QueueError>
+    peek() const noexcept(std::is_nothrow_move_constructible_v<T>) {
+        transfer();
         if (stack_out.empty()) return std::unexpected(QueueError::Empty);
         return stack_out.top();
     }
 
-private:
-    void transfer() noexcept(std::is_nothrow_move_constructible_v<T>) {
+  private:
+    void transfer() const noexcept(std::is_nothrow_move_constructible_v<T>) {
         if (!stack_out.empty()) return;
         while (!stack_in.empty()) {
             stack_out.push(std::move(stack_in.top()));
@@ -78,28 +81,26 @@ private:
         }
     }
 
-private:
-    std::stack<T> stack_in;
-    std::stack<T> stack_out;
+  private:
+    mutable std::stack<T> stack_in;
+    mutable std::stack<T> stack_out;
 };
 
-
-auto process(std::span<const std::string> queries, 
-             std::span<const int> values) -> std::vector<int> {
+auto process(std::span<const std::string> queries, std::span<const int> values)
+    -> std::vector<int> {
     assert(queries.size() == values.size());
-    if (queries.empty()) {
-        return {};
-    }
 
     auto queue = Queue<int>{};
     std::vector<int> result;
     result.reserve(queries.size());
 
-    for (size_t i = 0; i < queries.size(); ++i) {
-        auto query = trim_and_lower(queries[i]);
+    // const auto& can fail on temporary objects returned by modern views; auto&&
+    // never does.
+    for (auto&& [query_str, value] : std::views::zip(queries, values)) {
+        auto query = trim_and_lower(query_str);
 
         if (view_eq(query, "enqueue")) {
-            queue.enqueue(values[i]);
+            queue.enqueue(value);
         } else if (view_eq(query, "dequeue")) {
             // safe to dereference: crashes allowed for invalid ops
             result.push_back(*queue.dequeue());
@@ -109,7 +110,7 @@ auto process(std::span<const std::string> queries,
         } else if (view_eq(query, "size")) {
             result.push_back(static_cast<int>(queue.size()));
         } else {
-            throw std::invalid_argument("Invalid query: " + queries[i]);
+            throw std::invalid_argument("Invalid query: " + query_str);
         }
     }
 
@@ -143,7 +144,7 @@ TEST(Queue, PeekReturnsValueWithoutRemoving) {
     q.enqueue(42);
     ASSERT_TRUE(q.peek().has_value());
     EXPECT_EQ(*q.peek(), 42);
-    EXPECT_EQ(q.size(), 1);  // still in queue
+    EXPECT_EQ(q.size(), 1); // still in queue
 }
 
 TEST(Queue, DequeueUntilEmptyThenError) {
@@ -195,8 +196,7 @@ TEST(QueueFromStacks, PeekOperation) {
 TEST(QueueFromStacks, ComplexSequence) {
     std::vector<std::string> queries = {
         "enqueue", "enqueue", "enqueue", "dequeue", "dequeue",
-        "enqueue", "peek", "size", "dequeue"
-    };
+        "enqueue", "peek",    "size",    "dequeue"};
     std::vector<int> values = {1, 2, 3, 0, 0, 4, 0, 0, 0};
     auto result = process(queries, values);
     // First dequeue: 1, Second dequeue: 2
@@ -215,9 +215,7 @@ TEST(QueueFromStacks, CaseInsensitiveOperations) {
 }
 
 TEST(QueueFromStacks, AlternatingOperations) {
-    std::vector<std::string> queries = {
-        "enqueue", "peek", "size", "dequeue", "size"
-    };
+    std::vector<std::string> queries = {"enqueue", "peek", "size", "dequeue", "size"};
     std::vector<int> values = {10, 0, 0, 0, 0};
     auto result = process(queries, values);
     std::vector<int> expected = {10, 1, 10, 0};
@@ -233,9 +231,8 @@ TEST(QueueFromStacks, MultiplePeeksSameElement) {
 }
 
 TEST(QueueFromStacks, FIFOOrder) {
-    std::vector<std::string> queries = {
-        "enqueue", "enqueue", "enqueue", "dequeue", "dequeue", "dequeue"
-    };
+    std::vector<std::string> queries = {"enqueue", "enqueue", "enqueue",
+                                        "dequeue", "dequeue", "dequeue"};
     std::vector<int> values = {1, 2, 3, 0, 0, 0};
     auto result = process(queries, values);
     std::vector<int> expected = {1, 2, 3};
