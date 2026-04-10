@@ -20,10 +20,10 @@ int countBoundedPairs(const std::vector<int>& prices, int budget) {
 
     while (left < right) {
         if (*left + *right <= budget) {
-            // If (left + right) works, then left + every element 
+            // If (left + right) works, then left + every element
             // between left and right also works.
             count += std::distance(left, right);
-            ++left; 
+            ++left;
         } else {
             // Sum too high, make the right side smaller
             --right;
@@ -35,16 +35,16 @@ int countBoundedPairs(const std::vector<int>& prices, int budget) {
 // O(N): two pointer technique
 int countBoundedPairs_2(const std::vector<int>& prices, int budget) {
     if (prices.empty()) return 0;
-    
+
     auto count = std::size_t{0};
     auto end = std::prev(prices.end());
     for (auto begin = prices.begin(); begin != end; ++begin) {
-        for (;end != begin;--end)
+        for (; end != begin; --end)
             if (*end + *begin <= budget) break;
         if (end == begin) break;
-        //auto step = std::distance(begin, end);
-        //std::cout << "distance: " << step << std::endl;
-        //count += step;
+        // auto step = std::distance(begin, end);
+        // std::cout << "distance: " << step << std::endl;
+        // count += step;
         count += std::distance(begin, end);
     }
     return static_cast<int>(count);
@@ -63,11 +63,7 @@ int countBoundedPairs_1(const std::vector<int>& prices, int budget) {
     return count;
 }
 
-static void expect_bounded_pairs(
-    const std::vector<int>& prices,
-    int budget,
-    int expected)
-{
+static void expect_bounded_pairs(const std::vector<int>& prices, int budget, int expected) {
     EXPECT_EQ(countBoundedPairs_1(prices, budget), expected);
     EXPECT_EQ(countBoundedPairs_2(prices, budget), expected);
     EXPECT_EQ(countBoundedPairs(prices, budget), expected);
@@ -104,12 +100,12 @@ TEST(CountBoundedPairs, LargeBudgetAllPairs) {
 // https://gemini.google.com
 TEST(CountBoundedPairs, StandardCases) {
     // Basic overlap
-    expect_bounded_pairs({1, 2, 3, 4, 5}, 6, 6); 
+    expect_bounded_pairs({1, 2, 3, 4, 5}, 6, 6);
     // Pairs: (1,2), (1,3), (1,4), (1,5), (2,3), (2,4)
-    
+
     // Nothing fits
     expect_bounded_pairs({10, 20, 30}, 5, 0);
-    
+
     // Everything fits
     expect_bounded_pairs({1, 2, 3}, 10, 3);
 }
@@ -120,8 +116,7 @@ TEST(CountBoundedPairs, BoundaryConditions) {
     expect_bounded_pairs({}, 10, 0);
     expect_bounded_pairs({5}, 10, 0);
     expect_bounded_pairs({5, 5}, 10, 1);
-    
+
     // Large values
     expect_bounded_pairs({1, 100, 100, 100}, 101, 3);
 }
-

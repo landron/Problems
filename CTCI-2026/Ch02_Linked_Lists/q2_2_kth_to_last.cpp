@@ -2,10 +2,10 @@
 
 #include "../common/linked_list_utils.hpp"
 
-/** Returns the kth to last node in a singly linked list. 
- * 
+/** Returns the kth to last node in a singly linked list.
+ *
  * Single-pass two-pointer approach is optimal: O(n) time, O(1) extra space.
-*/
+ */
 template <typename NodePtr>
 [[nodiscard]] NodePtr kth_to_last_impl(NodePtr head, size_t k) noexcept {
     if (!head) return nullptr;
@@ -40,7 +40,7 @@ const Node* kth_to_last(const Node* head, size_t k) noexcept {
 TEST(test_limits, k_greater_than_length) {
     auto list = create_linked_list({1, 2, 3});
     auto node = kth_to_last(list.get(), 4); // k is larger than the list
-    EXPECT_EQ(node, nullptr); // Or however you chose to handle errors
+    EXPECT_EQ(node, nullptr);               // Or however you chose to handle errors
 }
 
 TEST(test_limits, empty_list) {
@@ -70,11 +70,11 @@ TEST(test_overloads, const_and_non_const) {
 
 TEST(test_limits, boundaries) {
     auto list = create_linked_list({10, 20, 30, 40});
-    
+
     // k = 1: The tail
     auto tail = kth_to_last(list.get(), 1);
     EXPECT_EQ(tail->data, 40);
-    
+
     // k = length: The head
     auto head = kth_to_last(list.get(), 4);
     EXPECT_EQ(head->data, 10);

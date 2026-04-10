@@ -1,4 +1,4 @@
-/* 
+/*
 Constraints:
     Intervals are not necessarily sorted by start time.
     Time complexity goal: O(nlogn).
@@ -11,10 +11,10 @@ Constraints:
 #include <gtest/gtest.h>
 
 // https://gemini.google.com version
-template<std::ranges::random_access_range R>
+template <std::ranges::random_access_range R>
 auto merge_intervals(R& intervals) -> std::vector<std::ranges::range_value_t<R>> {
     using Interval = std::ranges::range_value_t<R>;
-    
+
     if (std::ranges::empty(intervals)) return {};
 
     // 1. Sort in-place (O(n log n))
@@ -23,12 +23,12 @@ auto merge_intervals(R& intervals) -> std::vector<std::ranges::range_value_t<R>>
     // 2. Single-pass merge (O(n))
     std::vector<Interval> merged;
     merged.reserve(intervals.size()); // Optimization: avoid reallocations
-    
+
     merged.push_back(intervals[0]);
 
     for (const auto& current : intervals | std::views::drop(1)) {
         auto& last = merged.back();
-        
+
         if (current.first <= last.second) {
             // There is an overlap, extend the boundary
             last.second = std::max(last.second, current.second);
@@ -42,13 +42,12 @@ auto merge_intervals(R& intervals) -> std::vector<std::ranges::range_value_t<R>>
 }
 
 // also see merge_intervals_2 comment
-template<std::ranges::random_access_range R>
+template <std::ranges::random_access_range R>
 auto merge_intervals_3(R& intervals) -> std::vector<std::ranges::range_value_t<R>> {
-    if (std::ranges::empty(intervals))
-        return {};
+    if (std::ranges::empty(intervals)) return {};
 
-    // std::pair already has an operator< that performs exactly that "lexicographical" comparison 
-    // (compare first, then second).
+    // std::pair already has an operator< that performs exactly that
+    // "lexicographical" comparison (compare first, then second).
     std::ranges::sort(intervals);
 
     auto merger = [](const R& intervals) {
@@ -71,14 +70,15 @@ auto merge_intervals_3(R& intervals) -> std::vector<std::ranges::range_value_t<R
     return merger(intervals);
 }
 
-template<std::ranges::random_access_range R>
-// Here, using auto ... -> is a stylistic choice that signals: "I am writing modern, template-heavy C++."
+template <std::ranges::random_access_range R>
+// Here, using auto ... -> is a stylistic choice that signals: "I am writing
+// modern, template-heavy C++."
 auto merge_intervals_2(R& intervals) -> std::vector<std::ranges::range_value_t<R>> {
-    if (std::ranges::empty(intervals))
-        return {};
+    if (std::ranges::empty(intervals)) return {};
 
-    // Since C++17, lambdas are implicitly constexpr if they satisfy the requirements 
-    // (i.e., they don't do anything illegal in a constant expression).
+    // Since C++17, lambdas are implicitly constexpr if they satisfy the
+    // requirements (i.e., they don't do anything illegal in a constant
+    // expression).
     std::ranges::sort(intervals, [](auto const& a, auto const& b) constexpr {
         return a.first < b.first || (a.first == b.first && a.second < b.second);
     });
@@ -132,7 +132,7 @@ Intervals merge_intervals_1(Intervals& intervals) {
 
 TEST(test_merge_intervals, sample_overlapping_intervals) {
     const auto intervals = Intervals{{1, 3}, {2, 6}, {8, 10}, {15, 18}};
-    const auto expected  = Intervals{{1, 6}, {8, 10}, {15, 18}};
+    const auto expected = Intervals{{1, 6}, {8, 10}, {15, 18}};
 
     auto run_test = [&](auto&& func) {
         auto copy = intervals;

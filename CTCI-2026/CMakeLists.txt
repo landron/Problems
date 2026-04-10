@@ -37,3 +37,18 @@ endif()
 
 find_package(GTest MODULE REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE GTest::GTest GTest::Main)
+
+find_program(CLANG_FORMAT "clang-format")
+
+if(CLANG_FORMAT)
+    # Get all project source files
+    file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.h *.hpp *.cc)
+
+    add_custom_target(format
+        # -style=file:${CMAKE_SOURCE_DIR}/.clang-format
+        COMMAND ${CLANG_FORMAT} -i ${ALL_SOURCE_FILES}
+        COMMENT "Formatting code with clang-format"
+    )
+else()
+    message(WARNING "clang-format not found. 'format' target will not be available.")
+endif()

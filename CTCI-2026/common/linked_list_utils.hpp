@@ -1,9 +1,10 @@
 #pragma once
 
 /*
-The Risk: If the list is extremely long (e.g., 1 million nodes), the "chain reaction" of destructors 
-happens on the stack. This can cause a Stack Overflow during the deletion process.
-*/ 
+The Risk: If the list is extremely long (e.g., 1 million nodes), the "chain
+reaction" of destructors happens on the stack. This can cause a Stack Overflow
+during the deletion process.
+*/
 struct Node {
     int data;
     std::unique_ptr<Node> next;
