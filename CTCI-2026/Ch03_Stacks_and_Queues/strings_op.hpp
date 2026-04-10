@@ -10,7 +10,8 @@
 
 namespace {
 
-[[nodiscard]] auto trim_and_lower(std::string_view str) -> std::string {
+// This returns a view pipeline. No string is allocated.
+[[nodiscard]] auto trim_and_lower(std::string_view str) {
     auto is_space = [](unsigned char c) { return std::isspace(c); };
 
     return str 
@@ -20,8 +21,12 @@ namespace {
          | std::views::reverse                            // Flip back
          | std::views::transform([](unsigned char c) {    // Lowercase
                return static_cast<char>(std::tolower(c)); 
-           })
-         | std::ranges::to<std::string>();                // Collect
+           });
+}
+
+// Helper to compare a view to a string literal
+bool view_eq(auto&& view, std::string_view target) {
+    return std::ranges::equal(view, target);
 }
 
 
@@ -68,7 +73,7 @@ wrapped in the previous one.
 void expect_all_variants(std::string_view input, const std::string& expected) {
     EXPECT_EQ(trim_and_lower_old(input), expected) << "trim_and_lower_old failed";
     EXPECT_EQ(trim_and_lower_modern(input), expected) << "trim_and_lower_modern failed";
-    EXPECT_EQ(trim_and_lower(input), expected) << "trim_and_lower failed";
+    EXPECT_EQ(trim_and_lower(input) | std::ranges::to<std::string>(), expected) << "trim_and_lower failed";
 }
 
 }  // anonymous namespace

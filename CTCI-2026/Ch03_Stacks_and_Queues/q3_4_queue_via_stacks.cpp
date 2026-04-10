@@ -10,24 +10,22 @@ Tags: #queue #stack #amortized
 Compliance: ruff & pylint clean.
 
 Modern C++ best practices:
-- Use std::optional for operations that may fail (e.g., dequeue on empty queue).
+- Use std::expected for operations that may fail (e.g., dequeue on empty queue).
 - Use std::span for input parameters to allow flexible array-like inputs.
 - Use std::move and perfect forwarding for efficient value handling.
 - Use pipelining and ranges for string processing to improve readability and maintainability.
     see trim_and_lower
+    instantiate with std::string_view for zero-copy processing.
 */
 
-#include <algorithm>
 #include <cassert>
-#include <cctype>
 #include <concepts>
-#include <cstdlib>
-#include <iostream>
-#include <optional>
+#include <expected>
 #include <span>
 #include <stack>
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -37,6 +35,10 @@ Modern C++ best practices:
 template <std::move_constructible T>
 class Queue {
 public:
+    enum class QueueError {
+        Empty,  // empty queue on peek/dequeue
+    };
+
     void enqueue(T value) {
         stack_in.push(std::move(value));
     }
@@ -51,19 +53,19 @@ public:
         return stack_in.size() + stack_out.size();
     }
 
-    // returns std::optional: caller may ignore result for fire-and-forget dequeues
-    std::optional<T> dequeue() noexcept(std::is_nothrow_move_constructible_v<T>) {
+    // no [[nodiscard]]: caller may ignore result for fire-and-forget dequeues
+    std::expected<T, QueueError> dequeue() noexcept(std::is_nothrow_move_constructible_v<T>) {
         transfer();
-        if (stack_out.empty()) return std::nullopt;
+        if (stack_out.empty()) return std::unexpected(QueueError::Empty);
         auto value = std::move(stack_out.top());
         stack_out.pop();
         return value;
     }
 
     // const method with mutable cache: internal transfer() is hidden from API
-    [[nodiscard]] std::optional<T> peek() const noexcept(std::is_nothrow_move_constructible_v<T>) {
+    [[nodiscard]] std::expected<T, QueueError> peek() const noexcept(std::is_nothrow_move_constructible_v<T>) {
         const_cast<Queue*>(this)->transfer();
-        if (stack_out.empty()) return std::nullopt;
+        if (stack_out.empty()) return std::unexpected(QueueError::Empty);
         return stack_out.top();
     }
 
@@ -94,17 +96,17 @@ auto process(std::span<const std::string> queries,
     result.reserve(queries.size());
 
     for (size_t i = 0; i < queries.size(); ++i) {
-        const auto query = trim_and_lower(queries[i]);
+        auto query = trim_and_lower(queries[i]);
 
-        if (query == "enqueue") {
+        if (view_eq(query, "enqueue")) {
             queue.enqueue(values[i]);
-        } else if (query == "dequeue") {
+        } else if (view_eq(query, "dequeue")) {
             // safe to dereference: crashes allowed for invalid ops
             result.push_back(*queue.dequeue());
-        } else if (query == "peek") {
+        } else if (view_eq(query, "peek")) {
             // safe to dereference: crashes allowed for invalid ops
             result.push_back(*queue.peek());
-        } else if (query == "size") {
+        } else if (view_eq(query, "size")) {
             result.push_back(static_cast<int>(queue.size()));
         } else {
             throw std::invalid_argument("Invalid query: " + queries[i]);
@@ -112,6 +114,47 @@ auto process(std::span<const std::string> queries,
     }
 
     return result;
+}
+
+TEST(Queue, DequeueEmptyReturnsError) {
+    Queue<int> q;
+    auto result = q.dequeue();
+    ASSERT_FALSE(result.has_value());
+    EXPECT_EQ(result.error(), Queue<int>::QueueError::Empty);
+}
+
+TEST(Queue, PeekEmptyReturnsError) {
+    Queue<int> q;
+    auto result = q.peek();
+    ASSERT_FALSE(result.has_value());
+    EXPECT_EQ(result.error(), Queue<int>::QueueError::Empty);
+}
+
+TEST(Queue, DequeueReturnsValue) {
+    Queue<int> q;
+    q.enqueue(42);
+    auto result = q.dequeue();
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(*result, 42);
+}
+
+TEST(Queue, PeekReturnsValueWithoutRemoving) {
+    Queue<int> q;
+    q.enqueue(42);
+    ASSERT_TRUE(q.peek().has_value());
+    EXPECT_EQ(*q.peek(), 42);
+    EXPECT_EQ(q.size(), 1);  // still in queue
+}
+
+TEST(Queue, DequeueUntilEmptyThenError) {
+    Queue<int> q;
+    q.enqueue(1);
+    q.enqueue(2);
+    EXPECT_TRUE(q.dequeue().has_value());
+    EXPECT_TRUE(q.dequeue().has_value());
+    auto result = q.dequeue();
+    ASSERT_FALSE(result.has_value());
+    EXPECT_EQ(result.error(), Queue<int>::QueueError::Empty);
 }
 
 TEST(QueueFromStacks, EmptyOperations) {
