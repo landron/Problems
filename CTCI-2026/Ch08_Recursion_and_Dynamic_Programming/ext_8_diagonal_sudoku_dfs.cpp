@@ -8,6 +8,56 @@ Solve Diagonal Sudoku with 3x3 Blocks using iterative DFS.
 
 #include <gtest/gtest.h>
 
+#include "ext_8_diagonal_sudoku.h"
+
+namespace {
+
+auto is_valid(const Grid& grid, unsigned row, unsigned col, unsigned num)
+    -> bool {
+    assert(row < 9 && col < 9 && num > 0 && num < 10);
+
+    for (size_t i = 0; i < 9; ++i) {
+        if ((i != col && grid[row][i] == num) ||
+            (i != row && grid[i][col] == num))
+            return false;
+    }
+
+    for (size_t i = 0; i < 3; ++i) {
+        for (size_t j = 0; j < 3; ++j) {
+            if (i == row % 3 && j == col % 3) continue;
+            if (grid[row - row % 3 + i][col - col % 3 + j] == num) return false;
+        }
+    }
+
+    if (row == col) {
+        for (size_t i = 0; i < 9; ++i) {
+            if (i == row) continue;
+            if (grid[i][i] == num) return false;
+        }
+    }
+
+    if (row + col == 8) {
+        for (size_t i = 0; i < 9; ++i) {
+            if (i == row && (8 - i) == col) continue;
+            if (grid[i][8 - i] == num) return false;
+        }
+    }
+
+    return true;
+}
+
+auto is_valid_solution(const Grid& grid) -> bool {
+    for (unsigned row = 0; row < 9; ++row) {
+        for (unsigned col = 0; col < 9; ++col) {
+            auto num = grid[row][col];
+            if (num != 0 && !is_valid(grid, row, col, num)) return false;
+        }
+    }
+    return true;
+}
+
+} // namespace
+
 namespace diagonal_sudoku_dfs {
 
 // Iterative DFS/backtracking: place a value, move to the next empty cell,
@@ -73,58 +123,9 @@ auto solve(const Grid& board) -> Grid {
 
 } // namespace diagonal_sudoku_dfs
 
-namespace {
-
-using Grid = std::vector<std::vector<unsigned>>;
-
-auto is_valid(const Grid& grid, unsigned row, unsigned col, unsigned num)
-    -> bool {
-    assert(row < 9 && col < 9 && num > 0 && num < 10);
-
-    for (size_t i = 0; i < 9; ++i) {
-        if ((i != col && grid[row][i] == num) ||
-            (i != row && grid[i][col] == num))
-            return false;
-    }
-
-    for (size_t i = 0; i < 3; ++i) {
-        for (size_t j = 0; j < 3; ++j) {
-            if (i == row % 3 && j == col % 3) continue;
-            if (grid[row - row % 3 + i][col - col % 3 + j] == num) return false;
-        }
-    }
-
-    if (row == col) {
-        for (size_t i = 0; i < 9; ++i) {
-            if (i == row) continue;
-            if (grid[i][i] == num) return false;
-        }
-    }
-
-    if (row + col == 8) {
-        for (size_t i = 0; i < 9; ++i) {
-            if (i == row && (8 - i) == col) continue;
-            if (grid[i][8 - i] == num) return false;
-        }
-    }
-
-    return true;
-}
-
-auto is_valid_solution(const Grid& grid) -> bool {
-    for (unsigned row = 0; row < 9; ++row) {
-        for (unsigned col = 0; col < 9; ++col) {
-            auto num = grid[row][col];
-            if (num != 0 && !is_valid(grid, row, col, num)) return false;
-        }
-    }
-    return true;
-}
-
-} // namespace
-
 // clang-format off
 
+// Tests for diagonal_sudoku_dfs::solve
 #define DFS_SOLVED_GRID \
     {1, 2, 3, 4, 5, 6, 7, 8, 9}, \
     {4, 5, 6, 7, 8, 9, 1, 2, 3}, \

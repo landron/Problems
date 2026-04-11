@@ -3,8 +3,8 @@ Solve Diagonal Sudoku with 3x3 Blocks
 Given a 9x9 grid with empty cells marked as 0, fill the grid so that each row,
 column, 3x3 block, and both main diagonals contain numbers 1 to 9 exactly once.
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/solve-diagonal-sudoku-3x3-blocks
-    Hackerrank tests are poorly written: if invalid input, just return the input!
-    So return board; instead of return {};
+    Hackerrank tests are poorly written: if invalid input, just return the
+input! So return board; instead of return {};
 */
 
 #include <optional>
@@ -15,7 +15,7 @@ https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/solve-
 
 #include <gtest/gtest.h>
 
-using Grid = std::vector<std::vector<unsigned>>;
+#include "ext_8_diagonal_sudoku.h"
 
 enum class Validity : unsigned {
     Valid = 0,
@@ -201,6 +201,8 @@ TEST(SolveDiagonalSudoku, CompletedGrid) {
     Grid input    = {SOLVED_GRID};
     Grid expected = {SOLVED_GRID};
     EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+    // Also test iterative DFS variant
+    EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 TEST(SolveDiagonalSudoku, AlmostCompletedGrid) {
@@ -216,6 +218,8 @@ TEST(SolveDiagonalSudoku, AlmostCompletedGrid) {
 
     Grid expected = {SOLVED_GRID};
     EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+    // Also test iterative DFS variant
+    EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 TEST(SolveDiagonalSudoku, EmptyCellAtTopLeft) {
@@ -231,6 +235,8 @@ TEST(SolveDiagonalSudoku, EmptyCellAtTopLeft) {
 
     Grid expected = {SOLVED_GRID};
     EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+    // Also test iterative DFS variant
+    EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 TEST(SolveDiagonalSudoku, EmptyCellAtCenter) {
@@ -247,6 +253,8 @@ TEST(SolveDiagonalSudoku, EmptyCellAtCenter) {
 
     Grid expected = {SOLVED_GRID};
     EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+    // Also test iterative DFS variant
+    EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 TEST(SolveDiagonalSudoku, EmptyCellAtTopRight) {
@@ -263,6 +271,8 @@ TEST(SolveDiagonalSudoku, EmptyCellAtTopRight) {
 
     Grid expected = {SOLVED_GRID};
     EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+    // Also test iterative DFS variant
+    EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 TEST(SolveDiagonalSudoku, TwoEmptyCells) {
@@ -278,6 +288,8 @@ TEST(SolveDiagonalSudoku, TwoEmptyCells) {
 
     Grid expected = {SOLVED_GRID};
     EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+    // Also test iterative DFS variant
+    EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 /*
@@ -315,6 +327,11 @@ TEST(SolveDiagonalSudoku, DISABLED_HardPuzzle) {
     EXPECT_EQ(result[1][2], 2);
     EXPECT_EQ(result[7][0], 6);
     EXPECT_EQ(result[8][5], 7);
+    
+    // Also test iterative DFS variant
+    auto result_dfs = diagonal_sudoku_dfs::solve(input);
+    auto valid_dfs = is_valid_diagonal_sudoku(result_dfs);
+    EXPECT_TRUE(std::get<3>(valid_dfs) == Validity::Valid);
 }
 
 // clang-format on
