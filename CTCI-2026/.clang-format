@@ -8,6 +8,7 @@ AllowShortBlocksOnASingleLine: Empty
 AllowShortFunctionsOnASingleLine: Empty
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
 AlwaysBreakTemplateDeclarations: Yes
+# needed for string arrays, but it packs everything
 BinPackArguments: true
 PointerAlignment: Left
 

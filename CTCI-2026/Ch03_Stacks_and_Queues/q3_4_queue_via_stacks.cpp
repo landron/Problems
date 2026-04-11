@@ -17,6 +17,7 @@ Modern C++ best practices:
 and maintainability.
     * see trim_and_lower
     * instantiate with std::string_view for zero-copy processing.
+#modern_cpp #cpp23
 */
 
 #include <cassert>
