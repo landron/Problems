@@ -26,7 +26,7 @@ add_executable(
 	Ch01_Arrays_Strings/q1_10_merge_intervals.cpp Ch01_Arrays_Strings/q1_11_bounded_pairs.cpp
     Ch02_Linked_Lists/q2_2_kth_to_last.cpp
 	Ch03_Stacks_and_Queues/q3_4_queue_via_stacks.cpp
-    Ch08_Recursion_and_Dynamic_Programming/ext_8_diagonal_sudoku.cpp
+    Ch08_Recursion_and_Dynamic_Programming/ext_8_diagonal_sudoku.cpp Ch08_Recursion_and_Dynamic_Programming/ext_8_diagonal_sudoku_dfs.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs
