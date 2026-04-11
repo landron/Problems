@@ -73,7 +73,7 @@ auto solve(const Grid& board) -> Grid {
     for (size_t row = 0; row < 9; ++row) {
         for (size_t col = 0; col < 9; ++col) {
             if (result[row][col] == 0) {
-                empty_cells.push_back({row, col});
+                empty_cells.emplace_back(row, col);
             }
         }
     }
@@ -145,28 +145,28 @@ TEST(SolveDiagonalSudokuDFS, CompletedGrid) {
 
 TEST(SolveDiagonalSudokuDFS, TwoEmptyCells) {
     Grid input = {{0, 2, 3, 4, 5, 6, 7, 8, 9},
-                                       {4, 5, 6, 7, 8, 9, 1, 2, 3},
-                                       {7, 8, 9, 1, 2, 3, 4, 5, 6},
-                                       {2, 1, 4, 3, 6, 5, 8, 9, 7},
-                                       {3, 6, 8, 9, 0, 2, 5, 1, 4},
-                                       {5, 9, 7, 8, 1, 4, 6, 3, 2},
-                                       {9, 4, 1, 6, 3, 8, 2, 7, 5},
-                                       {8, 3, 2, 5, 4, 7, 9, 6, 1},
-                                       {6, 7, 5, 2, 9, 1, 3, 4, 8}};
+                  {4, 5, 6, 7, 8, 9, 1, 2, 3},
+                  {7, 8, 9, 1, 2, 3, 4, 5, 6},
+                  {2, 1, 4, 3, 6, 5, 8, 9, 7},
+                  {3, 6, 8, 9, 0, 2, 5, 1, 4},
+                  {5, 9, 7, 8, 1, 4, 6, 3, 2},
+                  {9, 4, 1, 6, 3, 8, 2, 7, 5},
+                  {8, 3, 2, 5, 4, 7, 9, 6, 1},
+                  {6, 7, 5, 2, 9, 1, 3, 4, 8}};
     Grid expected = {DFS_SOLVED_GRID};
     EXPECT_EQ(diagonal_sudoku_dfs::solve(input), expected);
 }
 
 TEST(SolveDiagonalSudokuDFS, InvalidPuzzleReturnsEmpty) {
     Grid input = {{1, 1, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                       {0, 0, 0, 0, 0, 0, 0, 0, 0}};
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                  {0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
     EXPECT_TRUE(diagonal_sudoku_dfs::solve(input).empty());
 }

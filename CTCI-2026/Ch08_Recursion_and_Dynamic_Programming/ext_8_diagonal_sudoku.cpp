@@ -5,6 +5,22 @@ column, 3x3 block, and both main diagonals contain numbers 1 to 9 exactly once.
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/solve-diagonal-sudoku-3x3-blocks
     Hackerrank tests are poorly written: if invalid input, just return the
 input! So return board; instead of return {};
+
+Complexity: exponential O(9^k) Time worst case (k = empty cells) | O(k) Space
+for backtrack stack Tags: #backtracking #dfs #stack Style: clang-format clean.
+(ninja format)
+
+Modern C++ best practices:
+- Use std::optional for functions that may not return a value (e.g.,
+find_next_empty).
+- Use structured bindings for tuple/pair unpacking (C++17+).
+    * Note: structured bindings are const — use std::tie for re-assignment (see
+solve loop).
+- Use std::views and std::ranges::to for cleaner data transformations (C++23,
+see completeDiagonalSudokuGrid).
+- Use auto return type deduction to reduce verbosity (e.g., find_next_empty,
+is_valid).
+#modern_cpp #cpp23
 */
 
 #include <optional>
@@ -72,6 +88,8 @@ auto is_valid(const Grid& grid, unsigned row, unsigned col, unsigned num,
     return Validity::Valid;
 };
 
+// Precondition: board is a valid, partially filled Diagonal Sudoku grid
+// (no clue conflicts in rows, columns, 3x3 blocks, or diagonals).
 auto solve_diagonal_sudoku(const Grid& board) -> Grid {
     auto find_next_empty =
         [](const Grid& grid, size_t start_row,
@@ -115,12 +133,12 @@ auto solve_diagonal_sudoku(const Grid& board) -> Grid {
         }
 
         if (num == 10) {
-            // No valid number 1-9: backtrack
             if (backtrack.empty()) {
-                break; // No solution exists
+                break;
             }
             auto [prev_i, prev_j, prev_num] = backtrack.top();
-            result[prev_i][prev_j] = 0; // Clear cell for retry
+            // Clear cell for retry
+            result[prev_i][prev_j] = 0;
             current_search = backtrack.top();
             backtrack.pop();
         }
@@ -131,39 +149,23 @@ auto solve_diagonal_sudoku(const Grid& board) -> Grid {
 
 using GridHKR = std::vector<std::vector<int>>;
 GridHKR completeDiagonalSudokuGrid(const GridHKR& grid_in) {
-    Grid grid;
-    for (const auto& row : grid_in) {
-        std::vector<unsigned> new_row;
-        for (int cell : row) {
-            new_row.push_back(static_cast<unsigned>(cell));
-        }
-        grid.push_back(std::move(new_row));
-    }
+    auto grid = grid_in | std::views::transform([](const auto& row) {
+                    return row | std::views::transform([](int c) {
+                               return static_cast<unsigned>(c);
+                           }) |
+                           std::ranges::to<std::vector>();
+                }) |
+                std::ranges::to<std::vector>();
 
     auto solved = solve_diagonal_sudoku(grid);
-    if (0) {
-        if (solved.empty()) {
-            std::cout << "No solution exists for the given grid." << std::endl;
-            return {};
-        }
-        std::cout << "Solved grid:" << std::endl;
-        for (const auto& row : solved) {
-            for (auto cell : row) {
-                std::cout << cell << " ";
-            }
-            std::cout << std::endl;
-        }
-    }
 
-    GridHKR grid_out;
-    for (const auto& row : solved) {
-        std::vector<int> new_row;
-        for (unsigned cell : row) {
-            new_row.push_back(static_cast<int>(cell));
-        }
-        grid_out.push_back(std::move(new_row));
-    }
-    return grid_out;
+    return solved | std::views::transform([](const auto& row) {
+               return row | std::views::transform([](unsigned c) {
+                          return static_cast<int>(c);
+                      }) |
+                      std::ranges::to<std::vector>();
+           }) |
+           std::ranges::to<std::vector>();
 }
 
 auto is_valid_diagonal_sudoku(const Grid& grid, bool print_it = false)
@@ -332,6 +334,39 @@ TEST(SolveDiagonalSudoku, DISABLED_HardPuzzle) {
     auto result_dfs = diagonal_sudoku_dfs::solve(input);
     auto valid_dfs = is_valid_diagonal_sudoku(result_dfs);
     EXPECT_TRUE(std::get<3>(valid_dfs) == Validity::Valid);
+}
+
+// clang-format on
+
+// Tests for completeDiagonalSudokuGrid (Hackerrank adapter: GridHKR =
+// vector<vector<int>>)
+
+#define SOLVED_GRID_HKR                                                        \
+    {1, 2, 3, 4, 5, 6, 7, 8, 9}, {4, 5, 6, 7, 8, 9, 1, 2, 3},                  \
+        {7, 8, 9, 1, 2, 3, 4, 5, 6}, {2, 1, 4, 3, 6, 5, 8, 9, 7},              \
+        {3, 6, 8, 9, 7, 2, 5, 1, 4}, {5, 9, 7, 8, 1, 4, 6, 3, 2},              \
+        {9, 4, 1, 6, 3, 8, 2, 7, 5}, {8, 3, 2, 5, 4, 7, 9, 6, 1},              \
+        {6, 7, 5, 2, 9, 1, 3, 4, 8}
+
+// clang-format off
+TEST(CompleteDiagonalSudokuGrid, CompletedGrid) {
+    GridHKR input    = {SOLVED_GRID_HKR};
+    GridHKR expected = {SOLVED_GRID_HKR};
+    EXPECT_EQ(completeDiagonalSudokuGrid(input), expected);
+}
+
+TEST(CompleteDiagonalSudokuGrid, TwoEmptyCells) {
+    GridHKR input = {{ 0, 2, 3, 4, 5, 6, 7, 8, 9},
+                     { 4, 5, 6, 7, 8, 9, 1, 2, 3},
+                     { 7, 8, 9, 1, 2, 3, 4, 5, 6},
+                     { 2, 1, 4, 3, 6, 5, 8, 9, 7},
+                     { 3, 6, 8, 9, 0, 2, 5, 1, 4},
+                     { 5, 9, 7, 8, 1, 4, 6, 3, 2},
+                     { 9, 4, 1, 6, 3, 8, 2, 7, 5},
+                     { 8, 3, 2, 5, 4, 7, 9, 6, 1},
+                     { 6, 7, 5, 2, 9, 1, 3, 4, 8}};
+    GridHKR expected = {SOLVED_GRID_HKR};
+    EXPECT_EQ(completeDiagonalSudokuGrid(input), expected);
 }
 
 // clang-format on
