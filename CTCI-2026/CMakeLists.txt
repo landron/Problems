@@ -15,7 +15,7 @@ if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" CACHE FILEPATH "")
 endif()
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -26,6 +26,7 @@ add_executable(
 	Ch01_Arrays_Strings/q1_10_merge_intervals.cpp Ch01_Arrays_Strings/q1_11_bounded_pairs.cpp
     Ch02_Linked_Lists/q2_2_kth_to_last.cpp
 	Ch03_Stacks_and_Queues/q3_4_queue_via_stacks.cpp
+    Ch08_Recursion_and_Dynamic_Programming/ext_8_diagonal_sudoku.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs

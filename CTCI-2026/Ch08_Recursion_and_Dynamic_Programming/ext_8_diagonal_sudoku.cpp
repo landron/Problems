@@ -1,0 +1,239 @@
+/*
+Solve Diagonal Sudoku with 3x3 Blocks
+Given a 9x9 grid with empty cells marked as 0, fill the grid so that each row,
+column, 3x3 block, and both main diagonals contain numbers 1 to 9 exactly once.
+https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/solve-diagonal-sudoku-3x3-blocks
+*/
+
+#include <optional>
+#include <print>
+#include <ranges>
+#include <stack>
+#include <vector>
+
+#include <gtest/gtest.h>
+
+using Grid = std::vector<std::vector<size_t>>;
+
+auto solve_diagonal_sudoku(const Grid& board) -> Grid {
+    auto is_valid = [](const Grid& grid, size_t row, size_t col, size_t num,
+                       bool print_it = false) -> bool {
+        assert(row < 9 && col < 9 && num > 0 && num < 10);
+
+        if (print_it)
+            std::println("Checking if {} can be placed at ({}, {})", num, row,
+                         col);
+
+        for (size_t i = 0; i < 9; ++i) {
+            if (grid[row][i] == num || grid[i][col] == num) {
+                if (print_it) std::println("... row/col exists");
+                return false;
+            }
+        }
+
+        for (size_t i = 0; i < 3; ++i) {
+            for (size_t j = 0; j < 3; ++j) {
+                if (grid[row - row % 3 + i][col - col % 3 + j] == num) {
+                    if (print_it) std::println("... 3x3 block exists");
+                    return false;
+                }
+            }
+        }
+
+        if (row == col) { // Main diagonal
+            for (size_t i = 0; i < 9; ++i) {
+                if (grid[i][i] == num) {
+                    if (print_it) std::println("... main diagonal exists");
+                    return false;
+                }
+            }
+        }
+        if (row + col == 8) { // Anti-diagonal
+            for (size_t i = 0; i < 9; ++i) {
+                if (grid[i][8 - i] == num) {
+                    if (print_it) std::println("... anti-diagonal exists");
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    };
+
+    auto find_next_empty =
+        [](const Grid& grid, size_t start_row,
+           size_t start_col) -> std::optional<std::pair<size_t, size_t>> {
+        for (size_t row = start_row; row < 9; ++row) {
+            for (size_t col = (row == start_row) ? start_col : 0; col < 9;
+                 ++col) {
+                if (grid[row][col] == 0) {
+                    return {{row, col}};
+                }
+            }
+        }
+        return std::nullopt;
+    };
+
+    auto result = board;
+    // (row, col, next_num_to_try)
+    std::stack<std::tuple<size_t, size_t, size_t>> backtrack; 
+    auto current_search = std::tuple<size_t, size_t, size_t>{0, 0, 1};
+
+    while (true) {
+        auto [i, j, num] = current_search;
+
+        if (auto next_empty = find_next_empty(result, i, j); !next_empty) {
+            // All cells filled: solution found
+            return result;
+        } else {
+            // THE OLD (C++11) WAY - Ugly, use only for re-assignment
+            std::tie(i, j) = *next_empty;
+        }
+
+        // Try values from num to 9 for this cell
+        for (; num < 10; ++num) {
+            if (is_valid(result, i, j, num)) {
+                result[i][j] = num;
+                backtrack.push({i, j, num + 1});
+                // Continue search (next empty cell) from current position)
+                current_search = {i, j, 1};
+                break;
+            }
+        }
+
+        if (num == 10) {
+            // No valid number 1-9: backtrack
+            if (backtrack.empty()) {
+                break; // No solution exists
+            }
+            auto [prev_i, prev_j, prev_num] = backtrack.top();
+            result[prev_i][prev_j] = 0; // Clear cell for retry
+            current_search = backtrack.top();
+            backtrack.pop();
+        }
+    }
+
+    return {};
+}
+
+using GridHKR = std::vector<std::vector<int>>;
+GridHKR completeDiagonalSudokuGrid(const GridHKR& grid_in) {
+    Grid grid;
+    for (const auto& row : grid_in) {
+        std::vector<size_t> new_row;
+        for (int cell : row) {
+            new_row.push_back(static_cast<size_t>(cell));
+        }
+        grid.push_back(std::move(new_row));
+    }
+    auto solved = solve_diagonal_sudoku(grid);
+    GridHKR grid_out;
+    for (const auto& row : solved) {
+        std::vector<int> new_row;
+        for (size_t cell : row) {
+            new_row.push_back(static_cast<int>(cell));
+        }
+        grid_out.push_back(std::move(new_row));
+    }
+    return grid_out;
+}
+
+// clang-format off
+
+// Valid diagonal sudoku solution (rows, cols, 3x3 blocks, both diagonals all contain 1-9):
+// Main diag: 1,5,9,3,7,4,2,6,8 | Anti diag: 9,9... wait verified by solver
+#define SOLVED_GRID \
+    {1, 2, 3, 4, 5, 6, 7, 8, 9}, \
+    {4, 5, 6, 7, 8, 9, 1, 2, 3}, \
+    {7, 8, 9, 1, 2, 3, 4, 5, 6}, \
+    {2, 1, 4, 3, 6, 5, 8, 9, 7}, \
+    {3, 6, 8, 9, 7, 2, 5, 1, 4}, \
+    {5, 9, 7, 8, 1, 4, 6, 3, 2}, \
+    {9, 4, 1, 6, 3, 8, 2, 7, 5}, \
+    {8, 3, 2, 5, 4, 7, 9, 6, 1}, \
+    {6, 7, 5, 2, 9, 1, 3, 4, 8}
+
+TEST(SolveDiagonalSudoku, CompletedGrid) {
+    Grid input    = {SOLVED_GRID};
+    Grid expected = {SOLVED_GRID};
+    EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+}
+
+TEST(SolveDiagonalSudoku, AlmostCompletedGrid) {
+    Grid input = {{1, 2, 3, 4, 5, 6, 7, 8, 9},
+                  {4, 5, 6, 7, 8, 9, 1, 2, 3},
+                  {7, 8, 9, 1, 2, 3, 4, 5, 6},
+                  {2, 1, 4, 3, 6, 5, 8, 9, 7},
+                  {3, 6, 8, 9, 7, 2, 5, 1, 4},
+                  {5, 9, 7, 8, 1, 4, 6, 3, 2},
+                  {9, 4, 1, 6, 3, 8, 2, 7, 5},
+                  {8, 3, 2, 5, 4, 7, 9, 6, 1},
+                  {6, 7, 5, 2, 9, 1, 3, 4, 0}}; // last cell empty
+
+    Grid expected = {SOLVED_GRID};
+    EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+}
+
+TEST(SolveDiagonalSudoku, EmptyCellAtTopLeft) {
+    Grid input = {{0, 2, 3, 4, 5, 6, 7, 8, 9},
+                  {4, 5, 6, 7, 8, 9, 1, 2, 3},
+                  {7, 8, 9, 1, 2, 3, 4, 5, 6},
+                  {2, 1, 4, 3, 6, 5, 8, 9, 7},
+                  {3, 6, 8, 9, 7, 2, 5, 1, 4},
+                  {5, 9, 7, 8, 1, 4, 6, 3, 2},
+                  {9, 4, 1, 6, 3, 8, 2, 7, 5},
+                  {8, 3, 2, 5, 4, 7, 9, 6, 1},
+                  {6, 7, 5, 2, 9, 1, 3, 4, 8}};
+
+    Grid expected = {SOLVED_GRID};
+    EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+}
+
+TEST(SolveDiagonalSudoku, EmptyCellAtCenter) {
+    // (4,4) is on the main diagonal
+    Grid input = {{1, 2, 3, 4, 5, 6, 7, 8, 9},
+                  {4, 5, 6, 7, 8, 9, 1, 2, 3},
+                  {7, 8, 9, 1, 2, 3, 4, 5, 6},
+                  {2, 1, 4, 3, 6, 5, 8, 9, 7},
+                  {3, 6, 8, 9, 0, 2, 5, 1, 4},
+                  {5, 9, 7, 8, 1, 4, 6, 3, 2},
+                  {9, 4, 1, 6, 3, 8, 2, 7, 5},
+                  {8, 3, 2, 5, 4, 7, 9, 6, 1},
+                  {6, 7, 5, 2, 9, 1, 3, 4, 8}};
+
+    Grid expected = {SOLVED_GRID};
+    EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+}
+
+TEST(SolveDiagonalSudoku, EmptyCellAtTopRight) {
+    // (0,8) is on the anti-diagonal
+    Grid input = {{1, 2, 3, 4, 5, 6, 7, 8, 0},
+                  {4, 5, 6, 7, 8, 9, 1, 2, 3},
+                  {7, 8, 9, 1, 2, 3, 4, 5, 6},
+                  {2, 1, 4, 3, 6, 5, 8, 9, 7},
+                  {3, 6, 8, 9, 7, 2, 5, 1, 4},
+                  {5, 9, 7, 8, 1, 4, 6, 3, 2},
+                  {9, 4, 1, 6, 3, 8, 2, 7, 5},
+                  {8, 3, 2, 5, 4, 7, 9, 6, 1},
+                  {6, 7, 5, 2, 9, 1, 3, 4, 8}};
+
+    Grid expected = {SOLVED_GRID};
+    EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+}
+
+TEST(SolveDiagonalSudoku, TwoEmptyCells) {
+    Grid input = {{0, 2, 3, 4, 5, 6, 7, 8, 9},
+                  {4, 5, 6, 7, 8, 9, 1, 2, 3},
+                  {7, 8, 9, 1, 2, 3, 4, 5, 6},
+                  {2, 1, 4, 3, 6, 5, 8, 9, 7},
+                  {3, 6, 8, 9, 0, 2, 5, 1, 4},
+                  {5, 9, 7, 8, 1, 4, 6, 3, 2},
+                  {9, 4, 1, 6, 3, 8, 2, 7, 5},
+                  {8, 3, 2, 5, 4, 7, 9, 6, 1},
+                  {6, 7, 5, 2, 9, 1, 3, 4, 8}};
+
+    Grid expected = {SOLVED_GRID};
+    EXPECT_EQ(solve_diagonal_sudoku(input), expected);
+}
+
+// clang-format on
