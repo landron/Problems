@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/livio/Documents/Code/Problems/hackerrank/algo",
+    "cmake.sourceDirectory": "/home/livio/Documents/Code/mine/problems/Design",
     "cmake.generator": "Ninja",
     // unavoidable for the cmake tools extension to work: CMake/Build terminal is not bash
     //    even if Terminal it is:
@@ -13,13 +13,7 @@
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "~/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
-    "chat.tools.terminal.autoApprove": {
-        "/^python -m unittest( [\\w\\.\\/_-]+)*( -v)?$/": {
-            "approve": true,
-            "matchCommandLine": true
-        }
-    },
+
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
-    "C_Cpp.clang_format_fallbackStyle": "Google"
 }
