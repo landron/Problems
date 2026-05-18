@@ -1,7 +1,9 @@
 #[[
-    cmake -G Ninja ../../Problems/CTCI-2026
+    cmake -G Ninja ../../mine/problems/Design
         with build folder outside this repository, you can do:
         cmake -G Ninja ../../mine/problems/Design
+
+    ./design --gtest_filter=LRUCacheTest.Example1
 ]]
 cmake_minimum_required(VERSION 3.21...4.2)
 
@@ -15,13 +17,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(design)
-
-# Source files for the executable
-file(GLOB_RECURSE SOURCES *.cpp)
-
 add_executable(
     ${PROJECT_NAME}
-    ${SOURCES}
+    001-RandomizedSet_test.cpp 002-LRU_test.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs
