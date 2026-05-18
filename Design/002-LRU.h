@@ -10,6 +10,12 @@ Beats   56.39%
 
 Warning:
  * move_top: move (splice), don't allocate (push_front)
+
+#ds_hash
+#ds_dll
+#tech_hashmap_iterator
+#pattern_cache
+#algo_lru
 */
 #pragma once
 

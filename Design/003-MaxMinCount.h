@@ -9,6 +9,13 @@ Your first version (AllOne1):
 * better cache locality
 * STL-balanced tree is highly optimized in C++
 So it can beat “O(1)” solutions in practice.
+
+#ds_hash
+#ds_dll
+#ds_bucket
+#tech_hashmap_iterator
+#tech_bucket_list
+#pattern_frequency
 */
 #pragma once
 
