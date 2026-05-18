@@ -145,8 +145,3 @@ TEST(LRUCacheTest, SequentialAccess) {
     EXPECT_EQ(cache.get(3), 'c');
     EXPECT_EQ(cache.get(4), 'd');
 }
-
-int main(int argc, char** argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

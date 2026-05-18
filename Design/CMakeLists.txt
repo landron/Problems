@@ -4,6 +4,7 @@
         cmake -G Ninja ../../mine/problems/Design
 
     ./design --gtest_filter=LRUCacheTest.Example1
+        ./design --gtest_filter=AllOneTest.*
 ]]
 cmake_minimum_required(VERSION 3.21...4.2)
 
@@ -19,7 +20,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 project(design)
 add_executable(
     ${PROJECT_NAME}
-    001-RandomizedSet_test.cpp 002-LRU_test.cpp
+    001-RandomizedSet_test.cpp 002-LRU_test.cpp 003-MaxMinCount_test.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs
