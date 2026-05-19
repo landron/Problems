@@ -13,7 +13,9 @@
     "cmake.configureSettings": {
         "CMAKE_TOOLCHAIN_FILE": "~/dev/vcpkg/scripts/buildsystems/vcpkg.cmake"
     },
-
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
+    "cSpell.words": [
+        "followee"
+    ],
 }

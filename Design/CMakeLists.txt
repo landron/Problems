@@ -20,7 +20,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 project(design)
 add_executable(
     ${PROJECT_NAME}
-    001-RandomizedSet_test.cpp 002-LRU_test.cpp 003-MaxMinCount_test.cpp
+    001-RandomizedSet_test.cpp 002-LRU_test.cpp 003-MaxMinCount_test.cpp 004-Twitter_test.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs
