@@ -35,7 +35,7 @@ TODO: Improve:
     list<string> inside Bucket
     map<string, <Bucket, iterator inside list<string> >>
 */
-class AllOne {
+class AllOne_Amortized {
   private:
     struct Bucket {
         size_t count;
@@ -135,7 +135,7 @@ Memory
 84.98MB
 Beats   90.49%
 */
-class AllOne1 {
+class AllOne_NotO1 {
   public:
     // O(log n)
     void inc(const std::string& key) {
