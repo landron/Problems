@@ -9,11 +9,25 @@ Solution 1
 
 Solution 2
     Runtime
-    7ms
-    Beats   63.59%
+    4ms
+    Beats   82.27%
     Memory
-    55.93MB
-    Beats   42.73%
+    56.00MB
+    Beats   40.94%
+
+#ds_hash
+#ds_heap
+#ds_vector
+#ds_graph
+#algo_kway_merge
+#tech_cache_locality
+#tech_heap_merge
+#tech_reverse_traversal
+#tech_index_pointer
+#design_social_feed
+#design_twitter
+#perf_allocator
+#perf_cache_friendly
 */
 #pragma once
 
@@ -32,11 +46,13 @@ struct Tweet {
 };
 
 struct User {
-    int user_id;
     std::unordered_set<int> following;
+    // Cache Locality
     // CRITICAL OPTIMIZATION: Swapped std::list for std::vector.
     // List allocates node elements disjointly across global memory. Vector
     // stores them sequentially, maximizing CPU cache-line efficiency.
+    //
+    // ChatGPT: This is probably the single biggest real-world win.
     std::vector<Tweet> timeline;
 };
 
@@ -47,6 +63,7 @@ struct HeapNode {
     unsigned long timestamp;
     int tweet_id;
     const std::vector<Tweet>* source_vector;
+    // ChatGPT: Excellent micro-optimization.
     size_t current_index;
 
     // Time Complexity: O(1) | Space Complexity: O(1)
@@ -58,7 +75,7 @@ struct HeapNode {
 class Twitter {
   private:
     std::unordered_map<int, User> users;
-    unsigned long global_timestamp;
+    unsigned long global_timestamp = 0;
 
     // Time Complexity: O(1) average | Space Complexity: O(1)
     // DIFFERENCE FROM YOURS: Returns a direct pointer to the User instance
@@ -66,23 +83,15 @@ class Twitter {
     // map lookup hashing.
     inline User* getOrCreateUser(int userId) {
         auto it = users.find(userId);
-        if (it == users.end()) {
-            return &users
-                        .insert({userId, User{.user_id = userId,
-                                              .following = {},
-                                              .timeline = {}}})
-                        .first->second;
-        }
+        if (it == users.end())
+            return &users.insert({userId, User{}}).first->second;
         return &(it->second);
     }
 
   public:
-    // Time Complexity: O(1) | Space Complexity: O(1)
-    Twitter() : global_timestamp(0) {}
-
     // Time Complexity: O(1) average | Space Complexity: O(1)
     void postTweet(int userId, int tweetId) {
-        User* user = getOrCreateUser(userId);
+        auto user = getOrCreateUser(userId);
         // CRITICAL OPTIMIZATION: Instead of push_front (which is slow on
         // vectors), we push_back and read from right-to-left. This gives O(1)
         // amortized insertion.
@@ -90,15 +99,21 @@ class Twitter {
             Tweet{.timestamp = ++global_timestamp, .id = tweetId});
     }
 
-    // Time Complexity: O(K + N log K) where K is active following channels and
-    // N <= 10 Space Complexity: O(K) allocation footprint
+    // Time Complexity: O(K * log K) where K is active following channels
+    // and N <= 10
+    //  *  Initial heap population: O((K+1) * log K)
+    //  *  Main loop: O(N log K)
+    // Space Complexity: O(K) allocation footprint
     std::vector<int> getNewsFeed(int userId) {
-        // Fast-path lookup without structural generation
-        auto main_it = users.find(userId);
-        if (main_it == users.end()) return {};
+        auto get_user = [&]() -> const User* {
+            auto it = users.find(userId);
+            if (it == users.end()) return nullptr;
+            return &(it->second);
+        };
+        auto reader = get_user();
+        if (!reader) return {};
 
-        const auto& author = main_it->second;
-        if (author.timeline.empty() && author.following.empty()) return {};
+        if (reader->timeline.empty() && reader->following.empty()) return {};
 
         // Track a min-priority queue on stack memory
         std::priority_queue<HeapNode> max_heap;
@@ -106,27 +121,26 @@ class Twitter {
         std::vector<int> feed;
         feed.reserve(10); // Prevents mid-loop reallocation overhead
 
+        auto add_to_heap = [&](const std::vector<Tweet>& timeline, size_t idx) {
+            max_heap.push(HeapNode{.timestamp = timeline[idx].timestamp,
+                                   .tweet_id = timeline[idx].id,
+                                   .source_vector = &timeline,
+                                   .current_index = idx});
+        };
+        auto add_last_to_heap = [&](const std::vector<Tweet>& timeline) {
+            return add_to_heap(timeline, timeline.size() - 1);
+        };
+
         // Process user's personal timeline (reading backwards from the end of
         // the vector)
-        if (!author.timeline.empty()) {
-            size_t idx = author.timeline.size() - 1;
-            max_heap.push(HeapNode{.timestamp = author.timeline[idx].timestamp,
-                                   .tweet_id = author.timeline[idx].id,
-                                   .source_vector = &author.timeline,
-                                   .current_index = idx});
-        }
+        //  adds newest (latest) node only
+        if (!reader->timeline.empty()) add_last_to_heap(reader->timeline);
 
         // Process followee timelines
-        for (int followeeId : author.following) {
-            auto fit = users.find(followeeId);
-            if (fit != users.end() && !fit->second.timeline.empty()) {
-                const auto& vec = fit->second.timeline;
-                size_t idx = vec.size() - 1;
-                max_heap.push(HeapNode{.timestamp = vec[idx].timestamp,
-                                       .tweet_id = vec[idx].id,
-                                       .source_vector = &vec,
-                                       .current_index = idx});
-            }
+        for (auto followeeId : reader->following) {
+            auto it = users.find(followeeId);
+            if (it != users.end() && !it->second.timeline.empty())
+                add_last_to_heap(it->second.timeline);
         }
 
         // Main Merge tracking loop
@@ -139,14 +153,9 @@ class Twitter {
             feed.push_back(top_node.tweet_id);
 
             // Access the next newest tweet by decrementing the vector index
-            if (top_node.current_index > 0) {
-                size_t next_idx = top_node.current_index - 1;
-                const auto& vec = *(top_node.source_vector);
-                max_heap.push(HeapNode{.timestamp = vec[next_idx].timestamp,
-                                       .tweet_id = vec[next_idx].id,
-                                       .source_vector = top_node.source_vector,
-                                       .current_index = next_idx});
-            }
+            if (top_node.current_index > 0)
+                add_to_heap(*(top_node.source_vector),
+                            top_node.current_index - 1);
         }
 
         return feed;
