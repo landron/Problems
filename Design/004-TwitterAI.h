@@ -18,7 +18,7 @@ Solution 2
 #ds_hash
 #ds_heap
 #ds_vector
-#ds_graph
+#ds_graph       # followers: directed graph adjacency list
 #algo_kway_merge
 #tech_cache_locality
 #tech_heap_merge
@@ -104,6 +104,19 @@ class Twitter {
     //  *  Initial heap population: O((K+1) * log K)
     //  *  Main loop: O(N log K)
     // Space Complexity: O(K) allocation footprint
+    /*
+        priority_queue vs map
+        Both approaches achieve $O(\log K)$ time complexity per operation, but
+       they have fundamentally different hardware and execution
+       characteristics:
+       * std::priority_queue (Binary Heap):Same $O(\log K)$, but
+       blazing fast. It operates inside a contiguous block of memory with zero
+       dynamic allocations during the tracking loop, making it highly friendly
+       to your CPU cache.std::map (Red-Black Tree):Same $O(\log K)$, but
+       sluggish. Every single insertion or deletion forces the OS to allocate or
+       free dynamic memory node structures, while pointer chasing degrades CPU
+       cache efficiency.
+     */
     std::vector<int> getNewsFeed(int userId) {
         auto get_user = [&]() -> const User* {
             auto it = users.find(userId);
