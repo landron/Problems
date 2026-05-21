@@ -5,5 +5,9 @@
 # __pycache__/
 
 build/
+# Go test binaries
+*.test
+
+# tests
 test.py
 z-TODO/
