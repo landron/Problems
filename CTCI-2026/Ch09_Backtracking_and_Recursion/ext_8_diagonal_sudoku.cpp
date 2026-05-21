@@ -3,7 +3,7 @@ Solve Diagonal Sudoku with 3x3 Blocks
 Given a 9x9 grid with empty cells marked as 0, fill the grid so that each row,
 column, 3x3 block, and both main diagonals contain numbers 1 to 9 exactly once.
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/solve-diagonal-sudoku-3x3-blocks
-    Hackerrank tests are poorly written: if invalid input, just return the
+    HackerRank tests are poorly written: if invalid input, just return the
 input! So return board; instead of return {};
 
 Complexity: exponential O(9^k) Time worst case (k = empty cells) | O(k) Space

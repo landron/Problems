@@ -2,9 +2,19 @@
 
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/shortest-path-with-processing-delays/
 
+While the problem takes place on a graph, the actual algorithmic tool used to
+solve it is Dijkstra's Algorithm (or a slight modification of it to account
+for node weights instead of just edge weights).
+ * Dijkstra's algorithm is fundamentally classified as a Greedy Algorithm.
+ * At every single step, it makes a locally optimal choice: it grabs the next
+ unvisited node with the absolute lowest accumulated cost (processing delay +
+ travel time) from the priority queue. It assumes that this immediate local
+ best choice will yield the globally optimal shortest path
+
 Complexity: O(N + M*M) Time (Dijkstra variant) | O(N + M) Space
 Tags: #dijkstra #shortest-path #graph
-Compliance: ruff & pylint clean.
+Compliance: black, pylint, ruff
+    ruff check Ch04_Trees_and_Graphs/q4_dijkstra_processing_delays.py
 """
 
 import bisect
@@ -16,8 +26,8 @@ import unittest
 def _build_adjacency_list(n, edges):
     """Build adjacency list, keeping minimum weight for duplicate edges.
 
-    OPT: List of Lists of Tuples (instead of Dict of Dicts) would be more space-efficient, 
-        but less convenient for duplicate edge handling. 
+    OPT: List of Lists of Tuples (instead of Dict of Dicts) would be more space-efficient,
+        but less convenient for duplicate edge handling.
     """
     neighbors = {i: {} for i in range(n)}
     for i, j, w in edges:

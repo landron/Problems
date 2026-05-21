@@ -5,9 +5,24 @@
 
 	with build folder outside this repository, you can do:
 		cmake -G Ninja ../../Problems/CTCI-2026
-
+]]
+#[[
 	Cracking the Coding Interview
         https://www.hackerrank.com/prep-kit/software-engineer
+
+    Categories:
+    01. Arrays and Basic Problem Solving
+    02. Strings and Pattern Matching
+    03. Linked Lists
+    04. Stacks and Queues
+    05. Binary Search
+    06. Two Pointers and Sliding Window
+    07. Hash Tables and Hash Maps
+    08. Greedy Algorithms
+    09. Backtracking and Recursion
+    10. Dynamic Programming Fundamentals
+    11. Trees and Binary Search Trees
+    12. Graphs
 ]]
 cmake_minimum_required(VERSION 3.21...4.2)
 
@@ -24,10 +39,10 @@ project(ctci-2026)
 
 add_executable(
     ${PROJECT_NAME}
-	Ch01_Arrays_Strings/q1_10_merge_intervals.cpp Ch01_Arrays_Strings/q1_11_bounded_pairs.cpp
-    Ch02_Linked_Lists/q2_2_kth_to_last.cpp
+	Ch01_Arrays_Basic_Problem_Solving/q1_10_merge_intervals.cpp Ch01_Arrays_Basic_Problem_Solving/q1_11_bounded_pairs.cpp
+    Ch03_Linked_Lists/q2_2_kth_to_last.cpp
 	Ch04_Stacks_and_Queues/queue_via_stacks.cpp
-    Ch08_Recursion_and_Dynamic_Programming/ext_8_diagonal_sudoku.cpp Ch08_Recursion_and_Dynamic_Programming/ext_8_diagonal_sudoku_dfs.cpp
+    Ch09_Backtracking_and_Recursion/ext_8_diagonal_sudoku.cpp Ch09_Backtracking_and_Recursion/ext_8_diagonal_sudoku_dfs.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs

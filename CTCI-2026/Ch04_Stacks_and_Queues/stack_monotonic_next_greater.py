@@ -4,7 +4,8 @@ https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/next-g
 
 Complexity: O(N) Time | O(N) Space
 Tags: #stack #monotonic-stack
-ruff & pylint clean.
+Compliance: black, pylint, ruff
+    ruff check Ch04_Stacks_and_Queues/stack_monotonic_next_greater.py
 """
 
 from collections import deque
