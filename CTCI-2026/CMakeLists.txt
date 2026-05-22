@@ -44,6 +44,7 @@ add_executable(
 	Ch01_Arrays_Basic_Problem_Solving/q1_10_merge_intervals.cpp Ch01_Arrays_Basic_Problem_Solving/q1_11_bounded_pairs.cpp
     Ch03_Linked_Lists/q2_2_kth_to_last.cpp Ch03_Linked_Lists/merge.cpp
 	Ch04_Stacks_and_Queues/queue_via_stacks.cpp
+    Ch05_Binary_Search/search_rotated_sorted_array.cpp
     Ch09_Backtracking_and_Recursion/ext_8_diagonal_sudoku.cpp Ch09_Backtracking_and_Recursion/ext_8_diagonal_sudoku_dfs.cpp
 )
 
