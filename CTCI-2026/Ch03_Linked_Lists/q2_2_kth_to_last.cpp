@@ -1,3 +1,6 @@
+/*
+./ctci-2026 --gtest_filter=kth_to_last.*
+*/
 #include <gtest/gtest.h>
 
 #include "../common/linked_list_utils.hpp"
@@ -7,7 +10,7 @@
  * Single-pass two-pointer approach is optimal: O(n) time, O(1) extra space.
  */
 template <typename NodePtr>
-[[nodiscard]] NodePtr kth_to_last_impl(NodePtr head, size_t k) noexcept {
+[[nodiscard]] NodePtr get_kth_to_last_impl(NodePtr head, size_t k) noexcept {
     if (!head) return nullptr;
 
     auto distance = k;
@@ -29,60 +32,67 @@ template <typename NodePtr>
     return first;
 }
 
-Node* kth_to_last(Node* head, size_t k) noexcept {
-    return kth_to_last_impl(head, k);
+namespace kth_to_last {
+
+using Node = ::Node<int>;
+
+Node* get_kth_to_last(Node* head, size_t k) noexcept {
+    return get_kth_to_last_impl(head, k);
 }
 
-const Node* kth_to_last(const Node* head, size_t k) noexcept {
-    return kth_to_last_impl(head, k);
+const Node* get_kth_to_last(const Node* head, size_t k) noexcept {
+    return get_kth_to_last_impl(head, k);
 }
 
-TEST(test_limits, k_greater_than_length) {
+} // namespace kth_to_last
+
+TEST(kth_to_last, k_greater_than_length) {
     auto list = create_linked_list({1, 2, 3});
-    auto node = kth_to_last(list.get(), 4); // k is larger than the list
+    auto node = kth_to_last::get_kth_to_last(list.get(),
+                                             4); // k is larger than the list
     EXPECT_EQ(node, nullptr); // Or however you chose to handle errors
 }
 
-TEST(test_limits, empty_list) {
-    std::unique_ptr<Node> list;
-    auto node = kth_to_last(list.get(), 1);
+TEST(kth_to_last, empty_list) {
+    std::unique_ptr<kth_to_last::Node> list;
+    auto node = kth_to_last::get_kth_to_last(list.get(), 1);
     EXPECT_EQ(node, nullptr);
 }
 
-TEST(test_limits, single_node) {
+TEST(kth_to_last, single_node) {
     auto list = create_linked_list({55});
-    auto node = kth_to_last(list.get(), 1);
+    auto node = kth_to_last::get_kth_to_last(list.get(), 1);
     ASSERT_NE(node, nullptr);
-    EXPECT_EQ(node->data, 55);
+    EXPECT_EQ((int)*node, 55);
 }
 
-TEST(test_overloads, const_and_non_const) {
+TEST(kth_to_last, const_and_non_const) {
     auto list = create_linked_list({1, 2, 3, 4, 5});
-    auto* mutable_result = kth_to_last(list.get(), 2);
+    auto mutable_result = kth_to_last::get_kth_to_last(list.get(), 2);
     ASSERT_NE(mutable_result, nullptr);
-    EXPECT_EQ(mutable_result->data, 4);
+    EXPECT_EQ((int)*mutable_result, 4);
 
-    const Node* const_head = list.get();
-    auto const_result = kth_to_last(const_head, 2);
+    const kth_to_last::Node* const_head = list.get();
+    auto const_result = kth_to_last::get_kth_to_last(const_head, 2);
     ASSERT_NE(const_result, nullptr);
-    EXPECT_EQ(const_result->data, 4);
+    EXPECT_EQ((int)*const_result, 4);
 }
 
-TEST(test_limits, boundaries) {
+TEST(kth_to_last, boundaries) {
     auto list = create_linked_list({10, 20, 30, 40});
 
     // k = 1: The tail
-    auto tail = kth_to_last(list.get(), 1);
-    EXPECT_EQ(tail->data, 40);
+    auto tail = kth_to_last::get_kth_to_last(list.get(), 1);
+    EXPECT_EQ((int)*tail, 40);
 
     // k = length: The head
-    auto head = kth_to_last(list.get(), 4);
-    EXPECT_EQ(head->data, 10);
+    auto head = kth_to_last::get_kth_to_last(list.get(), 4);
+    EXPECT_EQ((int)*head, 10);
 }
 
-TEST(test_sample, test1) {
+TEST(kth_to_last, sample) {
     auto list = create_linked_list({1, 2, 3, 4, 5});
-    auto node = kth_to_last(list.get(), 2);
+    auto node = kth_to_last::get_kth_to_last(list.get(), 2);
     ASSERT_TRUE(node);
-    EXPECT_EQ(node->data, 4);
+    EXPECT_EQ((int)*node, 4);
 }

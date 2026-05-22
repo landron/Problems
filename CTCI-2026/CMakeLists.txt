@@ -4,7 +4,9 @@
 	* ninja
 
 	with build folder outside this repository, you can do:
-		cmake -G Ninja ../../Problems/CTCI-2026
+		cmake -G Ninja ../../mine/problems/CTCI-2026
+
+    ./ctci-2026 --gtest_filter=kth_to_last.*
 ]]
 #[[
 	Cracking the Coding Interview
@@ -40,7 +42,7 @@ project(ctci-2026)
 add_executable(
     ${PROJECT_NAME}
 	Ch01_Arrays_Basic_Problem_Solving/q1_10_merge_intervals.cpp Ch01_Arrays_Basic_Problem_Solving/q1_11_bounded_pairs.cpp
-    Ch03_Linked_Lists/q2_2_kth_to_last.cpp
+    Ch03_Linked_Lists/q2_2_kth_to_last.cpp Ch03_Linked_Lists/merge.cpp
 	Ch04_Stacks_and_Queues/queue_via_stacks.cpp
     Ch09_Backtracking_and_Recursion/ext_8_diagonal_sudoku.cpp Ch09_Backtracking_and_Recursion/ext_8_diagonal_sudoku_dfs.cpp
 )
