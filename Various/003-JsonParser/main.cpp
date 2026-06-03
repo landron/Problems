@@ -3,8 +3,7 @@
 
 extern void TestUnits();
 
-int main (int /*argc*/, TCHAR* /*argv*/[])
-{   
+int main(int /*argc*/, TCHAR* /*argv*/[]) {
     TestUnits();
 
     return 0;

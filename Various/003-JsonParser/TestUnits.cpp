@@ -1,136 +1,116 @@
 
+#include <cassert>
 #include <iostream>
 #include <sstream>
-#include <cassert>
 
 #include "JsonParser.h"
 
-//void TestUnit_1()
+// void TestUnit_1()
 //{
-//    JsonItem item;
-//    for (JsonItem::iterator it = item.begin(); it != item.end(); ++it)
-//    {
-//        switch (it.Type())
-//        {
-//        case TYPE_STRING:
-//            {
-//                //JsonValueString value = *it;
-//                //JsonValueString value = it.operator*<TYPE_STRING, std::string>();
-//            }
-//            break;
-//        }
-//    }
-//}
+//     JsonItem item;
+//     for (JsonItem::iterator it = item.begin(); it != item.end(); ++it)
+//     {
+//         switch (it.Type())
+//         {
+//         case TYPE_STRING:
+//             {
+//                 //JsonValueString value = *it;
+//                 //JsonValueString value = it.operator*<TYPE_STRING,
+//                 std::string>();
+//             }
+//             break;
+//         }
+//     }
+// }
 
-void TestUnit_1_limit_cases_trailing_commas()
-{
-   static const wchar_t* test =
-   {
-      L"{\
+void TestUnit_1_limit_cases_trailing_commas() {
+    static const wchar_t* test = {L"{\
        \"firstName\": \"Jennifer\",\
        \"lastName\": \"Connelly\",\
-       }"
-   };
+       }"};
 
-   std::wstringbuf buf(test);
-   std::wistream ss(&buf);
+    std::wstringbuf buf(test);
+    std::wistream ss(&buf);
 
-   JsonParser parser(ss);
-   size_t i = 0;
-   for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i);
-   assert(0 == i);
+    JsonParser parser(ss);
+    size_t i = 0;
+    for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i)
+        ;
+    assert(0 == i);
 }
 
-void TestUnit_2_Array()
-{
-    static const wchar_t* test =
-    {
-        L"{   \"names\" : [\"Onze\", \"Treize\", \"Cinquante\", \"Quatre vingt\"]}"
-    };
+void TestUnit_2_Array() {
+    static const wchar_t* test = {L"{   \"names\" : [\"Onze\", \"Treize\", "
+                                  L"\"Cinquante\", \"Quatre vingt\"]}"};
 
     std::wstringbuf buf(test);
     std::wistream ss(&buf);
 
     JsonParser item(ss);
     size_t i = 0;
-    for (JsonItem::iterator it = item.begin(); it != item.end(); ++it, ++i)
-    {
-       JsonItem item(*it);
-       //wprintf(L"Item: %s\n", item.Name().c_str());
+    for (JsonItem::iterator it = item.begin(); it != item.end(); ++it, ++i) {
+        JsonItem item(*it);
+        // wprintf(L"Item: %s\n", item.Name().c_str());
     }
     assert(1 == i);
 }
 
-void TestUnit_3_just_begin()
-{
-   static const wchar_t* test =
-   {
-      L"{\
+void TestUnit_3_just_begin() {
+    static const wchar_t* test = {L"{\
        \"firstName\": \"John\",\
        \"lastName\": \"Smith\"\
-       }"
-   };
+       }"};
 
-   std::wstringbuf buf(test);
-   std::wistream ss(&buf);
+    std::wstringbuf buf(test);
+    std::wistream ss(&buf);
 
-   JsonParser parser(ss);
-   JsonItem::iterator it = parser.begin();
-   const JsonItem::iterator end = parser.end();
-   assert(it != end);
+    JsonParser parser(ss);
+    JsonItem::iterator it = parser.begin();
+    const JsonItem::iterator end = parser.end();
+    assert(it != end);
 }
 
-void TestUnit_4_just_begin()
-{
-   static const wchar_t* test =
-   {
-      L"{\
+void TestUnit_4_just_begin() {
+    static const wchar_t* test = {L"{\
        \"firstName\": \"Balthzar\",\
        \"lastName\": \"Carolyn\",\
        \"others\": {\
        \"firstName\": \"Cairo\",\
        \"lastName\": \"Vangelis\"\
        }\
-       }"
-   };
+       }"};
 
-   std::wstringbuf buf(test);
-   std::wistream ss(&buf);
+    std::wstringbuf buf(test);
+    std::wistream ss(&buf);
 
-   JsonParser parser(ss);
-   JsonItem::iterator it = parser.begin();
-   const JsonItem::iterator end = parser.end();
-   assert(it != end);
+    JsonParser parser(ss);
+    JsonItem::iterator it = parser.begin();
+    const JsonItem::iterator end = parser.end();
+    assert(it != end);
 }
 
-void TestUnit_5_a_for()
-{
-   static const wchar_t* test =
-   {
-      L"{\
+void TestUnit_5_a_for() {
+    static const wchar_t* test = {L"{\
        \"firstName\": \"Jennifer\",\
        \"lastName\": \"Connelly\",\
        \"others\": {\
        \"firstName\": \"Baghdad\",\
        \"lastName\": \"Tlemcen\"\
        }\
-       }"
-   };
+       }"};
 
-   std::wstringbuf buf(test);
-   std::wistream ss(&buf);
+    std::wstringbuf buf(test);
+    std::wistream ss(&buf);
 
-   JsonParser parser(ss);
-   size_t i = 0;
-   for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i);
-   assert(3 == i);
+    JsonParser parser(ss);
+    size_t i = 0;
+    for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i)
+        ;
+    assert(3 == i);
 }
 
-void TestUnit_6_a_for_complete()
-{
-   static const wchar_t* test =
-   {
-      L"{\
+void TestUnit_6_a_for_complete() {
+    static const wchar_t* test = {L"{\
        \"firstName\": \"Wolfgang\",\
        \"someName\": \"Amadeus\",\
        \"lastName\": \"Mozart\",\
@@ -138,28 +118,24 @@ void TestUnit_6_a_for_complete()
        \"firstName\": \"Beethoven\",\
        \"lastName\": \"Chopin\"\
        }\
-       }"
-   };
+       }"};
 
-   std::wstringbuf buf(test);
-   std::wistream ss(&buf);
+    std::wstringbuf buf(test);
+    std::wistream ss(&buf);
 
-   JsonParser parser(ss);
-   size_t i = 0;
-   for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i)
-   {
-      JsonItem item(*it);
-      //wprintf(L"Item: %s\n", item.Name().c_str());
-      assert(std::wstring::npos != item.Name().find(L"Name"));
-   }
-   assert(4 == i);
+    JsonParser parser(ss);
+    size_t i = 0;
+    for (JsonItem::iterator it = parser.begin(); it != parser.end();
+         ++it, ++i) {
+        JsonItem item(*it);
+        // wprintf(L"Item: %s\n", item.Name().c_str());
+        assert(std::wstring::npos != item.Name().find(L"Name"));
+    }
+    assert(4 == i);
 }
 
-void TestUnit_7_simple_except_numbers()
-{
-   static const wchar_t* test =
-   {
-      L"{\
+void TestUnit_7_simple_except_numbers() {
+    static const wchar_t* test = {L"{\
        \"firstName\": \"Jennifer\",\
        \"lastName\": \"Connelly\",\
        \"beautiful\": true,\
@@ -167,32 +143,31 @@ void TestUnit_7_simple_except_numbers()
        \"husband\": null,\
        \"active\": true,\
        \"last film\": \"unknown\"\
-       }"
-   };
+       }"};
 
-   std::wstringbuf buf(test);
-   std::wistream ss(&buf);
+    std::wstringbuf buf(test);
+    std::wistream ss(&buf);
 
-   JsonParser parser(ss);
-   size_t i = 0;
-   for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i);
-   assert(7 == i);
+    JsonParser parser(ss);
+    size_t i = 0;
+    for (JsonItem::iterator it = parser.begin(); it != parser.end(); ++it, ++i)
+        ;
+    assert(7 == i);
 }
 
-void TestUnits()
-{
-   //  TODO
-   //TestUnit_1();
+void TestUnits() {
+    //  TODO
+    // TestUnit_1();
 
-   // limit cases
-   TestUnit_1_limit_cases_trailing_commas();
-   
-   TestUnit_2_Array();
-   TestUnit_3_just_begin();
-   TestUnit_4_just_begin();
+    // limit cases
+    TestUnit_1_limit_cases_trailing_commas();
 
-   TestUnit_5_a_for();
-   TestUnit_6_a_for_complete();
+    TestUnit_2_Array();
+    TestUnit_3_just_begin();
+    TestUnit_4_just_begin();
 
-   TestUnit_7_simple_except_numbers();
+    TestUnit_5_a_for();
+    TestUnit_6_a_for_complete();
+
+    TestUnit_7_simple_except_numbers();
 }
