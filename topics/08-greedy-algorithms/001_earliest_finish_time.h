@@ -1,5 +1,13 @@
 /*
     https://leetcode.com/problems/earliest-finish-time-for-land-and-water-rides-ii/
+
+#ds_vector
+#algo_greedy
+#algo_linear_scan           // linear time without sorting
+#tech_cache_locality
+#tech_eliminate_sorting
+#pattern_earliest_finish
+#perf_zero_allocation
 */
 #pragma once
 
@@ -24,7 +32,6 @@ Beats   100.00%
 Memory
 238.03MB
 Beats   66.06%
-
 */
 class SolutionGemini {
   public:
