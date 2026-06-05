@@ -1,9 +1,13 @@
 /*
 go test -c ./Ch10_Dynamic_Programming_Fundamentals
 */
-package main
+package dynamic_programming_test
 
-import "testing"
+import (
+	"testing"
+
+	dp "problems/Ch10_Dynamic_Programming_Fundamentals"
+)
 
 func TestMinTransformationCost(t *testing.T) {
 	tests := []struct {
@@ -42,9 +46,9 @@ func TestMinTransformationCost(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actual := minTransformationCost(tt.A, tt.B, tt.insertCost, tt.deleteCost)
+			actual := dp.MinTransformationCost(tt.A, tt.B, tt.insertCost, tt.deleteCost)
 			if actual != tt.expected {
-				t.Errorf("minTransformationCost() = %d; want %d", actual, tt.expected)
+				t.Errorf("MinTransformationCost() = %d; want %d", actual, tt.expected)
 			}
 		})
 	}

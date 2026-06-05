@@ -1,9 +1,12 @@
 /*
 Min Cost to Convert String Arrays with Edit Distance
 
+	Implement a function that Minimum total cost to transform A into B
+	using insertions, deletions, and line modifications.
+
 https://www.hackerrank.com/contests/software-engineer-prep-kit/challenges/min-cost-convert-string-arrays-edit-distance
 */
-package main
+package dynamic_programming
 
 /*
  * Complete the 'minTransformationCost' function below.
@@ -16,6 +19,6 @@ package main
  *  4. INTEGER deleteCost
  */
 
-func minTransformationCost(_, _ /*A, B*/ []string, _ /*insertCost*/, _ /*deleteCost*/ int32) int64 {
+func MinTransformationCost(_, _ /*A, B*/ []string, _ /*insertCost*/, _ /*deleteCost*/ int32) int64 {
 	return 0
 }
