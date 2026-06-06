@@ -1,6 +1,7 @@
 /*
 https://leetcode.com/problems/total-waviness-of-numbers-in-range-i
-    Not enough for https://leetcode.com/problems/total-waviness-of-numbers-in-range-ii
+    Not enough for
+https://leetcode.com/problems/total-waviness-of-numbers-in-range-ii
 */
 #pragma once
 

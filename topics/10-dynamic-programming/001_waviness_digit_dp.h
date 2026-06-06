@@ -49,12 +49,16 @@ position in number  : max 10**15​​​​​​​ ; 20 covers uint64_t
 / trend
 / started
 */
-Node memo[16][11][3][2];
-bool seen[16][11][3][2];
+struct Cache {
+    Node memo[16][11][3][2];
+    bool seen[16][11][3][2];
+};
 
 Node dfs(const std::string& digits, int pos, int prev_digit, Trend trend,
-         bool started, bool tight) {
+         bool started, bool tight, Cache& cache) {
     /*
+        DFS = Depth-First Search.
+
         pos        : current digit index (0 = most significant digit)
         prev_digit : previous chosen digit (10 = no digit chosen yet)
         trend      : current direction of movement (NONE / RISING / FALLING)
@@ -77,8 +81,8 @@ Node dfs(const std::string& digits, int pos, int prev_digit, Trend trend,
 
     if (!tight) {
         const auto trendi = static_cast<int>(trend);
-        if (seen[pos][prev_digit][trendi][started])
-            return memo[pos][prev_digit][trendi][started];
+        if (cache.seen[pos][prev_digit][trendi][started])
+            return cache.memo[pos][prev_digit][trendi][started];
     }
 
     const int limit = tight ? (digits[pos] - '0') : 9;
@@ -91,7 +95,7 @@ Node dfs(const std::string& digits, int pos, int prev_digit, Trend trend,
         // Still in leading zeros
         if (!started && digit == 0) {
             auto child =
-                dfs(digits, pos + 1, 10, Trend::NONE, false, next_tight);
+                dfs(digits, pos + 1, 10, Trend::NONE, false, next_tight, cache);
 
             result.count += child.count;
             result.waves += child.waves;
@@ -115,8 +119,8 @@ Node dfs(const std::string& digits, int pos, int prev_digit, Trend trend,
             // next_trend = Trend::FLAT;
             next_trend = Trend::NONE;
 
-        auto child =
-            dfs(digits, pos + 1, next_prev, next_trend, true, next_tight);
+        auto child = dfs(digits, pos + 1, next_prev, next_trend, true,
+                         next_tight, cache);
 
         result.count += child.count;
 
@@ -129,8 +133,8 @@ Node dfs(const std::string& digits, int pos, int prev_digit, Trend trend,
 
     if (!tight) {
         const auto trendi = static_cast<int>(trend);
-        seen[pos][prev_digit][trendi][started] = true;
-        memo[pos][prev_digit][trendi][started] = result;
+        cache.seen[pos][prev_digit][trendi][started] = true;
+        cache.memo[pos][prev_digit][trendi][started] = result;
     }
 
     return result;
@@ -144,12 +148,13 @@ template <std::integral T>
     auto solve = [](T n) -> T {
         if (n < 100) return 0; // Peaks/valleys require at least 3 digits
 
-        std::memset(seen, 0, sizeof(seen));
+        Cache cache;
+        std::memset(cache.seen, 0, sizeof(cache.seen));
 
         auto res = dfs(std::to_string(n), 0,
                        10,          // no previous digit
                        Trend::NONE, // flat/start
-                       false, true);
+                       false, true, cache);
 
         return res.waves;
     };
