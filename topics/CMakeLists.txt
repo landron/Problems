@@ -1,7 +1,7 @@
 #[[
 	cmake -G Ninja ../../mine/problems/topics
 
-    ./ctci-2026 --gtest_filter=kth_to_last.*
+    ./topics --gtest_filter=EarliestFinishTime.*
 ]]
 #[[
 	Categories:
@@ -38,7 +38,8 @@ project(topics)
 
 add_executable(
     ${PROJECT_NAME}
-    08-greedy-algorithms/001_earliest_finish_time_tests.cpp
+    08-greedy-algorithms/001_earliest_finish_time_test.cpp
+    10-dynamic-programming/001_waviness_test.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs
