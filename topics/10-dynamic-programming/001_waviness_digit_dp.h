@@ -154,7 +154,8 @@ template <std::integral T>
         auto res = dfs(std::to_string(n), 0,
                        10,          // no previous digit
                        Trend::NONE, // flat/start
-                       false, true, cache);
+                       false, true, cache
+                    );
 
         return res.waves;
     };
