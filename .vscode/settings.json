@@ -1,5 +1,5 @@
 {
-    "cmake.sourceDirectory": "/home/livio/Documents/Code/mine/problems/CTCI-2026",
+    "cmake.sourceDirectory": "/home/livio/Documents/Code/mine/problems/topics",
     "cmake.generator": "Ninja",
     // unavoidable for the cmake tools extension to work: CMake/Build terminal is not bash
     //    even if Terminal it is:

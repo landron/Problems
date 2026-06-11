@@ -8,10 +8,8 @@
             "name": "Launch CMake Project",
             "type": "cppdbg",
             "request": "launch",
-
             // Adjust the path to your executable 
-            "program": "${workspaceFolder}/build/design",
-
+            "program": "${workspaceFolder}/build/topics",
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",

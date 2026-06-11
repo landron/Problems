@@ -39,7 +39,7 @@ project(topics)
 add_executable(
     ${PROJECT_NAME}
     08-greedy-algorithms/001_earliest_finish_time_test.cpp
-    10-dynamic-programming/001_waviness_test.cpp
+    10-dynamic-programming/001_waviness_test.cpp 10-dynamic-programming/002_max_sum_non_overlapping_subarrays_test.cpp
 )
 
 # Enable common warnings - vital for troubleshooting performance/bugs
