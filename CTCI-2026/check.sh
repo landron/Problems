@@ -17,7 +17,7 @@ go build -o /dev/null ./...
 
 go test ./...
 
-golangci-lint run -v --timeout 600s
+golangci-lint run -v --timeout 600s -c ../.golangci.yml
 
 echo
 echo "All checks passed successfully at $(date +'%H:%M:%S %d.%m')"

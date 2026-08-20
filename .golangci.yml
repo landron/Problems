@@ -1,3 +1,5 @@
+# from the folder with go.mod:  golangci-lint run -v --timeout 600s
+
 version: "2"
 run:
   tests: true

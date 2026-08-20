@@ -1,3 +1,5 @@
+// see check.sh
+
 module problems
 
 go 1.26
