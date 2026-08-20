@@ -1,4 +1,4 @@
-// see check.sh
+// commands: see check.sh
 
 module problems
 

@@ -1,5 +1,4 @@
 #!/bin/bash
-# Reference:    languages/go/check.sh
 
 set -euo pipefail
 # set -x
@@ -10,11 +9,15 @@ go mod tidy
 
 gofumpt -l -w -extra ./
 
+# only tests
+#   avoid
+#       go: build output "Ch10_Dynamic_Programming_Fundamentals" already 
+#           exists and is a directory
 go build -o /dev/null ./...
 
 go test ./...
 
-golangci-lint run -v --timeout 600s -c ../.golangci.yml
+golangci-lint run -v --timeout 600s -c ../../.golangci.yml
 
 echo
 echo "All checks passed successfully at $(date +'%H:%M:%S %d.%m')"
