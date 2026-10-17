@@ -1,6 +1,13 @@
 Performance
- [ ] Start a VS "Run and debug" session
- [ ] Performance improvements for print_narcissistic_numbers, generate version 
+[ ] Performance improvements for print_narcissistic_numbers, generate version 
 
 Ease of use
- [ ] Add a command line (to not build it each time for different option)
+[ ] Add a command line (to not build it each time for different option)
+
+##################
+Done
+
+Performance
+[x] Start a VS "Run and debug" session
+    launch.json
+    cmake command line: -DCMAKE_BUILD_TYPE=Debug 
