@@ -1,0 +1,6 @@
+Performance
+ [ ] Start a VS "Run and debug" session
+ [ ] Performance improvements for print_narcissistic_numbers, generate version 
+
+Ease of use
+ [ ] Add a command line (to not build it each time for different option)

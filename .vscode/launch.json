@@ -9,7 +9,10 @@
             "type": "cppdbg",
             "request": "launch",
             // Adjust the path to your executable 
-            "program": "${workspaceFolder}/build/topics",
+            "program": "${workspaceFolder}/../../build/modern-cpp-challenge/modern-cpp-challenge",
+            // "args": [
+            //     "--gtest_filter=test_p7*"
+            // ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
