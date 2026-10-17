@@ -88,7 +88,7 @@ Divisors math_lib::get_prime_divisors(unsigned long long number,
    same number multiple times
 */
 static ProperDivisors
-    get_proper_divisors_recursively(const Divisors& prime_divisors) {
+get_proper_divisors_recursively(const Divisors& prime_divisors) {
     assert(!prime_divisors.empty());
     // std::cout << "get_proper_divisors: " << utils::to_string(prime_divisors)
     // << std::endl;
@@ -147,7 +147,7 @@ static ProperDivisors
         Ex.: (2,3), (3,1), (5,1), (7,2)
 */
 static ProperDivisors
-    get_proper_divisors_iteratively(const Divisors& prime_divisors) {
+get_proper_divisors_iteratively(const Divisors& prime_divisors) {
     assert(!prime_divisors.empty());
 
     //  iterate the cartesian product of the given primes

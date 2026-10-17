@@ -23,7 +23,7 @@ std::string utils::to_string_impl(const std::vector<size_t>& vec) {
 }
 
 std::string
-    utils::to_string(const std::vector<std::pair<unsigned, unsigned>>& vec) {
+utils::to_string(const std::vector<std::pair<unsigned, unsigned>>& vec) {
     const auto toString = [](const std::pair<size_t, size_t>& data) {
         std::ostringstream str;
         str << "(" << data.first << "," << data.second << ")";

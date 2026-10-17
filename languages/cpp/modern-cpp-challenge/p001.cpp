@@ -46,7 +46,7 @@ constexpr auto sum_of_divisible_3_5_smart(unsigned limit) -> BigInteger {
 }; // namespace
 
 modern_cpp_challenge::BigInteger
-    modern_cpp_challenge::sum_of_divisible_3_5(unsigned limit) {
+modern_cpp_challenge::sum_of_divisible_3_5(unsigned limit) {
     return sum_of_divisible_3_5_smart(limit);
 }
 

@@ -1,5 +1,7 @@
 #[[
     cmake -G Ninja ../../mine/problems
+    ninja format
+        [0/1] Formatting code with clang-format
 ]]
 cmake_minimum_required(VERSION 3.21...4.2)
 
