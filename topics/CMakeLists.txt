@@ -1,5 +1,6 @@
 #[[
 	cmake -G Ninja ../../mine/problems/topics
+        -DCMAKE_BUILD_TYPE=Debug : debug (debug symbols, step debugging)
 
     ./topics --gtest_filter=EarliestFinishTime.*
 ]]

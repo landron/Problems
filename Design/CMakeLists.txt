@@ -1,7 +1,6 @@
 #[[
     cmake -G Ninja ../../mine/problems/Design
-        with build folder outside this repository, you can do:
-        cmake -G Ninja ../../mine/problems/Design
+        -DCMAKE_BUILD_TYPE=Debug : debug (debug symbols, step debugging)
 
     ./design --gtest_filter=LRUCacheTest.Example1
         ./design --gtest_filter=AllOneTest.*

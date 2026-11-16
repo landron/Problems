@@ -5,6 +5,7 @@
 
 	with build folder outside this repository, you can do:
 		cmake -G Ninja ../../mine/problems/CTCI-2026
+            -DCMAKE_BUILD_TYPE=Debug : debug (debug symbols, step debugging)
 
     ./ctci-2026 --gtest_filter=kth_to_last.*
 ]]
